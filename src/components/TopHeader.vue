@@ -2,13 +2,17 @@
   <div>
     <b-navbar type="dark" variant="dark">
       <b-navbar-nav>
-        <b-nav-item href="/">Home</b-nav-item>
+    
         <!--
-        <b-nav-item href="/product">Produits</b-nav-item>
+        
         <b-nav-item href="/request">Demande</b-nav-item>
         -->
         <b-nav-item href="/theoretical">Théorique</b-nav-item>
-        <b-nav-item href="/producer">Contrats</b-nav-item>
+         <b-nav-item-dropdown text="Contrats" right>
+          <b-dropdown-item href="/producer">Par Producteur</b-dropdown-item>
+            <b-dropdown-item href="/product">Par Produit</b-dropdown-item>
+        </b-nav-item-dropdown>
+ 
         <b-nav-item href="/season">Saisons</b-nav-item>
       
         <!-- Navbar dropdowns 

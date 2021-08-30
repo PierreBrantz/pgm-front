@@ -22,8 +22,9 @@ import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { AllCommunityModules } from "@ag-grid-community/all-modules";
 import axios from "axios";
 
-const THEORETICAL_QUANTITY_COLOR = "#ffe0cc";
-const TOTAL_COLOR = "#ccffb3";
+const THEORETICAL_QUANTITY_COLOR = "#15b3d629";
+const TOTAL_THEO_COLOR = "#d9ffc6b8";
+const TOTAL_REAL_COLOR = "#ffe09bb8";
 
 export default {
   data() {
@@ -100,17 +101,28 @@ export default {
         headerName: "Prix",
         resizable: true,
         valueGetter: function (params) {
-          if (params.data.price != null) {
-            return params.data.price + "€";
+          if (params.data.price != null && params.data.season != null) {
+            return params.data.price * params.data.season.percent + "€";
           }
         },
         width: 80,
         pinned: "left",
       },
       {
+        headerName: "Saison (%)",
+        resizable: true,
+        valueGetter: function (params) {
+          if (params.data.season != null) {
+            return params.data.season.name + ' (' + params.data.season.percent + ')' ;
+          }
+        },
+        width: 100,
+        pinned: "left",
+      },
+      {
         headerName: "Mai",
         children:[{
-        headerName: "Th.",
+        headerName: "Théo.",
         editable: true,
         valueParser: numberParser,
         resizable: true,
@@ -154,9 +166,11 @@ export default {
         width: 70,
       }]},
       {
-        field: "quantity2",
-        headerName: "Jui",
+        headerName: "Juin",
+        children:[{
+        headerName: "Théo.",
         editable: true,
+        resizable: true,
         valueParser: numberParser,
         cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
         valueGetter: function (params) {
@@ -182,10 +196,11 @@ export default {
         width: 70,
       },
       {
-        field: "quantity2",
-        headerName: "Jui",
+        
+        headerName: "Réel",
         editable: false,
         valueParser: numberParser,
+        resizable: true,
         valueGetter: function (params) {
           if (params.data.realQuantities[0] != null) {
             var sum = 0;
@@ -197,11 +212,13 @@ export default {
         },
 
         width: 70,
-      },
+      }]},
       {
-        field: "quantity3",
-        headerName: "Jul",
+        headerName: "Juillet",
+        children:[{
+        headerName: "Théo.",
         editable: true,
+        resizable: true,
         valueParser: numberParser,
         cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
         valueGetter: function (params) {
@@ -225,9 +242,10 @@ export default {
         width: 70,
       },
       {
-        field: "quantity3",
-        headerName: "Jul",
+        
+        headerName: "Réel",
         editable: false,
+        resizable: true,
         valueParser: numberParser,
         valueGetter: function (params) {
           if (params.data.realQuantities[0] != null) {
@@ -240,11 +258,13 @@ export default {
         },
 
         width: 70,
-      },
+      }]},
       {
-        field: "quantity4",
-        headerName: "Aou",
+        headerName: "Août",
+        children:[{
+        headerName: "Théo.",
         editable: true,
+        resizable: true,
         valueParser: numberParser,
         cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
         valueGetter: function (params) {
@@ -268,9 +288,9 @@ export default {
         width: 70,
       },
       {
-        field: "quantity4",
-        headerName: "Aou",
+        headerName: "Réel",
         editable: false,
+        resizable: true,
         valueParser: numberParser,
         valueGetter: function (params) {
           if (params.data.realQuantities[0] != null) {
@@ -283,11 +303,13 @@ export default {
         },
 
         width: 70,
-      },
+      }]},
       {
-        field: "quantity5",
-        headerName: "Sep",
+        headerName: "Septembre",
+        children:[{
+        headerName: "Théo.",
         editable: true,
+        resizable: true,
         valueParser: numberParser,
         cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
         valueGetter: function (params) {
@@ -311,9 +333,9 @@ export default {
         width: 70,
       },
       {
-        field: "quantity5",
-        headerName: "Sep",
+        headerName: "Réel",
         editable: false,
+        resizable: true,
         valueParser: numberParser,
         valueGetter: function (params) {
           if (params.data.realQuantities[0] != null) {
@@ -326,11 +348,13 @@ export default {
         },
 
         width: 70,
-      },
+      }]},
       {
-        field: "quantity6",
-        headerName: "Oct",
+        headerName: "Octobre",
+        children:[{
+        headerName: "Théo.",
         editable: true,
+        resizable:true,
         valueParser: numberParser,
         cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
         valueGetter: function (params) {
@@ -354,9 +378,9 @@ export default {
         width: 70,
       },
       {
-        field: "quantity6",
-        headerName: "Oct",
+        headerName: "Réel",
         editable: false,
+        resizable: true,
         valueParser: numberParser,
         valueGetter: function (params) {
           if (params.data.realQuantities[0] != null) {
@@ -369,11 +393,13 @@ export default {
         },
 
         width: 70,
-      },
+      }]},
       {
-        field: "quantity7",
-        headerName: "Nov",
+        headerName: "Novembre",
+        children:[{
+        headerName: "Théo.",
         editable: true,
+        resizable: true,
         valueParser: numberParser,
         cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
         valueGetter: function (params) {
@@ -397,9 +423,10 @@ export default {
         width: 70,
       },
       {
-        field: "quantity7",
-        headerName: "Nov",
+        
+        headerName: "Réel",
         editable: false,
+        resizable: true,
         valueParser: numberParser,
         valueGetter: function (params) {
           if (params.data.realQuantities[0] != null) {
@@ -412,11 +439,13 @@ export default {
         },
 
         width: 70,
-      },
+      }]},
       {
-        field: "quantity8",
-        headerName: "Dec",
+        headerName: "Décembre",
+        children:[{
+        headerName: "Théo.",
         editable: true,
+        resizable: true,
         valueParser: numberParser,
         cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
         valueGetter: function (params) {
@@ -440,9 +469,10 @@ export default {
         width: 70,
       },
       {
-        field: "quantity8",
-        headerName: "Dec",
+        
+        headerName: "Réel",
         editable: false,
+        resizable: true,
         valueParser: numberParser,
         valueGetter: function (params) {
           if (params.data.realQuantities[0] != null) {
@@ -455,11 +485,13 @@ export default {
         },
 
         width: 70,
-      },
+      }]},
       {
-        field: "quantity9",
-        headerName: "Jan",
+        headerName: "Janvier",
+        children:[{
+        headerName: "Théo.",
         editable: true,
+        resizable: true,
         valueParser: numberParser,
         cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
         valueGetter: function (params) {
@@ -483,9 +515,10 @@ export default {
         width: 70,
       },
       {
-        field: "quantity9",
-        headerName: "Jan",
+        
+        headerName: "Réel",
         editable: false,
+        resizable:true,
         valueParser: numberParser,
         valueGetter: function (params) {
           if (params.data.realQuantities[0] != null) {
@@ -498,10 +531,12 @@ export default {
         },
 
         width: 70,
-      },
-      {
-        headerName: "Fev",
+      }]},
+      {headerName: "Février",
+        children:[{
+        headerName: "Théo.",
         editable: true,
+        resizable: true,
         valueParser: numberParser,
         cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
         valueGetter: function (params) {
@@ -525,8 +560,9 @@ export default {
         width: 70,
       },
       {
-        headerName: "Fev",
+        headerName: "Réel",
         editable: false,
+        resizable:true,
         valueParser: numberParser,
         valueGetter: function (params) {
           if (params.data.realQuantities[0] != null) {
@@ -539,15 +575,16 @@ export default {
         },
 
         width: 70,
-      },
+      }]},
       {
         
-        headerName: "Théo",
+        headerName: "Qte. Totale",
         marryChildren:true,
         children:[{
-            headerName: 'test',
+            headerName: 'Théo.',
         width: 70,
-        cellStyle: { "background-color": TOTAL_COLOR },
+        resizable: true,
+        cellStyle: { "background-color": TOTAL_THEO_COLOR },
          valueGetter: function (params) {
           var sum = 0;
           for (let i = 0; i < params.data.quantities.length; i++) {
@@ -562,14 +599,16 @@ export default {
               params.data.quantities[i].quantity8 +
               params.data.quantities[i].quantity9 +
               params.data.quantities[i].quantity10;
-          }
-          return sum;
+              
+          }          
+            return sum ;
         }
       },
       {
         headerName: "Réel",
         width: 70,
-        cellStyle: { "background-color": TOTAL_COLOR },
+        resizable: true,
+        cellStyle: { "background-color": TOTAL_REAL_COLOR },
         valueGetter: function (params) {
           var sum = 0;
           for (let i = 0; i < params.data.realQuantities.length; i++) {
@@ -585,17 +624,19 @@ export default {
               params.data.realQuantities[i].quantity9 +
               params.data.realQuantities[i].quantity10;
           }
-          return sum;
+         
+            return sum ;
         },
       }]},
 
       {
-        headerName: "Théo",
+        headerName: "Prix Total",
          marryChildren:true,
         children:[{
-        headerName: "Théo",
+        headerName: "Théo.",
+        resizable: true,
         width: 70,
-        cellStyle: { "background-color": TOTAL_COLOR },
+        cellStyle: { "background-color": TOTAL_THEO_COLOR },
         valueGetter: function (params) {
           var sum = 0;
           for (let i = 0; i < params.data.quantities.length; i++) {
@@ -611,14 +652,16 @@ export default {
               params.data.quantities[i].quantity9 * params.data.price +
               params.data.quantities[i].quantity10 * params.data.price;
           }
-          return sum + '€';
+          if(params.data.season != null)
+            return sum * params.data.season.percent + '€';
         }
       },
       {
     
         headerName: "Réel",
         width: 70,
-        cellStyle: { "background-color": TOTAL_COLOR },
+        resizable: true,
+        cellStyle: { "background-color": TOTAL_REAL_COLOR },
         valueGetter: function (params) {
           var sum = 0;
           for (let i = 0; i < params.data.realQuantities.length; i++) {
@@ -634,7 +677,8 @@ export default {
               params.data.realQuantities[i].quantity9 * params.data.price +
               params.data.realQuantities[i].quantity10 * params.data.price;
           }
-          return sum + '€';
+          if(params.data.season != null)
+            return sum * params.data.season.percent + '€';
         }
       }]},
     ],
@@ -650,5 +694,23 @@ window.numberParser = function numberParser(params) {
 };
 </script>
  
-<style scoped>
+<style >
+.ag-header-group-cell-label, .ag-header-cell-label {
+    display: block;
+    flex: 1 1 auto;
+    overflow: hidden;
+    align-items: center;
+    text-overflow: ellipsis;
+    align-self: stretch;
+    text-align: center;
+}
+
+.ag-theme-alpine .ag-cell, .ag-theme-alpine .ag-full-width-row .ag-cell-wrapper.ag-row-group {
+    border: 1px solid transparent;
+    line-height: 40px;
+    padding-left: 3px;
+    padding-right: 0px;
+    -webkit-font-smoothing: subpixel-antialiased;
+    text-align: center;
+}
 </style>

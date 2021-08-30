@@ -4,7 +4,7 @@
     <div id="nav">
       <top-header></top-header>
     </div>
-    <div style="height: 90%">
+    <div style="height: 100%">
       <router-view />
     </div>
   </div>
@@ -19,11 +19,12 @@ export default {
 };
 </script>
 
-<style  scoped>
+<style >
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   margin: 0;
   height: 100%;
-  padding: 0;
+  padding-bottom: 55px;
+  overflow: hidden;
 }
 </style>

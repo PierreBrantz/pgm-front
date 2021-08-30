@@ -20,20 +20,15 @@
         </b-col>
 
         <b-col cols="2">
-          <b-button-group>
-            <b-button
-              variant="outline-primary"
-              @click="addProducerClick"
-              class="m-2"
-              >Ajout Producteur</b-button
-            >
-            <b-button
-              variant="outline-primary"
-              @click="addProductClick"
-              class="m-2"
-              >Ajout Produit</b-button
-            >
-          </b-button-group>
+        
+          <b-button
+            variant="outline-primary"
+            @click="addProductClick"
+            class="m-2"
+            >Associer Produit</b-button
+          >
+            
+      
         </b-col>
         <b-col cols="3"> </b-col>
       </b-row>
@@ -63,6 +58,7 @@ import axios from "axios";
 import AddProducerModal from "../components/AddProducerModal.vue";
 import AddProductModal from "../components/AddProductModal.vue";
 
+
 const TOTAL_COLOR = "#ccffb3";
 
 export default {
@@ -85,6 +81,7 @@ export default {
     AgGridVue,
     "modal-addproducer": AddProducerModal,
     "modal-addproduct": AddProductModal,
+
   },
   mounted() {
     this.fetchProducers();
@@ -93,6 +90,16 @@ export default {
     this.gridColumnApi = this.gridOptions.columnApi;
   },
   methods: {
+
+    printDoc() {
+	console.log("Exporting to PDF...");
+	const docDefinition = getDocDefinition(
+    	printParams, 
+        gridOptions.api, 
+        gridOptions.columnApi
+	);
+	pdfMake.createPdf(docDefinition).download();
+},
     async fetchProducers() {
       const json = await axios
         .get("/producers")
@@ -120,7 +127,7 @@ export default {
 
       params.api.sizeColumnsToFit();
     },
-    async changeProducer(arg) {      
+    async changeProducer(arg) {
       const json = await axios
         .get("/products/producer/" + arg)
         .then((response) => (this.requests = response.data))
@@ -472,7 +479,6 @@ export default {
         width: 70,
       },
       {
-      
         headerName: "Réel",
         width: 70,
         cellStyle: { "background-color": TOTAL_COLOR },
@@ -496,8 +502,6 @@ export default {
       },
 
       {
-       
-    
         headerName: "Réel",
         width: 70,
         cellStyle: { "background-color": TOTAL_COLOR },
@@ -516,9 +520,9 @@ export default {
               params.data.realQuantities[i].quantity9 * params.data.price +
               params.data.realQuantities[i].quantity10 * params.data.price;
           }
-          return sum + '€';
-        }
-      }
+          return sum + "€";
+        },
+      },
     ];
     axios
       .get("/products/producer/0")

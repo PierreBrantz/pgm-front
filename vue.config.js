@@ -1,5 +1,4 @@
 
-
 module.exports = {
     devServer:  {
        
@@ -7,7 +6,7 @@ module.exports = {
         "/": {
           target: "https://pgm-services.herokuapp.com/",
           
-          
+      
                     
         },
       }
