@@ -9,6 +9,7 @@ import store from './store'
 import axios from "axios";
 
 axios.defaults.baseURL = "https://pgm-services.herokuapp.com/";
+//axios.defaults.baseURL = "http://localhost:8081/";
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)

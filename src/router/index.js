@@ -12,8 +12,9 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Agenda',
-    component: Agenda
+    name: 'theoretical',
+    component: () =>
+    import(/* webpackChunkName: "about" */ "../views/Theoretical.vue")
   },
   {
     path: '/product',
@@ -44,7 +45,20 @@ const routes = [
     name: 'season',
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/Season.vue")
+  },
+  {
+    path: '/addproducer',
+    name: 'addproducer',
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/AddProducer.vue")
+  },
+  {
+    path: '/addproduct',
+    name: 'addproduct',
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/AddProduct.vue")
   }
+
 ]
 
 const router = new VueRouter({

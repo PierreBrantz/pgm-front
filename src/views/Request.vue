@@ -28,7 +28,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import RequestModal from "../components/AddProducerModal.vue";
+import RequestModal from "./AddProducer.vue";
 
 export default {
   components: {   

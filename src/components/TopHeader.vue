@@ -10,10 +10,16 @@
         <b-nav-item href="/theoretical">Théorique</b-nav-item>
          <b-nav-item-dropdown text="Contrats" right>
           <b-dropdown-item href="/producer">Par Producteur</b-dropdown-item>
-            <b-dropdown-item href="/product">Par Produit</b-dropdown-item>
+          <b-dropdown-item href="/product">Par Produit</b-dropdown-item>
         </b-nav-item-dropdown>
  
         <b-nav-item href="/season">Saisons</b-nav-item>
+
+        <b-nav-item-dropdown text="Ajout" right>
+          <b-dropdown-item href="/addproducer">Producteur</b-dropdown-item>
+          <b-dropdown-item href="/addproduct">Produit</b-dropdown-item>
+          
+        </b-nav-item-dropdown>
       
         <!-- Navbar dropdowns 
         <b-nav-item-dropdown text="Lang" right>

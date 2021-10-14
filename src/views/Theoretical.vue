@@ -101,8 +101,8 @@ export default {
         headerName: "Prix",
         resizable: true,
         valueGetter: function (params) {
-          if (params.data.price != null && params.data.season != null) {
-            return params.data.price * params.data.season.percent + "€";
+          if (params.data.price != null && params.data.currentSeason != null) {
+            return params.data.price * params.data.currentSeason.percent + "€";
           }
         },
         width: 80,
@@ -112,8 +112,8 @@ export default {
         headerName: "Saison (%)",
         resizable: true,
         valueGetter: function (params) {
-          if (params.data.season != null) {
-            return params.data.season.name + ' (' + params.data.season.percent + ')' ;
+          if (params.data.currentSeason != null) {
+            return params.data.currentSeason.name + ' (' + params.data.currentSeason.percent + ')' ;
           }
         },
         width: 100,
@@ -129,204 +129,21 @@ export default {
         cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
         valueGetter: function (params) {
           if (params.data.quantities[0] != null) {
-            return params.data.quantities[0].quantity1;
-          }
-        },
-        valueSetter: function (params) {
-          var newValInt = parseInt(params.newValue);
-          var valueChanged = params.data.b !== newValInt;
-          if (valueChanged) {
-            if (typeof params.data.quantities[0] === "undefined") {
-              params.data.quantities[0] = {
-                id: params.data.id,
-                quantity1: newValInt,
-              };
-            } else {
-              params.data.quantities[0].quantity1 = newValInt;
-            }
-          }
-          return valueChanged;
-        },
-        width: 70,
-      },
-      {
-        headerName: "Réel",
-        editable: false,
-        resizable: true,
-        valueParser: numberParser,
-        valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            var sum = 0;
-            for (let i = 0; i < params.data.realQuantities.length; i++) {
-              sum += params.data.realQuantities[i].quantity1;
-            }
-            return sum;
-          }
-        },
-        width: 70,
-      }]},
-      {
-        headerName: "Juin",
-        children:[{
-        headerName: "Théo.",
-        editable: true,
-        resizable: true,
-        valueParser: numberParser,
-        cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
-        valueGetter: function (params) {
-          if (params.data.quantities[0] != null) {
-            return params.data.quantities[0].quantity2;
-          }
-        },
-        valueSetter: function (params) {
-          var newValInt = parseInt(params.newValue);
-          var valueChanged = params.data.b !== newValInt;
-          if (valueChanged) {
-            if (typeof params.data.quantities[0] === "undefined") {
-              params.data.quantities[0] = {
-                id: params.data.id,
-                quantity2: newValInt,
-              };
-            } else {
-              params.data.quantities[0].quantity2 = newValInt;
-            }
-          }
-          return valueChanged;
-        },
-        width: 70,
-      },
-      {
-        
-        headerName: "Réel",
-        editable: false,
-        valueParser: numberParser,
-        resizable: true,
-        valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            var sum = 0;
-            for (let i = 0; i < params.data.realQuantities.length; i++) {
-              sum += params.data.realQuantities[i].quantity2;
-            }
-            return sum;
-          }
-        },
-
-        width: 70,
-      }]},
-      {
-        headerName: "Juillet",
-        children:[{
-        headerName: "Théo.",
-        editable: true,
-        resizable: true,
-        valueParser: numberParser,
-        cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
-        valueGetter: function (params) {
-          if (params.data.quantities[0] != null) {
-            return params.data.quantities[0].quantity3;
-          }
-        },
-        valueSetter: function (params) {
-          var newValInt = parseInt(params.newValue);
-          var valueChanged = params.data.b !== newValInt;
-          if (typeof params.data.quantities[0] === "undefined") {
-            params.data.quantities[0] = {
-              id: params.data.id,
-              quantity3: newValInt,
-            };
-          } else {
-            params.data.quantities[0].quantity3 = newValInt;
-          }
-          return valueChanged;
-        },
-        width: 70,
-      },
-      {
-        
-        headerName: "Réel",
-        editable: false,
-        resizable: true,
-        valueParser: numberParser,
-        valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            var sum = 0;
-            for (let i = 0; i < params.data.realQuantities.length; i++) {
-              sum += params.data.realQuantities[i].quantity3;
-            }
-            return sum;
-          }
-        },
-
-        width: 70,
-      }]},
-      {
-        headerName: "Août",
-        children:[{
-        headerName: "Théo.",
-        editable: true,
-        resizable: true,
-        valueParser: numberParser,
-        cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
-        valueGetter: function (params) {
-          if (params.data.quantities[0] != null) {
-            return params.data.quantities[0].quantity4;
-          }
-        },
-        valueSetter: function (params) {
-          var newValInt = parseInt(params.newValue);
-          var valueChanged = params.data.b !== newValInt;
-          if (typeof params.data.quantities[0] === "undefined") {
-            params.data.quantities[0] = {
-              id: params.data.id,
-              quantity4: newValInt,
-            };
-          } else {
-            params.data.quantities[0].quantity4 = newValInt;
-          }
-          return valueChanged;
-        },
-        width: 70,
-      },
-      {
-        headerName: "Réel",
-        editable: false,
-        resizable: true,
-        valueParser: numberParser,
-        valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            var sum = 0;
-            for (let i = 0; i < params.data.realQuantities.length; i++) {
-              sum += params.data.realQuantities[i].quantity4;
-            }
-            return sum;
-          }
-        },
-
-        width: 70,
-      }]},
-      {
-        headerName: "Septembre",
-        children:[{
-        headerName: "Théo.",
-        editable: true,
-        resizable: true,
-        valueParser: numberParser,
-        cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
-        valueGetter: function (params) {
-          if (params.data.quantities[0] != null) {
             return params.data.quantities[0].quantity5;
           }
         },
         valueSetter: function (params) {
           var newValInt = parseInt(params.newValue);
           var valueChanged = params.data.b !== newValInt;
-          if (typeof params.data.quantities[0] === "undefined") {
-            params.data.quantities[0] = {
-              id: params.data.id,
-              quantity5: newValInt,
-            };
-          } else {
-            params.data.quantities[0].quantity5 = newValInt;
+          if (valueChanged) {
+            if (typeof params.data.quantities[0] === "undefined") {
+              params.data.quantities[0] = {
+                id: params.data.id,
+                quantity5: newValInt,
+              };
+            } else {
+              params.data.quantities[0].quantity5 = newValInt;
+            }
           }
           return valueChanged;
         },
@@ -346,15 +163,14 @@ export default {
             return sum;
           }
         },
-
         width: 70,
       }]},
       {
-        headerName: "Octobre",
+        headerName: "Juin",
         children:[{
         headerName: "Théo.",
         editable: true,
-        resizable:true,
+        resizable: true,
         valueParser: numberParser,
         cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
         valueGetter: function (params) {
@@ -365,23 +181,26 @@ export default {
         valueSetter: function (params) {
           var newValInt = parseInt(params.newValue);
           var valueChanged = params.data.b !== newValInt;
-          if (typeof params.data.quantities[0] === "undefined") {
-            params.data.quantities[0] = {
-              id: params.data.id,
-              quantity6: newValInt,
-            };
-          } else {
-            params.data.quantities[0].quantity6 = newValInt;
+          if (valueChanged) {
+            if (typeof params.data.quantities[0] === "undefined") {
+              params.data.quantities[0] = {
+                id: params.data.id,
+                quantity6: newValInt,
+              };
+            } else {
+              params.data.quantities[0].quantity6 = newValInt;
+            }
           }
           return valueChanged;
         },
         width: 70,
       },
       {
+        
         headerName: "Réel",
         editable: false,
-        resizable: true,
         valueParser: numberParser,
+        resizable: true,
         valueGetter: function (params) {
           if (params.data.realQuantities[0] != null) {
             var sum = 0;
@@ -395,7 +214,7 @@ export default {
         width: 70,
       }]},
       {
-        headerName: "Novembre",
+        headerName: "Juillet",
         children:[{
         headerName: "Théo.",
         editable: true,
@@ -441,7 +260,7 @@ export default {
         width: 70,
       }]},
       {
-        headerName: "Décembre",
+        headerName: "Août",
         children:[{
         headerName: "Théo.",
         editable: true,
@@ -469,7 +288,6 @@ export default {
         width: 70,
       },
       {
-        
         headerName: "Réel",
         editable: false,
         resizable: true,
@@ -487,7 +305,7 @@ export default {
         width: 70,
       }]},
       {
-        headerName: "Janvier",
+        headerName: "Septembre",
         children:[{
         headerName: "Théo.",
         editable: true,
@@ -515,10 +333,9 @@ export default {
         width: 70,
       },
       {
-        
         headerName: "Réel",
         editable: false,
-        resizable:true,
+        resizable: true,
         valueParser: numberParser,
         valueGetter: function (params) {
           if (params.data.realQuantities[0] != null) {
@@ -532,11 +349,12 @@ export default {
 
         width: 70,
       }]},
-      {headerName: "Février",
+      {
+        headerName: "Octobre",
         children:[{
         headerName: "Théo.",
         editable: true,
-        resizable: true,
+        resizable:true,
         valueParser: numberParser,
         cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
         valueGetter: function (params) {
@@ -562,13 +380,195 @@ export default {
       {
         headerName: "Réel",
         editable: false,
-        resizable:true,
+        resizable: true,
         valueParser: numberParser,
         valueGetter: function (params) {
           if (params.data.realQuantities[0] != null) {
             var sum = 0;
             for (let i = 0; i < params.data.realQuantities.length; i++) {
               sum += params.data.realQuantities[i].quantity10;
+            }
+            return sum;
+          }
+        },
+
+        width: 70,
+      }]},
+      {
+        headerName: "Novembre",
+        children:[{
+        headerName: "Théo.",
+        editable: true,
+        resizable: true,
+        valueParser: numberParser,
+        cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+        valueGetter: function (params) {
+          if (params.data.quantities[0] != null) {
+            return params.data.quantities[0].quantity11;
+          }
+        },
+        valueSetter: function (params) {
+          var newValInt = parseInt(params.newValue);
+          var valueChanged = params.data.b !== newValInt;
+          if (typeof params.data.quantities[0] === "undefined") {
+            params.data.quantities[0] = {
+              id: params.data.id,
+              quantity11: newValInt,
+            };
+          } else {
+            params.data.quantities[0].quantity11 = newValInt;
+          }
+          return valueChanged;
+        },
+        width: 70,
+      },
+      {
+        
+        headerName: "Réel",
+        editable: false,
+        resizable: true,
+        valueParser: numberParser,
+        valueGetter: function (params) {
+          if (params.data.realQuantities[0] != null) {
+            var sum = 0;
+            for (let i = 0; i < params.data.realQuantities.length; i++) {
+              sum += params.data.realQuantities[i].quantity11;
+            }
+            return sum;
+          }
+        },
+
+        width: 70,
+      }]},
+      {
+        headerName: "Décembre",
+        children:[{
+        headerName: "Théo.",
+        editable: true,
+        resizable: true,
+        valueParser: numberParser,
+        cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+        valueGetter: function (params) {
+          if (params.data.quantities[0] != null) {
+            return params.data.quantities[0].quantity12;
+          }
+        },
+        valueSetter: function (params) {
+          var newValInt = parseInt(params.newValue);
+          var valueChanged = params.data.b !== newValInt;
+          if (typeof params.data.quantities[0] === "undefined") {
+            params.data.quantities[0] = {
+              id: params.data.id,
+              quantity12: newValInt,
+            };
+          } else {
+            params.data.quantities[0].quantity12 = newValInt;
+          }
+          return valueChanged;
+        },
+        width: 70,
+      },
+      {
+        
+        headerName: "Réel",
+        editable: false,
+        resizable: true,
+        valueParser: numberParser,
+        valueGetter: function (params) {
+          if (params.data.realQuantities[0] != null) {
+            var sum = 0;
+            for (let i = 0; i < params.data.realQuantities.length; i++) {
+              sum += params.data.realQuantities[i].quantity12;
+            }
+            return sum;
+          }
+        },
+
+        width: 70,
+      }]},
+      {
+        headerName: "Janvier",
+        children:[{
+        headerName: "Théo.",
+        editable: true,
+        resizable: true,
+        valueParser: numberParser,
+        cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+        valueGetter: function (params) {
+          if (params.data.quantities[0] != null) {
+            return params.data.quantities[0].quantity1;
+          }
+        },
+        valueSetter: function (params) {
+          var newValInt = parseInt(params.newValue);
+          var valueChanged = params.data.b !== newValInt;
+          if (typeof params.data.quantities[0] === "undefined") {
+            params.data.quantities[0] = {
+              id: params.data.id,
+              quantity1: newValInt,
+            };
+          } else {
+            params.data.quantities[0].quantity1 = newValInt;
+          }
+          return valueChanged;
+        },
+        width: 70,
+      },
+      {
+        
+        headerName: "Réel",
+        editable: false,
+        resizable:true,
+        valueParser: numberParser,
+        valueGetter: function (params) {
+          if (params.data.realQuantities[0] != null) {
+            var sum = 0;
+            for (let i = 0; i < params.data.realQuantities.length; i++) {
+              sum += params.data.realQuantities[i].quantity1;
+            }
+            return sum;
+          }
+        },
+
+        width: 70,
+      }]},
+      {headerName: "Février",
+        children:[{
+        headerName: "Théo.",
+        editable: true,
+        resizable: true,
+        valueParser: numberParser,
+        cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+        valueGetter: function (params) {
+          if (params.data.quantities[0] != null) {
+            return params.data.quantities[0].quantity2;
+          }
+        },
+        valueSetter: function (params) {
+          var newValInt = parseInt(params.newValue);
+          var valueChanged = params.data.b !== newValInt;
+          if (typeof params.data.quantities[0] === "undefined") {
+            params.data.quantities[0] = {
+              id: params.data.id,
+              quantity2: newValInt,
+            };
+          } else {
+            params.data.quantities[0].quantity2 = newValInt;
+          }
+          return valueChanged;
+        },
+        width: 70,
+      },
+      {
+        headerName: "Réel",
+        editable: false,
+        resizable:true,
+        valueParser: numberParser,
+        valueGetter: function (params) {
+          if (params.data.realQuantities[0] != null) {
+            var sum = 0;
+            for (let i = 0; i < params.data.realQuantities.length; i++) {
+              sum += params.data.realQuantities[i].quantity2;
             }
             return sum;
           }
@@ -652,8 +652,8 @@ export default {
               params.data.quantities[i].quantity9 * params.data.price +
               params.data.quantities[i].quantity10 * params.data.price;
           }
-          if(params.data.season != null)
-            return sum * params.data.season.percent + '€';
+          if(params.data.currentSeason != null)
+            return sum * params.data.currentSeason.percent + '€';
         }
       },
       {
@@ -677,8 +677,8 @@ export default {
               params.data.realQuantities[i].quantity9 * params.data.price +
               params.data.realQuantities[i].quantity10 * params.data.price;
           }
-          if(params.data.season != null)
-            return sum * params.data.season.percent + '€';
+          if(params.data.currentSeason != null)
+            return sum * params.data.currentSeason.percent + '€';
         }
       }]},
     ],

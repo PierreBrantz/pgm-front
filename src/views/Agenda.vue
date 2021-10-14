@@ -19,7 +19,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import Sidebar from "../components/Sidebar.vue";
-import ProductModal from "../components/ProductModal.vue";
+import ProductModal from "./AddProduct.vue";
 
 export default {
   components: {

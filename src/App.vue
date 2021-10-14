@@ -23,8 +23,8 @@ export default {
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   margin: 0;
-  height: 100%;
+  height: 99%;
   padding-bottom: 55px;
-  overflow: hidden;
+  
 }
 </style>

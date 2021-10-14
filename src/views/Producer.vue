@@ -20,17 +20,23 @@
         </b-col>
 
         <b-col cols="2">
-        
           <b-button
             variant="outline-primary"
             @click="addProductClick"
             class="m-2"
             >Associer Produit</b-button
           >
-            
-      
         </b-col>
-        <b-col cols="3"> </b-col>
+        <b-col cols="3">
+          <b-button v-if="selectedProducer != null && selectedProducer != 0"
+            variant="outline-primary"
+            @click="downloadPDF"
+            class="m-2"
+            ><b-icon icon="download" scale="1.3" aria-hidden="true"></b-icon
+            ></b-button>
+         
+          
+        </b-col>
       </b-row>
     </b-container>
     <div style="flex: 1 1 auto">
@@ -44,8 +50,6 @@
         :modules="modules"
       ></ag-grid-vue>
     </div>
-    <modal-addproducer></modal-addproducer>
-    <modal-addproduct :producerId="producerId"></modal-addproduct>
   </div>
 </template>
 
@@ -55,9 +59,8 @@ import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { AllCommunityModules } from "@ag-grid-community/all-modules";
 import axios from "axios";
-import AddProducerModal from "../components/AddProducerModal.vue";
-import AddProductModal from "../components/AddProductModal.vue";
-
+import jsPDF from "jspdf";
+import JsPDFAutotable from "jspdf-autotable";
 
 const TOTAL_COLOR = "#ccffb3";
 
@@ -75,13 +78,12 @@ export default {
       columnDefs: null,
       modules: AllCommunityModules,
       producerId: null,
+      productsByProducer: [],
     };
   },
   components: {
     AgGridVue,
-    "modal-addproducer": AddProducerModal,
-    "modal-addproduct": AddProductModal,
-
+    JsPDFAutotable,
   },
   mounted() {
     this.fetchProducers();
@@ -90,16 +92,70 @@ export default {
     this.gridColumnApi = this.gridOptions.columnApi;
   },
   methods: {
+    findProducerName(id) {
+      this.producers.find((item) => {
+        if (item.value === id) {
+          return item.text;
+        }
+      });
+    },
 
-    printDoc() {
-	console.log("Exporting to PDF...");
-	const docDefinition = getDocDefinition(
-    	printParams, 
-        gridOptions.api, 
-        gridOptions.columnApi
-	);
-	pdfMake.createPdf(docDefinition).download();
-},
+    downloadPDF() {
+      const doc = new jsPDF();
+      doc.text("Contrat Maraichage", 10, 10);
+
+      doc.line(0, 35, 400, 35);
+      let rows = [];
+      this.productsByProducer.forEach((element) => {
+        if (element.realQuantities.length > 0) {
+          var temp = [
+            element.name,
+            element.price + "€",
+            element.realQuantities[0].quantity6,
+            element.realQuantities[0].quantity7,
+            element.realQuantities[0].quantity8,
+            element.realQuantities[0].quantity9,
+            element.realQuantities[0].quantity10,
+            element.realQuantities[0].quantity11,
+            element.realQuantities[0].quantity12,
+            element.realQuantities[0].quantity1,
+            element.realQuantities[0].quantity2,
+          ];
+          rows.push(temp);
+        }
+      });
+
+      JsPDFAutotable(doc, {
+        head: [
+          [
+            "Légume",
+            "Prix",
+            "Mai",
+            "Jui",
+            "Jul",
+            "Aou",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+            "Jan",
+            "Fev",
+          ],
+        ],
+        margin: { top: 50 },
+        body: rows,
+      }),
+        doc.save(
+          "Contrat_" +
+            this.producers.find((item) => {
+              if (item.value === this.producerId) {
+                return item;
+              }
+            }).text +
+            ".pdf"
+        );
+    },
+
     async fetchProducers() {
       const json = await axios
         .get("/producers")
@@ -133,6 +189,7 @@ export default {
         .then((response) => (this.requests = response.data))
         .then((rowData) => (this.rowData = rowData));
       this.producerId = arg;
+      this.productsByProducer = json;
     },
 
     addProducerClick() {
@@ -217,112 +274,8 @@ export default {
         pinned: "left",
       },
       {
-        field: "quantity1",
-        headerName: "Mai",
-        editable: true,
-        valueParser: numberParser,
-        valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            return params.data.realQuantities[0].quantity1;
-          }
-        },
-        valueSetter: function (params) {
-          var newValInt = parseInt(params.newValue);
-          var valueChanged = params.data.b !== newValInt;
-          if (valueChanged) {
-            if (typeof params.data.realQuantities[0] === "undefined") {
-              params.data.realQuantities[0] = {
-                id: params.data.id,
-                quantity1: newValInt,
-              };
-            } else {
-              params.data.realQuantities[0].quantity1 = newValInt;
-            }
-          }
-          return valueChanged;
-        },
-        width: 70,
-      },
-      {
-        field: "quantity2",
-        headerName: "Jui",
-        editable: true,
-        valueParser: numberParser,
-        valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            return params.data.realQuantities[0].quantity2;
-          }
-        },
-        valueSetter: function (params) {
-          var newValInt = parseInt(params.newValue);
-          var valueChanged = params.data.b !== newValInt;
-          if (valueChanged) {
-            if (typeof params.data.realQuantities[0] === "undefined") {
-              params.data.realQuantities[0] = {
-                id: params.data.id,
-                quantity2: newValInt,
-              };
-            } else {
-              params.data.realQuantities[0].quantity2 = newValInt;
-            }
-          }
-          return valueChanged;
-        },
-        width: 70,
-      },
-      {
-        field: "quantity3",
-        headerName: "Jul",
-        editable: true,
-        valueParser: numberParser,
-        valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            return params.data.realQuantities[0].quantity3;
-          }
-        },
-        valueSetter: function (params) {
-          var newValInt = parseInt(params.newValue);
-          var valueChanged = params.data.b !== newValInt;
-          if (typeof params.data.realQuantities[0] === "undefined") {
-            params.data.realQuantities[0] = {
-              id: params.data.id,
-              quantity3: newValInt,
-            };
-          } else {
-            params.data.realQuantities[0].quantity3 = newValInt;
-          }
-          return valueChanged;
-        },
-        width: 70,
-      },
-      {
-        field: "quantity4",
-        headerName: "Aou",
-        editable: true,
-        valueParser: numberParser,
-        valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            return params.data.realQuantities[0].quantity4;
-          }
-        },
-        valueSetter: function (params) {
-          var newValInt = parseInt(params.newValue);
-          var valueChanged = params.data.b !== newValInt;
-          if (typeof params.data.realQuantities[0] === "undefined") {
-            params.data.realQuantities[0] = {
-              id: params.data.id,
-              quantity4: newValInt,
-            };
-          } else {
-            params.data.realQuantities[0].quantity4 = newValInt;
-          }
-          return valueChanged;
-        },
-        width: 70,
-      },
-      {
         field: "quantity5",
-        headerName: "Sep",
+        headerName: "Mai",
         editable: true,
         valueParser: numberParser,
         valueGetter: function (params) {
@@ -333,13 +286,15 @@ export default {
         valueSetter: function (params) {
           var newValInt = parseInt(params.newValue);
           var valueChanged = params.data.b !== newValInt;
-          if (typeof params.data.realQuantities[0] === "undefined") {
-            params.data.realQuantities[0] = {
-              id: params.data.id,
-              quantity5: newValInt,
-            };
-          } else {
-            params.data.realQuantities[0].quantity5 = newValInt;
+          if (valueChanged) {
+            if (typeof params.data.realQuantities[0] === "undefined") {
+              params.data.realQuantities[0] = {
+                id: params.data.id,
+                quantity5: newValInt,
+              };
+            } else {
+              params.data.realQuantities[0].quantity5 = newValInt;
+            }
           }
           return valueChanged;
         },
@@ -347,7 +302,7 @@ export default {
       },
       {
         field: "quantity6",
-        headerName: "Oct",
+        headerName: "Jui",
         editable: true,
         valueParser: numberParser,
         valueGetter: function (params) {
@@ -358,13 +313,15 @@ export default {
         valueSetter: function (params) {
           var newValInt = parseInt(params.newValue);
           var valueChanged = params.data.b !== newValInt;
-          if (typeof params.data.realQuantities[0] === "undefined") {
-            params.data.realQuantities[0] = {
-              id: params.data.id,
-              quantity6: newValInt,
-            };
-          } else {
-            params.data.realQuantities[0].quantity6 = newValInt;
+          if (valueChanged) {
+            if (typeof params.data.realQuantities[0] === "undefined") {
+              params.data.realQuantities[0] = {
+                id: params.data.id,
+                quantity6: newValInt,
+              };
+            } else {
+              params.data.realQuantities[0].quantity6 = newValInt;
+            }
           }
           return valueChanged;
         },
@@ -372,7 +329,7 @@ export default {
       },
       {
         field: "quantity7",
-        headerName: "Nov",
+        headerName: "Jul",
         editable: true,
         valueParser: numberParser,
         valueGetter: function (params) {
@@ -397,7 +354,7 @@ export default {
       },
       {
         field: "quantity8",
-        headerName: "Dec",
+        headerName: "Aou",
         editable: true,
         valueParser: numberParser,
         valueGetter: function (params) {
@@ -422,7 +379,7 @@ export default {
       },
       {
         field: "quantity9",
-        headerName: "Jan",
+        headerName: "Sep",
         editable: true,
         valueParser: numberParser,
         valueGetter: function (params) {
@@ -440,6 +397,106 @@ export default {
             };
           } else {
             params.data.realQuantities[0].quantity9 = newValInt;
+          }
+          return valueChanged;
+        },
+        width: 70,
+      },
+      {
+        field: "quantity10",
+        headerName: "Oct",
+        editable: true,
+        valueParser: numberParser,
+        valueGetter: function (params) {
+          if (params.data.realQuantities[0] != null) {
+            return params.data.realQuantities[0].quantity10;
+          }
+        },
+        valueSetter: function (params) {
+          var newValInt = parseInt(params.newValue);
+          var valueChanged = params.data.b !== newValInt;
+          if (typeof params.data.realQuantities[0] === "undefined") {
+            params.data.realQuantities[0] = {
+              id: params.data.id,
+              quantity10: newValInt,
+            };
+          } else {
+            params.data.realQuantities[0].quantity10 = newValInt;
+          }
+          return valueChanged;
+        },
+        width: 70,
+      },
+      {
+        field: "quantity11",
+        headerName: "Nov",
+        editable: true,
+        valueParser: numberParser,
+        valueGetter: function (params) {
+          if (params.data.realQuantities[0] != null) {
+            return params.data.realQuantities[0].quantity11;
+          }
+        },
+        valueSetter: function (params) {
+          var newValInt = parseInt(params.newValue);
+          var valueChanged = params.data.b !== newValInt;
+          if (typeof params.data.realQuantities[0] === "undefined") {
+            params.data.realQuantities[0] = {
+              id: params.data.id,
+              quantity11: newValInt,
+            };
+          } else {
+            params.data.realQuantities[0].quantity11 = newValInt;
+          }
+          return valueChanged;
+        },
+        width: 70,
+      },
+      {
+        field: "quantity12",
+        headerName: "Dec",
+        editable: true,
+        valueParser: numberParser,
+        valueGetter: function (params) {
+          if (params.data.realQuantities[0] != null) {
+            return params.data.realQuantities[0].quantity12;
+          }
+        },
+        valueSetter: function (params) {
+          var newValInt = parseInt(params.newValue);
+          var valueChanged = params.data.b !== newValInt;
+          if (typeof params.data.realQuantities[0] === "undefined") {
+            params.data.realQuantities[0] = {
+              id: params.data.id,
+              quantity12: newValInt,
+            };
+          } else {
+            params.data.realQuantities[0].quantity12 = newValInt;
+          }
+          return valueChanged;
+        },
+        width: 70,
+      },
+      {
+        field: "quantity1",
+        headerName: "Jan",
+        editable: true,
+        valueParser: numberParser,
+        valueGetter: function (params) {
+          if (params.data.realQuantities[0] != null) {
+            return params.data.realQuantities[0].quantity1;
+          }
+        },
+        valueSetter: function (params) {
+          var newValInt = parseInt(params.newValue);
+          var valueChanged = params.data.b !== newValInt;
+          if (typeof params.data.realQuantities[0] === "undefined") {
+            params.data.realQuantities[0] = {
+              id: params.data.id,
+              quantity1: newValInt,
+            };
+          } else {
+            params.data.realQuantities[0].quantity1 = newValInt;
             axios
               .get("/products/producer/0")
               .then((response) => (this.products = response.data))
@@ -450,13 +507,13 @@ export default {
         width: 70,
       },
       {
-        field: "quantity10",
+        field: "quantity2",
         headerName: "Fev",
         editable: true,
         valueParser: numberParser,
         valueGetter: function (params) {
           if (params.data.realQuantities[0] != null) {
-            return params.data.realQuantities[0].quantity10;
+            return params.data.realQuantities[0].quantity2;
           }
         },
         valueSetter: function (params) {
@@ -469,10 +526,10 @@ export default {
           if (typeof params.data.realQuantities[0] === "undefined") {
             params.data.realQuantities[0] = {
               id: params.data.id,
-              quantity10: newValInt,
+              quantity2: newValInt,
             };
           } else {
-            params.data.realQuantities[0].quantity10 = newValInt;
+            params.data.realQuantities[0].quantity2 = newValInt;
           }
           return valueChanged;
         },
