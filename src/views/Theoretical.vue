@@ -38,6 +38,12 @@ export default {
       headerHeight: null,
     };
   },
+  computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
+    }
+  },
+
 
   components: {
     AgGridVue,
@@ -55,8 +61,12 @@ export default {
     },
   },
   mounted() {
+    if (!this.currentUser) {
+      this.$router.push('/login');
+    }
     this.gridApi = this.gridOptions.api;
     this.gridColumnApi = this.gridOptions.columnApi;
+   // this.gridApi.sizeColumnsToFit();
   },
   beforeMount() {
     this.headerHeight = 20;
@@ -80,19 +90,19 @@ export default {
       {
         headerName: "Légumes",
         field: "name",
-        width: 200,
+        width: 150,
         sortable: true,
         pinned: "left",
         resizable: true
       },
       {
         headerName: "Condit#",
-        width: 100,
+        width: 60,
         pinned: "left",
         resizable: true,
 
         valueGetter: function (params) {
-          if (params.data.packaging.name != null) {
+          if (params.data.packaging && params.data.packaging.name) {
             return params.data.packaging.name;
           }
         },
@@ -101,26 +111,16 @@ export default {
         headerName: "Prix",
         resizable: true,
         valueGetter: function (params) {
-          if (params.data.price != null && params.data.currentSeason != null) {
-            return params.data.price * params.data.currentSeason.percent + "€";
+          if (params.data.price) {
+            return params.data.price + "€";
           }
         },
-        width: 80,
+        width: 60,
         pinned: "left",
       },
-      {
-        headerName: "Saison (%)",
-        resizable: true,
-        valueGetter: function (params) {
-          if (params.data.currentSeason != null) {
-            return params.data.currentSeason.name + ' (' + params.data.currentSeason.percent + ')' ;
-          }
-        },
-        width: 100,
-        pinned: "left",
-      },
-      {
-        headerName: "Mai",
+    
+  {
+        headerName: "Janvier",
         children:[{
         headerName: "Théo.",
         editable: true,
@@ -128,8 +128,8 @@ export default {
         resizable: true,
         cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
         valueGetter: function (params) {
-          if (params.data.quantities[0] != null) {
-            return params.data.quantities[0].quantity5;
+          if (params.data.quantities[0]) {
+            return params.data.quantities[0].quantity1;
           }
         },
         valueSetter: function (params) {
@@ -139,15 +139,198 @@ export default {
             if (typeof params.data.quantities[0] === "undefined") {
               params.data.quantities[0] = {
                 id: params.data.id,
-                quantity5: newValInt,
+                quantity1: newValInt,
               };
             } else {
-              params.data.quantities[0].quantity5 = newValInt;
+              params.data.quantities[0].quantity1 = newValInt;
             }
           }
           return valueChanged;
         },
-        width: 70,
+        width: 60,
+      },
+      {
+        headerName: "Réel",
+        editable: false,
+        resizable: true,
+        valueParser: numberParser,
+        valueGetter: function (params) {
+          if (params.data.realQuantities[0] != null) {
+            var sum = 0;
+            for (let i = 0; i < params.data.realQuantities.length; i++) {
+              sum += params.data.realQuantities[i].quantity1;
+            }
+            return sum;
+          }
+        },
+        width: 60,
+      }]},
+      {
+        headerName: "Février",
+        children:[{
+        headerName: "Théo.",
+        editable: true,
+        resizable: true,
+        valueParser: numberParser,
+        cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+        valueGetter: function (params) {
+          if (params.data.quantities[0] != null) {
+            return params.data.quantities[0].quantity2;
+          }
+        },
+        valueSetter: function (params) {
+          var newValInt = parseInt(params.newValue);
+          var valueChanged = params.data.b !== newValInt;
+          if (valueChanged) {
+            if (typeof params.data.quantities[0] === "undefined") {
+              params.data.quantities[0] = {
+                id: params.data.id,
+                quantity2: newValInt,
+              };
+            } else {
+              params.data.quantities[0].quantity2 = newValInt;
+            }
+          }
+          return valueChanged;
+        },
+        width: 60,
+      },
+      {
+        
+        headerName: "Réel",
+        editable: false,
+        valueParser: numberParser,
+        resizable: true,
+        valueGetter: function (params) {
+          if (params.data.realQuantities[0] != null) {
+            var sum = 0;
+            for (let i = 0; i < params.data.realQuantities.length; i++) {
+              sum += params.data.realQuantities[i].quantity2;
+            }
+            return sum;
+          }
+        },
+
+        width: 60,
+      }]},
+      {
+        headerName: "Mars",
+        children:[{
+        headerName: "Théo.",
+        editable: true,
+        resizable: true,
+        valueParser: numberParser,
+        cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+        valueGetter: function (params) {
+          if (params.data.quantities[0] != null) {
+            return params.data.quantities[0].quantity3;
+          }
+        },
+        valueSetter: function (params) {
+          var newValInt = parseInt(params.newValue);
+          var valueChanged = params.data.b !== newValInt;
+          if (typeof params.data.quantities[0] === "undefined") {
+            params.data.quantities[0] = {
+              id: params.data.id,
+              quantity3: newValInt,
+            };
+          } else {
+            params.data.quantities[0].quantity3 = newValInt;
+          }
+          return valueChanged;
+        },
+        width: 60,
+      },
+      {
+        
+        headerName: "Réel",
+        editable: false,
+        resizable: true,
+        valueParser: numberParser,
+        valueGetter: function (params) {
+          if (params.data.realQuantities[0] != null) {
+            var sum = 0;
+            for (let i = 0; i < params.data.realQuantities.length; i++) {
+              sum += params.data.realQuantities[i].quantity3;
+            }
+            return sum;
+          }
+        },
+
+        width: 60,
+      }]},
+      {
+        headerName: "Avril",
+        children:[{
+        headerName: "Théo.",
+        editable: true,
+        resizable: true,
+        valueParser: numberParser,
+        cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+        valueGetter: function (params) {
+          if (params.data.quantities[0] != null) {
+            return params.data.quantities[0].quantity4;
+          }
+        },
+        valueSetter: function (params) {
+          var newValInt = parseInt(params.newValue);
+          var valueChanged = params.data.b !== newValInt;
+          if (typeof params.data.quantities[0] === "undefined") {
+            params.data.quantities[0] = {
+              id: params.data.id,
+              quantity4: newValInt,
+            };
+          } else {
+            params.data.quantities[0].quantity4 = newValInt;
+          }
+          return valueChanged;
+        },
+        width: 60,
+      },
+      {
+        headerName: "Réel",
+        editable: false,
+        resizable: true,
+        valueParser: numberParser,
+        valueGetter: function (params) {
+          if (params.data.realQuantities[0] != null) {
+            var sum = 0;
+            for (let i = 0; i < params.data.realQuantities.length; i++) {
+              sum += params.data.realQuantities[i].quantity4;
+            }
+            return sum;
+          }
+        },
+
+        width: 60,
+      }]},
+      {
+        headerName: "Mai",
+        children:[{
+        headerName: "Théo.",
+        editable: true,
+        resizable: true,
+        valueParser: numberParser,
+        cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+        valueGetter: function (params) {
+          if (params.data.quantities[0] != null) {
+            return params.data.quantities[0].quantity5;
+          }
+        },
+        valueSetter: function (params) {
+          var newValInt = parseInt(params.newValue);
+          var valueChanged = params.data.b !== newValInt;
+          if (typeof params.data.quantities[0] === "undefined") {
+            params.data.quantities[0] = {
+              id: params.data.id,
+              quantity5: newValInt,
+            };
+          } else {
+            params.data.quantities[0].quantity5 = newValInt;
+          }
+          return valueChanged;
+        },
+        width: 60,
       },
       {
         headerName: "Réel",
@@ -163,14 +346,15 @@ export default {
             return sum;
           }
         },
-        width: 70,
+
+        width: 60,
       }]},
       {
         headerName: "Juin",
         children:[{
         headerName: "Théo.",
         editable: true,
-        resizable: true,
+        resizable:true,
         valueParser: numberParser,
         cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
         valueGetter: function (params) {
@@ -181,26 +365,23 @@ export default {
         valueSetter: function (params) {
           var newValInt = parseInt(params.newValue);
           var valueChanged = params.data.b !== newValInt;
-          if (valueChanged) {
-            if (typeof params.data.quantities[0] === "undefined") {
-              params.data.quantities[0] = {
-                id: params.data.id,
-                quantity6: newValInt,
-              };
-            } else {
-              params.data.quantities[0].quantity6 = newValInt;
-            }
+          if (typeof params.data.quantities[0] === "undefined") {
+            params.data.quantities[0] = {
+              id: params.data.id,
+              quantity6: newValInt,
+            };
+          } else {
+            params.data.quantities[0].quantity6 = newValInt;
           }
           return valueChanged;
         },
-        width: 70,
+        width: 60,
       },
       {
-        
         headerName: "Réel",
         editable: false,
-        valueParser: numberParser,
         resizable: true,
+        valueParser: numberParser,
         valueGetter: function (params) {
           if (params.data.realQuantities[0] != null) {
             var sum = 0;
@@ -211,7 +392,7 @@ export default {
           }
         },
 
-        width: 70,
+        width: 60,
       }]},
       {
         headerName: "Juillet",
@@ -239,7 +420,7 @@ export default {
           }
           return valueChanged;
         },
-        width: 70,
+        width: 60,
       },
       {
         
@@ -257,7 +438,7 @@ export default {
           }
         },
 
-        width: 70,
+        width: 60,
       }]},
       {
         headerName: "Août",
@@ -285,9 +466,10 @@ export default {
           }
           return valueChanged;
         },
-        width: 70,
+        width: 60,
       },
       {
+        
         headerName: "Réel",
         editable: false,
         resizable: true,
@@ -302,7 +484,7 @@ export default {
           }
         },
 
-        width: 70,
+        width: 60,
       }]},
       {
         headerName: "Septembre",
@@ -330,12 +512,13 @@ export default {
           }
           return valueChanged;
         },
-        width: 70,
+        width: 60,
       },
       {
+        
         headerName: "Réel",
         editable: false,
-        resizable: true,
+        resizable:true,
         valueParser: numberParser,
         valueGetter: function (params) {
           if (params.data.realQuantities[0] != null) {
@@ -347,14 +530,13 @@ export default {
           }
         },
 
-        width: 70,
+        width: 60,
       }]},
-      {
-        headerName: "Octobre",
+      {headerName: "Octobre",
         children:[{
         headerName: "Théo.",
         editable: true,
-        resizable:true,
+        resizable: true,
         valueParser: numberParser,
         cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
         valueGetter: function (params) {
@@ -375,12 +557,12 @@ export default {
           }
           return valueChanged;
         },
-        width: 70,
+        width: 60,
       },
       {
         headerName: "Réel",
         editable: false,
-        resizable: true,
+        resizable:true,
         valueParser: numberParser,
         valueGetter: function (params) {
           if (params.data.realQuantities[0] != null) {
@@ -392,10 +574,10 @@ export default {
           }
         },
 
-        width: 70,
+        width: 60,
       }]},
-      {
-        headerName: "Novembre",
+      ,
+      {headerName: "Novembre",
         children:[{
         headerName: "Théo.",
         editable: true,
@@ -420,13 +602,12 @@ export default {
           }
           return valueChanged;
         },
-        width: 70,
+        width: 60,
       },
       {
-        
         headerName: "Réel",
         editable: false,
-        resizable: true,
+        resizable:true,
         valueParser: numberParser,
         valueGetter: function (params) {
           if (params.data.realQuantities[0] != null) {
@@ -438,10 +619,10 @@ export default {
           }
         },
 
-        width: 70,
+        width: 60,
       }]},
-      {
-        headerName: "Décembre",
+      ,
+      {headerName: "Décembre",
         children:[{
         headerName: "Théo.",
         editable: true,
@@ -466,13 +647,12 @@ export default {
           }
           return valueChanged;
         },
-        width: 70,
+        width: 60,
       },
       {
-        
         headerName: "Réel",
         editable: false,
-        resizable: true,
+        resizable:true,
         valueParser: numberParser,
         valueGetter: function (params) {
           if (params.data.realQuantities[0] != null) {
@@ -484,97 +664,7 @@ export default {
           }
         },
 
-        width: 70,
-      }]},
-      {
-        headerName: "Janvier",
-        children:[{
-        headerName: "Théo.",
-        editable: true,
-        resizable: true,
-        valueParser: numberParser,
-        cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
-        valueGetter: function (params) {
-          if (params.data.quantities[0] != null) {
-            return params.data.quantities[0].quantity1;
-          }
-        },
-        valueSetter: function (params) {
-          var newValInt = parseInt(params.newValue);
-          var valueChanged = params.data.b !== newValInt;
-          if (typeof params.data.quantities[0] === "undefined") {
-            params.data.quantities[0] = {
-              id: params.data.id,
-              quantity1: newValInt,
-            };
-          } else {
-            params.data.quantities[0].quantity1 = newValInt;
-          }
-          return valueChanged;
-        },
-        width: 70,
-      },
-      {
-        
-        headerName: "Réel",
-        editable: false,
-        resizable:true,
-        valueParser: numberParser,
-        valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            var sum = 0;
-            for (let i = 0; i < params.data.realQuantities.length; i++) {
-              sum += params.data.realQuantities[i].quantity1;
-            }
-            return sum;
-          }
-        },
-
-        width: 70,
-      }]},
-      {headerName: "Février",
-        children:[{
-        headerName: "Théo.",
-        editable: true,
-        resizable: true,
-        valueParser: numberParser,
-        cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
-        valueGetter: function (params) {
-          if (params.data.quantities[0] != null) {
-            return params.data.quantities[0].quantity2;
-          }
-        },
-        valueSetter: function (params) {
-          var newValInt = parseInt(params.newValue);
-          var valueChanged = params.data.b !== newValInt;
-          if (typeof params.data.quantities[0] === "undefined") {
-            params.data.quantities[0] = {
-              id: params.data.id,
-              quantity2: newValInt,
-            };
-          } else {
-            params.data.quantities[0].quantity2 = newValInt;
-          }
-          return valueChanged;
-        },
-        width: 70,
-      },
-      {
-        headerName: "Réel",
-        editable: false,
-        resizable:true,
-        valueParser: numberParser,
-        valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            var sum = 0;
-            for (let i = 0; i < params.data.realQuantities.length; i++) {
-              sum += params.data.realQuantities[i].quantity2;
-            }
-            return sum;
-          }
-        },
-
-        width: 70,
+        width: 60,
       }]},
       {
         
@@ -583,22 +673,25 @@ export default {
         children:[{
             headerName: 'Théo.',
         width: 70,
+        pinned: "right",
         resizable: true,
         cellStyle: { "background-color": TOTAL_THEO_COLOR },
          valueGetter: function (params) {
           var sum = 0;
           for (let i = 0; i < params.data.quantities.length; i++) {
             sum +=
-              params.data.quantities[i].quantity1 +
-              params.data.quantities[i].quantity2 +
-              params.data.quantities[i].quantity3 +
-              params.data.quantities[i].quantity4 +
-              params.data.quantities[i].quantity5 +
-              params.data.quantities[i].quantity6 +
-              params.data.quantities[i].quantity7 +
-              params.data.quantities[i].quantity8 +
-              params.data.quantities[i].quantity9 +
-              params.data.quantities[i].quantity10;
+              (params.data.quantities[i].quantity1 || 0) +
+              (params.data.quantities[i].quantity2 || 0) +
+              (params.data.quantities[i].quantity3  || 0) +
+              (params.data.quantities[i].quantity4  || 0) +
+              (params.data.quantities[i].quantity5 | 0) +
+              (params.data.quantities[i].quantity6 || 0) +
+              (params.data.quantities[i].quantity7 || 0) +
+              (params.data.quantities[i].quantity8 || 0) +
+              (params.data.quantities[i].quantity9 || 0) +
+              (params.data.quantities[i].quantity10 || 0) +
+              (params.data.quantities[i].quantity11  || 0) +
+              (params.data.quantities[i].quantity12  || 0);
               
           }          
             return sum ;
@@ -607,6 +700,7 @@ export default {
       {
         headerName: "Réel",
         width: 70,
+        pinned: "right",
         resizable: true,
         cellStyle: { "background-color": TOTAL_REAL_COLOR },
         valueGetter: function (params) {
@@ -622,7 +716,9 @@ export default {
               params.data.realQuantities[i].quantity7 +
               params.data.realQuantities[i].quantity8 +
               params.data.realQuantities[i].quantity9 +
-              params.data.realQuantities[i].quantity10;
+              params.data.realQuantities[i].quantity10 +
+              params.data.realQuantities[i].quantity11 +
+              params.data.realQuantities[i].quantity12;
           }
          
             return sum ;
@@ -634,6 +730,7 @@ export default {
          marryChildren:true,
         children:[{
         headerName: "Théo.",
+        pinned: "right",
         resizable: true,
         width: 70,
         cellStyle: { "background-color": TOTAL_THEO_COLOR },
@@ -641,44 +738,49 @@ export default {
           var sum = 0;
           for (let i = 0; i < params.data.quantities.length; i++) {
             sum +=
-              params.data.quantities[i].quantity1 * params.data.price +
-              params.data.quantities[i].quantity2 * params.data.price +
-              params.data.quantities[i].quantity3 * params.data.price +
-              params.data.quantities[i].quantity4 * params.data.price +
-              params.data.quantities[i].quantity5 * params.data.price +
-              params.data.quantities[i].quantity6 * params.data.price +
-              params.data.quantities[i].quantity7 * params.data.price +
-              params.data.quantities[i].quantity8 * params.data.price +
-              params.data.quantities[i].quantity9 * params.data.price +
-              params.data.quantities[i].quantity10 * params.data.price;
+              (params.data.quantities[i].quantity1 * params.data.price * params.data.seasonalityProduct.january || 0) +
+              (params.data.quantities[i].quantity2 * params.data.price * params.data.seasonalityProduct.february || 0) +
+              (params.data.quantities[i].quantity3 * params.data.price * params.data.seasonalityProduct.march || 0) +
+              (params.data.quantities[i].quantity4 * params.data.price * params.data.seasonalityProduct.april || 0) +
+              (params.data.quantities[i].quantity5 * params.data.price * params.data.seasonalityProduct.may || 0) +
+              (params.data.quantities[i].quantity6 * params.data.price * params.data.seasonalityProduct.june || 0) +
+              (params.data.quantities[i].quantity7 * params.data.price * params.data.seasonalityProduct.july || 0) +
+              (params.data.quantities[i].quantity8 * params.data.price * params.data.seasonalityProduct.august || 0) +
+              (params.data.quantities[i].quantity9 * params.data.price * params.data.seasonalityProduct.september || 0) +
+              (params.data.quantities[i].quantity10 * params.data.price * params.data.seasonalityProduct.october || 0) +
+              (params.data.quantities[i].quantity11 * params.data.price * params.data.seasonalityProduct.november || 0) +
+              (params.data.quantities[i].quantity12 * params.data.price * params.data.seasonalityProduct.december || 0);
           }
-          if(params.data.currentSeason != null)
-            return sum * params.data.currentSeason.percent + '€';
+          
+            return sum.toFixed(2)  + '€';
         }
       },
       {
     
         headerName: "Réel",
         width: 70,
+        pinned: "right",
         resizable: true,
         cellStyle: { "background-color": TOTAL_REAL_COLOR },
         valueGetter: function (params) {
           var sum = 0;
           for (let i = 0; i < params.data.realQuantities.length; i++) {
             sum +=
-              params.data.realQuantities[i].quantity1 * params.data.price +
-              params.data.realQuantities[i].quantity2 * params.data.price +
-              params.data.realQuantities[i].quantity3 * params.data.price +
-              params.data.realQuantities[i].quantity4 * params.data.price +
-              params.data.realQuantities[i].quantity5 * params.data.price +
-              params.data.realQuantities[i].quantity6 * params.data.price +
-              params.data.realQuantities[i].quantity7 * params.data.price +
-              params.data.realQuantities[i].quantity8 * params.data.price +
-              params.data.realQuantities[i].quantity9 * params.data.price +
-              params.data.realQuantities[i].quantity10 * params.data.price;
+              (params.data.realQuantities[i].quantity1 * params.data.price * params.data.seasonalityProduct.january || 0) +
+              (params.data.realQuantities[i].quantity2 * params.data.price * params.data.seasonalityProduct.february || 0) +
+              (params.data.realQuantities[i].quantity3 * params.data.price * params.data.seasonalityProduct.march || 0) +
+              (params.data.realQuantities[i].quantity4 * params.data.price * params.data.seasonalityProduct.april || 0) +
+              (params.data.realQuantities[i].quantity5 * params.data.price * params.data.seasonalityProduct.may || 0) +
+              (params.data.realQuantities[i].quantity6 * params.data.price * params.data.seasonalityProduct.june || 0) +
+              (params.data.realQuantities[i].quantity7 * params.data.price * params.data.seasonalityProduct.july || 0) +
+              (params.data.realQuantities[i].quantity8 * params.data.price * params.data.seasonalityProduct.august || 0) +
+              (params.data.realQuantities[i].quantity9 * params.data.price * params.data.seasonalityProduct.september || 0) +
+              (params.data.realQuantities[i].quantity10 * params.data.price * params.data.seasonalityProduct.october || 0) +
+              (params.data.realQuantities[i].quantity11 * params.data.price * params.data.seasonalityProduct.november || 0) +
+              (params.data.realQuantities[i].quantity12 * params.data.price * params.data.seasonalityProduct.december || 0) ;
           }
-          if(params.data.currentSeason != null)
-            return sum * params.data.currentSeason.percent + '€';
+          
+            return sum.toFixed(2)  + '€';
         }
       }]},
     ],
@@ -695,22 +797,18 @@ window.numberParser = function numberParser(params) {
 </script>
  
 <style >
-.ag-header-group-cell-label, .ag-header-cell-label {
-    display: block;
-    flex: 1 1 auto;
-    overflow: hidden;
-    align-items: center;
-    text-overflow: ellipsis;
-    align-self: stretch;
-    text-align: center;
+.ag-theme-alpine .ag-header-cell,
+.ag-theme-alpine .ag-header-group-cell {
+  margin-left: 5px;
+  padding-left: 5px;
+  padding-right: 3px;
 }
 
-.ag-theme-alpine .ag-cell, .ag-theme-alpine .ag-full-width-row .ag-cell-wrapper.ag-row-group {
-    border: 1px solid transparent;
-    line-height: 40px;
-    padding-left: 3px;
-    padding-right: 0px;
-    -webkit-font-smoothing: subpixel-antialiased;
-    text-align: center;
+.ag-theme-alpine .ag-cell,
+.ag-theme-alpine .ag-full-width-row .ag-cell-wrapper.ag-row-group {
+  margin-left: 0px;
+  padding-left: 5px;
+  padding-right: 3px;
 }
+
 </style>

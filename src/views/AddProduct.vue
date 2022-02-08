@@ -1,219 +1,506 @@
 <template>
   <b-container fluid>
-    <b-row
-      ><b-col cols="3">
-        <b-form-select
-          v-model="selectedProduct"
-          :options="products"
-          v-on:change="changeProduct"
-          class="m-2"
-        ></b-form-select>
-      </b-col>
-      <b-col cols="3">
-        <b-icon
-          @click="deleteProduct"
-          variant="danger"
-          icon="trash"
-          scale="1.5"
-          aria-hidden="true"
-          class="m-3"
-        ></b-icon>
-      </b-col>
-    </b-row>
-    <b-form @submit="onSubmit">
+    <b-form @submit="onSubmit" @delete="onDelete">
       <b-row class="m-1">
-        <b-col sm="3">
-          <label>Type de conditionnement :</label>
+        <b-col class="p-1" cols="3">
+          <label>Nom :</label>
         </b-col>
-        <b-col sm="9">
-          <b-form-input
-            id="conditioningId"
-            v-model="form.conditioning"
-            size="sm"
-          ></b-form-input>
+        <b-col class="p-1" cols="3">
+          <b-form-select
+            v-model="selectedProduct"
+            :options="productList"
+            v-on:change="changeProduct"
+          ></b-form-select>
+        </b-col>
+        <b-col class="p-2" cols="3">
+            <b-icon
+              @click="addProductName"
+              variant="success"
+              icon="plus"
+              scale="2"
+            ></b-icon>
+          </b-col>        
+      </b-row>
+
+      <b-row class="m-1">
+        <b-col class="p-1" cols="3">
+          <label>Type :</label>
+        </b-col>
+        <b-col class="p-1" cols="3">
+          <b-form-select
+            v-model="selectedProductType"
+            :options="productTypeList"
+          ></b-form-select>
+        </b-col>
+        <b-col class="p-2" cols="3">
+          <b-icon
+            @click="editProductType"
+            variant="primary"
+            icon="pencil"
+            scale="1.5"
+            aria-hidden="true"
+          ></b-icon>
         </b-col>
       </b-row>
+
       <b-row class="m-1">
-        <b-col sm="3">
-          <label>Nombre d'unité par conditionnement :</label>
+        <b-col class="p-1" cols="3">
+          <label>Famille :</label>
         </b-col>
-        <b-col sm="9">
-          <b-form-input
-            id="nbByConditioningId"
-            v-model="form.nbByConditioning"
-            size="sm"
-          ></b-form-input>
+        <b-col class="p-1" cols="3">
+          <b-form-select
+            v-model="selectedProductFamily"
+            :options="productFamilyList"
+          ></b-form-select>
+        </b-col>
+        <b-col class="p-2" cols="3">
+          <b-icon
+            @click="editProductFamily"
+            variant="primary"
+            icon="pencil"
+            scale="1.5"
+            aria-hidden="true"
+          ></b-icon>
         </b-col>
       </b-row>
+
       <b-row class="m-1">
-        <b-col sm="3">
-          <label>Poids (par unité) :</label>
+        <b-col class="p-1" cols="3">
+          <label>Unité :</label>
         </b-col>
-        <b-col sm="9">
-          <b-form-input
-            id="weightId"
-            v-model="form.weight"
-            size="sm"
-          ></b-form-input>
+        <b-col class="p-1" cols="3">
+          <b-form-select
+            v-model="selectedProductUnit"
+            :options="productUnitList"
+          ></b-form-select>
+        </b-col>
+        <b-col class="p-2" cols="3">
+          <b-icon
+            @click="editProductUnit"
+            variant="primary"
+            icon="pencil"
+            scale="1.5"
+            aria-hidden="true"
+          ></b-icon>
         </b-col>
       </b-row>
+
       <b-row class="m-1">
-        <b-col sm="3">
-          <label>Vendu au kg ou à la pièce :</label>
+        <b-col class="p-1" cols="3">
+          <label>Label :</label>
         </b-col>
-        <b-col sm="9">
-          <b-form-input
-            id="unitForSaleId"
-            v-model="form.unitForSale"
-            size="sm"
-          ></b-form-input>
+        <b-col class="p-1" cols="3">
+          <b-form-select
+            v-model="selectedProductLabel"
+            :options="productLabelList"
+          ></b-form-select>
+        </b-col>
+        <b-col class="p-2" cols="3">
+          <b-icon
+            @click="editProductLabel"
+            variant="primary"
+            icon="pencil"
+            scale="1.5"
+            aria-hidden="true"
+          ></b-icon>
         </b-col>
       </b-row>
+
       <b-row class="m-1">
-        <b-col sm="3">
-          <label>Prix d'achat :</label>
+        <b-col class="p-1" cols="3">
+          <label>Calibrage :</label>
         </b-col>
-        <b-col sm="9">
+        <b-col class="p-1" cols="3">
           <b-form-input
-            id="priceId"
-            v-model="form.price"
-            size="sm"
-          ></b-form-input>
-        </b-col>
-      </b-row>
-      <b-row class="m-1">
-        <b-col sm="3">
-          <label>Conditionnement légumerie :</label>
-        </b-col>
-        <b-col sm="9">
-          <b-form-input
-            id="conditioningByVegetableId"
-            v-model="form.conditioningByVegetable"
-            size="sm"
-          ></b-form-input>
-        </b-col>
-      </b-row>
-       <b-row class="m-1">
-        <b-col sm="3">
-          <label>Ratio légume brut/conditionné :</label>
-        </b-col>
-        <b-col sm="9">
-          <b-form-input
-            id="percentBrutConditioningId"
-            v-model="form.percentBrutConditioning"
-            size="sm"
-          ></b-form-input>
-        </b-col>
-      </b-row>
-      <b-row class="m-1">
-        <b-col sm="3">
-          <label>Coût du travail par conditionnement :</label>
-        </b-col>
-        <b-col sm="9">
-          <b-form-input
-            id="workCostByConditioningId"
-            v-model="form.workCostByConditioning"
-            size="sm"
-          ></b-form-input>
-        </b-col>
-      </b-row>
-      <b-row class="m-1">
-        <b-col sm="3">
-          <label>Délai de livraison :</label>
-        </b-col>
-        <b-col sm="9">
-          <b-form-input
-            id="deliveryTimeLimitId"
-            v-model="form.deliveryTimeLimit"
-            size="sm"
+            id="calibrationId"
+            v-model="form.calibration"
           ></b-form-input>
         </b-col>
       </b-row>
 
+      <b-row class="m-1">
+        <b-col class="p-1" cols="3">
+          <label>Vendu au kg ou à la pièce :</label>
+        </b-col>
+        <b-col class="p-1" cols="3">
+          <b-form-input
+            id="salesFormatId"
+            v-model="form.salesFormat"
+          ></b-form-input>
+        </b-col>
+      </b-row>
+
+      <b-row class="m-1">
+        <b-col class="p-1" cols="3">
+          <label>Marge par saison :</label>
+        </b-col>
+        <b-col class="p-1" cols="3">
+          <b-form-input
+            id="seasonMarginId"
+            v-model="form.seasonMargin"
+          ></b-form-input>
+        </b-col>
+      </b-row>
+
+      <b-row class="m-1">
+        <b-col class="p-1" cols="3">
+          <label>Prix d'achat de référence :</label>
+        </b-col>
+        <b-col class="p-1" cols="3">
+          <b-form-input
+            id="purchasePriceId"
+            v-model="form.price"
+          ></b-form-input>
+        </b-col>
+      </b-row>
+
+      <b-row class="m-1">
+        <b-col class="p-1" cols="3">
+          <label>Emballage :</label>
+        </b-col>
+        <b-col class="p-1" cols="3">
+          <b-form-select
+            v-model="selectedPackaging"
+            :options="packagingList"            
+          ></b-form-select>
+        </b-col>
+        <b-col class="p-2" cols="3">
+          <b-icon
+            @click="editPackaging"
+            variant="primary"
+            icon="pencil"
+            scale="1.5"
+            aria-hidden="true"
+          ></b-icon>
+        </b-col>
+      </b-row>
+
+      <b-row class="m-1">
+        <b-col cols="3" class="p-1">
+          <label>Nombre d'unité par emballage :</label>
+        </b-col>
+        <b-col cols="3" class="p-1">
+          <b-form-input
+            id="nbByPackagingId"
+            v-model="form.nbByPackaging"
+          ></b-form-input>
+        </b-col>
+      </b-row>
+
+      <b-row class="m-1">
+        <b-col cols="3" class="p-1">
+          <label>Origine :</label>
+        </b-col>
+        <b-col cols="3" class="p-1">
+          <b-form-select
+            v-model="selectedProductOrigin"
+            :options="productOriginList"
+          ></b-form-select>
+        </b-col>
+        <b-col class="p-2" cols="3">
+          <b-icon
+            @click="editProductOrigin"
+            variant="primary"
+            icon="pencil"
+            scale="1.5"
+            aria-hidden="true"
+          ></b-icon>
+        </b-col>
+      </b-row>
+
+      <b-row class="m-1">
+        <b-col cols="3" class="p-1">
+          <label>Code barre :</label>
+        </b-col>
+        <b-col cols="3" class="p-1">
+          <b-form-input id="barCodeId" v-model="form.barCode"></b-form-input>
+        </b-col>
+      </b-row>
+
+      <b-row class="m-1">
+        <b-col cols="3" class="p-1">
+          <label>Coiffe :</label>
+        </b-col>
+        <b-col cols="3" class="p-1">
+          <b-form-checkbox v-model="form.cap" name="check-button" switch>
+          </b-form-checkbox>
+        </b-col>
+      </b-row>
+
+      <b-row class="m-1">
+        <b-col cols="3" class="p-1">
+          <label>Fragile :</label>
+        </b-col>
+        <b-col cols="3" class="p-1">
+          <b-form-checkbox v-model="form.fragil" name="check-button" switch>
+          </b-form-checkbox>
+        </b-col>
+      </b-row>
+
+      <b-row class="m-1">
+        <b-col cols="3" class="p-1">
+          <label>ID dans l'e-shop :</label>
+        </b-col>
+        <b-col cols="3" class="p-1">
+          <b-form-input id="eshopId" v-model="form.eshop"></b-form-input>
+        </b-col>
+      </b-row>
+
+      <b-row class="m-1">
+        <b-col cols="3" class="p-1">
+          <label>Remarque :</label>
+        </b-col>
+        <b-col cols="3" class="p-1">
+          <b-form-input id="remarkId" v-model="form.remark"></b-form-input>
+        </b-col>
+      </b-row>
       <b-button class="m-3" type="submit" variant="primary">Sauver</b-button>
+      <b-button class="m-3" type="delete" variant="danger">Supprimer</b-button>
     </b-form>
+    <product-name-modal :products="products" :productList="productList">></product-name-modal>
+    <product-type-modal :productTypes="productTypes">></product-type-modal>
+    <product-family-modal :productFamilies="productFamilies">></product-family-modal>
+    <product-unit-modal :productUnits="productUnits">></product-unit-modal>
+    <product-label-modal :productLabels="productLabels">></product-label-modal>
+    <packaging-modal :packagings="packagings">></packaging-modal>
+    <product-origin-modal :productOrigins="productOrigins"></product-origin-modal>
   </b-container>
 </template>
 
 <script>
 import axios from "axios";
+import ProductNameModal from "../components/ProductNameModal.vue"
+import ProductTypeModal from "../components/ProductTypeModal.vue"
+import ProductFamilyModal from "../components/ProductFamilyModal.vue"
+import ProductUnitModal from "../components/ProductUnitModal.vue"
+import ProductLabelModal from "../components/ProductLabelModal.vue"
+import PackagingModal from "../components/PackagingModal.vue"
+import ProductOriginModal from "../components/ProductOriginModal.vue"
 
 export default {
-  components: {},
+  components: {
+    "product-name-modal": ProductNameModal,
+    "product-type-modal": ProductTypeModal,
+    "product-family-modal": ProductFamilyModal,
+    "product-unit-modal": ProductUnitModal,
+    "product-label-modal": ProductLabelModal,
+    "packaging-modal": PackagingModal,
+    "product-origin-modal": ProductOriginModal,
+  },
   props: [],
   data() {
     return {
       selectedProduct: null,
-      form: [{ name: "", quantity: 0, conditioning: "", nbByConditioning: 0, weight: 0, unitForSale: "",  price: 0, conditioningByVegetable: "", percentBrutConditioning: "", workCostByConditioning: "", deliveryTimeLimit: ""  }],
-      products: [{ value: null, text: "Choisir un produit..." }],
+      selectedProductType: null,
+      selectedProductFamily: null,
+      selectedProductUnit: null,
+      selectedProductLabel: null,
+      selectedPackaging: null,
+      selectedProductOrigin: null,
+      form: [],
+      products:[],
+      productList: [{ value: null, text: "Choisir un produit..." }],
+      productTypes: [],
+      productTypeList: [{ value: null, text: "Choisir un type..." }],
+      productFamilies: [],
+      productFamilyList: [{ value: null, text: "Choisir une famille..." }],
+      productUnits: [],
+      productUnitList: [{ value: null, text: "Choisir une unité..." }],
+      productLabels: [],
+      productLabelList: [{ value: null, text: "Choisir un label..." }],
+      packagings:[],
+      packagingList: [{ value: null, text: "Choisir un emballage..." }],
+      productOrigins:[],
+      productOriginList: [{ value: null, text: "Choisir une origine..." }],
     };
   },
+
   mounted() {
+
+    if (!this.currentUser) {
+      this.$router.push("/login");
+    }
     this.fetchProducts();
+    this.fetchProductTypes();
+    this.fetchProductFamilies();
+    this.fetchProductUnits();
+    this.fetchProductLabels();
+    this.fetchPackagings();
+    this.fetchProductOrigins();
+  },
+  computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
   },
   methods: {
     async fetchProducts() {
       const json = await axios
         .get("/products")
         .then((response) => (this.requests = response.data));
+        this.products=json;
       json.forEach((element) =>
-        this.products.push({ value: element.id, text: element.name })
+        this.productList.push({ value: element.id, text: element.name })
       );
+    },
+    async fetchProductTypes() {
+      const json = await axios
+        .get("/productTypes")
+        .then((response) => (this.requests = response.data));
+         this.productTypes = json;
+      json.forEach((element) =>
+        this.productTypeList.push({ value: element.id, text: element.name })
+      );
+    },
+    async fetchProductFamilies() {
+      const json = await axios
+        .get("/productFamilies")
+        .then((response) => (this.requests = response.data));
+         this.productFamilies = json;
+       json.forEach((element) =>
+        this.productFamilyList.push({ value: element.id, text: element.name })
+      );
+    },
+    async fetchProductUnits() {
+      const json = await axios
+        .get("/productUnits")
+        .then((response) => (this.requests = response.data));
+        this.productUnits = json;
+      json.forEach((element) =>
+        this.productUnitList.push({ value: element.id, text: element.name })
+      );
+    },
+    async fetchProductLabels() {
+      const json = await axios
+        .get("/productLabels")
+        .then((response) => (this.requests = response.data));
+        this.productLabels = json;
+      json.forEach((element) =>
+        this.productLabelList.push({ value: element.id, text: element.name })
+      );
+    },
+    async fetchPackagings() {
+      const json = await axios
+        .get("/packagings")
+        .then((response) => (this.requests = response.data));
+        this.packagings = json;
+      json.forEach((element) =>
+        this.packagingList.push({ value: element.id, text: element.name })
+     
+      );
+    },
+    async fetchProductOrigins() {
+      const json = await axios
+        .get("/productOrigins")
+        .then((response) => (this.requests = response.data));
+        this.productOrigins = json;
+      json.forEach((element) =>
+        this.productOriginList.push({ value: element.id, text: element.name })
+      );
+    
     },
     async changeProduct(arg) {
       const json = await axios
         .get("/products/" + arg)
         .then((response) => (this.requests = response.data));
       this.form = json;
+     
+     if(this.form.packaging != null)
+      this.selectedPackaging = this.form.packaging.id;
+     
+     if(this.form.productType != null)
+     this.selectedProductType = this.form.productType.id;
+
+     if(this.form.productFamily != null)
+      this.selectedProductFamily = this.form.productFamily.id;
+
+      if(this.form.productUnit != null)
+      this.selectedProductUnit = this.form.productUnit.id;
+
+      if(this.form.productLabel != null)
+      this.selectedProductLabel = this.form.productLabel.id; 
+      
+      if(this.form.productOrigin != null)
+      this.selectedProductOrigin = this.form.productOrigin.id;
+
+    },
+
+    addProductName(arg){
+      this.$root.$emit("bv::show::modal", "product-name-modal", "#btnShow");
+    },
+    editProductType(arg){ 
+      this.$root.$emit("bv::show::modal", "product-type-modal", "#btnShow");
+    },
+        editProductFamily(arg){ 
+      this.$root.$emit("bv::show::modal", "product-family-modal", "#btnShow");
+    },
+        editProductUnit(arg){ 
+      this.$root.$emit("bv::show::modal", "product-unit-modal", "#btnShow");
+    },
+        editProductLabel(arg){ 
+      this.$root.$emit("bv::show::modal", "product-label-modal", "#btnShow");
+    },
+        editPackaging(arg){ 
+      this.$root.$emit("bv::show::modal", "packaging-modal", "#btnShow");
+    },
+        editProductOrigin(arg){ 
+      this.$root.$emit("bv::show::modal", "product-origin-modal", "#btnShow");
     },
     onSubmit(event) {
-      axios
+         
+             this.form.productType =  this.productTypes.find((item) => {
+              if (item.id === this.selectedProductType) {
+                return item;
+              }
+            });
+               this.form.productFamily =  this.productFamilies.find((item) => {
+              if (item.id === this.selectedProductFamily) {
+                return item;
+              }
+            });
+               this.form.productUnit =  this.productUnits.find((item) => {
+              if (item.id === this.selectedProductUnit) {
+                return item;
+              }
+            });
+               this.form.productLabel =  this.productLabels.find((item) => {
+              if (item.id === this.selectedProductLabel) {
+                return item;
+              }
+            });
+               this.form.packaging=  this.packagings.find((item) => {
+              if (item.id === this.selectedPackaging) {
+                return item;
+              }
+            });
+               this.form.productOrigin=  this.productOrigins.find((item) => {
+              if (item.id === this.selectedProductOrigin) {
+                return item;
+              }
+            });
+       axios
         .post(
-          "/products",  
-          JSON.stringify({
-            id: this.form.id,
-            name: this.form.name,
-            firstName: this.form.firstName,
-            abr: this.form.abr,
-            company: this.form.company,
-            number: this.form.number,
-            road: this.form.road,
-            postCode: this.form.postCode,
-            town: this.form.town,
-            phone: this.form.phone,
-            gsm: this.form.gsm,
-            mail: this.form.mail,
-            account: this.form.account,
-            tva: this.form.tva,
-          })
+          "/products" ,
+            [this.form]
         )
         .then((response) => (this.requests = response.data));
     },
-
-    deleteProduct() {
-      axios.delete("/producers/" + this.selectedProducer);
-      this.producers = [{ value: null, text: "Choisir un producteur..." }];
-      this.form = [
-        {
-          id: "",
-          name: "",
-          firstName: "",
-          abr: "",
-          company: "",
-          number: "",
-          road: "",
-          postCode: "",
-          town: "",
-          phone: "",
-          gsm: "",
-          mail: "",
-          account: "",
-          tva: "",
-        },
-      ];
-      this.fetchProducers();
-    },
-  },
+  onDelete(event) {
+       axios.delete("/products/" + this.selectedProduct);
+      this.productList = [{ value: null, text: "Choisir un produit..." }];
+      this.form =[];
+      this.selectedProduct= null,
+      this.selectedProductType= null,
+      this.selectedProductFamily= null,
+      this.selectedProductUnit= null,
+      this.selectedProductLabel= null,
+      this.selectedPackaging= null,
+      this.selectedProductOrigin= null,
+      this.fetchProducts();
+    }
+  }
+   
+  
 };
 </script>
 

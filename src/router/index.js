@@ -1,7 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Agenda from '../views/Agenda.vue'
 import FullCalendar from "vue-full-calendar";
+import Login from "../components/Login.vue";
+import Register from "../components/Register.vue";
+// lazy-loaded
+const Profile = () => import("../components/Profile.vue")
+
 
 
 import 'fullcalendar/dist/fullcalendar.css'
@@ -10,11 +14,26 @@ Vue.use(FullCalendar);
 Vue.use(VueRouter)
 
 const routes = [
+   {
+    path: "/login",
+    component: Login,
+  },
+  {
+    path: "/register",
+    component: Register,
+  },
+  {
+    path: "/profile",
+    name: "profile",
+    // lazy-loaded
+    component: Profile,
+  },
+
   {
     path: '/',
-    name: 'theoretical',
+    name: 'producer',
     component: () =>
-    import(/* webpackChunkName: "about" */ "../views/Theoretical.vue")
+    import(/* webpackChunkName: "about" */ "../views/Producer.vue")
   },
   {
     path: '/product',
@@ -57,6 +76,13 @@ const routes = [
     name: 'addproduct',
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AddProduct.vue")
+  },
+
+  {
+    path: '/paramcontract',
+    name: 'paramcontract',
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/ParamContract.vue")
   }
 
 ]

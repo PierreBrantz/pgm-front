@@ -1,228 +1,393 @@
 <template>
-  <b-container fluid>
-    <b-row class="rowLegend"
-      ><b-col cols="4">
-        <b-form-select
-          v-model="selectedProduct"
-          :options="products"
-          v-on:change="changeProduct"
-          class="m-2"
-        ></b-form-select>
-      </b-col>
-      <b-col cols="4"></b-col>
-      <b-col cols="3" class='legend-block'>
-        <div class='my-legend'>
-          <div class='legend-title'>Saisons</div>
-          <div class='legend-scale'>
-            <ul class='legend-labels'>
-              <li><span style='background:#8DD3C7'></span>{{percents[0].name + " (" + percents[0].percent + "%)"}}</li>
-               <li><span style='background:#cf750f'></span>{{percents[1].name + " (" + percents[1].percent + "%)"}}</li>
-                <li><span style='background:#BEBADA'></span>{{percents[2].name + " (" + percents[2].percent + "%)"}}</li>
-            </ul>
-          </div>
-        </div>
-      </b-col>
-     
-    </b-row>
-    <br><br><br>
-
-    <b-row>
-
-      
-      <b-col
-        cols="4"
-        v-for="
-          season in seasons"
-        :key="season.seasonalityId"
-        class="form-inline"
-      >
-        <b-card v-bind:id="'card' + season.seasonalityId">
-          <div class="form-inline">
-            <b-form-datepicker 
-              v-model="season.startDate"
-              size="sm"
-              :date-format-options="{
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric',
-              }"
-              
-            ></b-form-datepicker>
-
-            <b-form-datepicker
-              v-model="season.endDate"
-              size="sm"
-              :date-format-options="{
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric',
-              }"
-            >
-             
-            </b-form-datepicker>
-          </div>
+  <div style="display: flex; flex-direction: column; height: 100%">
+    <b-container fluid>
+      <b-row>
+        <b-card  no-body v-if="seasons.length > 0" class="m-1 p-1" style="max-width: 23rem;">
+          <b-row class='mb-1'>
+            <b-col>
+              <b-row>
+                <b-col>
+                  <b-button
+                    variant="outline-secondary"
+                    v-on:click="currentSeason = 0"
+                    size="sm"
+                    >{{ seasons[0].name }}</b-button
+                  >
+                </b-col>
+                <b-col>
+                  <b-form-input
+                    v-model="seasons[0].percent"
+                    type="number"
+                    size="sm"
+                    @change="saveSeasons"
+                  ></b-form-input>
+                </b-col>
+              </b-row>
+            </b-col>  
+            <b-col>
+              <b-row>
+                <b-col>
+                  <b-button
+                    variant="success"
+                    v-on:click="currentSeason = 1"
+                    size="sm"
+                    >{{ seasons[1].name }}</b-button
+                  > </b-col
+                ><b-col
+                  ><b-form-input
+                    v-model="seasons[1].percent"
+                    type="number"
+                    size="sm"
+                    @change="saveSeasons"
+                  ></b-form-input>
+                </b-col>
+              </b-row>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col>
+              <b-row>
+                <b-col>
+                  <b-button
+                    variant="info"
+                    v-on:click="currentSeason = 2"
+                    size="sm"
+                    >{{ seasons[2].name }}
+                  </b-button>
+                </b-col>
+                <b-col>
+                  <b-form-input
+                    v-model="seasons[2].percent"
+                    type="number"
+                    size="sm"
+                    @change="saveSeasons"
+                  ></b-form-input>
+                </b-col>
+              </b-row>
+            </b-col>
+            <b-col>
+              <b-row>
+                <b-col>
+                  <b-button
+                    variant="warning"
+                    v-on:click="currentSeason = 3"
+                    size="sm"
+                    >{{ seasons[3].name }}</b-button
+                  > </b-col
+                ><b-col
+                  ><b-form-input
+                    v-model="seasons[3].percent"
+                    type="number"
+                    size="sm"
+                    @change="saveSeasons"
+                  ></b-form-input> </b-col
+              ></b-row>
+            </b-col>
+          </b-row>
         </b-card>
-        
-      </b-col>
-      
-    
-    </b-row>
-    <br><br><br><br><br><br>
-    <b-row>
-      <b-col cols="9"></b-col>
-      <b-col v-if="selectedProduct != null">
-        <b-button class="m-3" v-on:click="save()" variant="primary">Sauver</b-button>
-      </b-col>
-    </b-row>
-    
-    
-  </b-container>
+       
+      </b-row>
+    </b-container>
+    <ag-grid-vue
+      style="width: 100%; height: 100%"
+      class="ag-theme-alpine"
+      :columnDefs="columnDefs"
+      :rowData="rowData"
+      :gridOptions="gridOptions"
+    >
+    </ag-grid-vue>
+  </div>
 </template>
 
 <script>
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import axios from "axios";
+import { AgGridVue } from "ag-grid-vue";
+import CONST from "../services/constant.js";
 
 export default {
-  components: {},
+  name: "App",
   data() {
     return {
-      selectedProduct: null,
-      seasons :[],
-      product: null,
-      products: [{ value: null, text: "Choisir un produit..." }],
-      percents:[]
+      columnDefs: null,
+      rowData: null,
+      gridOptions: null,
+      seasons: [],
+      currentSeason: 0,
+      seasonalityProduct: null
     };
   },
-  beforeMount() {
-    this.fetchProducts();
-    this.fetchSeasonality();
-     
-  },
-  methods: {
-    async fetchSeasonality(){
-      const json = await axios.get("/seasons").then((response) => (this.requests = response.data));
-      this.percents = json;
+  computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
     },
-     async fetchProducts() {
+  },
+  components: {
+    AgGridVue,
+  },
+  mounted() {
+    if (!this.currentUser) {
+      this.$router.push("/login");
+    }
+    this.gridApi = this.gridOptions.api;
+    this.gridColumnApi = this.gridOptions.columnApi;
+    this.gridApi.sizeColumnsToFit();
+    this.fetchProductList();
+    this.fetchSeasonality();
+  },
+  beforeMount() {
+    this.gridOptions = {
+      onCellClicked: (event) => {
+        console.log(event.data);
+        switch (event.colDef.field) {
+          case "january": {
+
+            event.data.seasonalityProduct.january = this.currentSeason;
+            break;
+          }
+          case "february": {
+            event.data.seasonalityProduct.february = this.currentSeason;
+            break;
+          }
+          case "march": {
+            event.data.seasonalityProduct.march = this.currentSeason;
+            break;
+          }
+          case "april": {
+            event.data.seasonalityProduct.april = this.currentSeason;
+            break;
+          }
+          case "may": {
+            event.data.seasonalityProduct.may = this.currentSeason;
+            break;
+          }
+          case "june": {
+            event.data.seasonalityProduct.june = this.currentSeason;
+            break;
+          }
+          case "july": {
+            event.data.seasonalityProduct.july = this.currentSeason;
+            break;
+          }
+          case "august": {
+            event.data.seasonalityProduct.august = this.currentSeason;
+            break;
+          }
+          case "september": {
+            event.data.seasonalityProduct.september = this.currentSeason;
+            break;
+          }
+          case "october": {
+            event.data.seasonalityProduct.october = this.currentSeason;
+            break;
+          }
+          case "november": {
+            event.data.seasonalityProduct.november = this.currentSeason;
+            break;
+          }
+          case "december": {
+            event.data.seasonalityProduct.december = this.currentSeason;
+            break;
+          }
+        }
+        this.save();
+        this.gridOptions.api.redrawRows();
+      },
+    };
+
+    this.columnDefs = [
+      {
+        field: "name",
+        width: 300,
+        resizable: true,
+        cellClass: (params) => {
+          return this.selectColor(params.value);
+        },
+      },
+      {
+        field: "january",
+        headerName: "janvier",
+        cellClass: (params) => {
+          if (params.data.seasonalityProduct != null) {
+            return this.selectColor(params.data.seasonalityProduct.january);
+          }
+        },
+      },
+      {
+        field: "february",
+        headerName: "Février",
+        cellClass: (params) => {
+          if (params.data.seasonalityProduct != null) {
+            return this.selectColor(params.data.seasonalityProduct.february);
+          }
+        },
+      },
+      {
+        field: "march",
+        headerName: "Mars",
+        cellClass: (params) => {
+          if (params.data.seasonalityProduct != null) {
+            return this.selectColor(params.data.seasonalityProduct.march);
+          }
+        },
+      },
+      {
+        field: "april",
+        headerName: "Avril",
+        cellClass: (params) => {
+          if (params.data.seasonalityProduct != null) {
+            return this.selectColor(params.data.seasonalityProduct.april);
+          }
+        },
+      },
+      {
+        field: "may",
+        headerName: "Mai",
+        cellClass: (params) => {
+          if (params.data.seasonalityProduct != null) {
+            return this.selectColor(params.data.seasonalityProduct.may);
+          }
+        },
+      },
+      {
+        field: "june",
+        headerName: "Juin",
+        cellClass: (params) => {
+          if (params.data.seasonalityProduct != null) {
+            return this.selectColor(params.data.seasonalityProduct.june);
+          }
+        },
+      },
+      {
+        field: "july",
+        headerName: "Juillet",
+        cellClass: (params) => {
+          if (params.data.seasonalityProduct != null) {
+            return this.selectColor(params.data.seasonalityProduct.july);
+          }
+        },
+      },
+      {
+        field: "august",
+        headerName: "Août",
+        cellClass: (params) => {
+          if (params.data.seasonalityProduct != null) {
+            return this.selectColor(params.data.seasonalityProduct.august);
+          }
+        },
+      },
+      {
+        field: "september",
+        headerName: "Septembre",
+        cellClass: (params) => {
+          if (params.data.seasonalityProduct != null) {
+            return this.selectColor(params.data.seasonalityProduct.september);
+          }
+        },
+      },
+      {
+        field: "october",
+        headerName: "Octobre",
+        cellClass: (params) => {
+          if (params.data.seasonalityProduct != null) {
+            return this.selectColor(params.data.seasonalityProduct.october);
+          }
+        },
+      },
+      {
+        field: "november",
+        headerName: "Novembre",
+        cellClass: (params) => {
+          if (params.data.seasonalityProduct != null) {
+            return this.selectColor(params.data.seasonalityProduct.november);
+          }
+        },
+      },
+      {
+        field: "december",
+        headerName: "Décembre",
+        cellClass: (params) => {
+          if (params.data.seasonalityProduct != null) {
+            return this.selectColor(params.data.seasonalityProduct.december);
+          }
+        },
+      },
+    ];
+  },
+
+  methods: {
+    async fetchProductList() {
       const json = await axios
         .get("/products")
-        .then((response) => (this.requests = response.data));
-      json.forEach((element) =>
-        this.products.push({ value: element.id, text: element.name })
-      );
+        .then((response) => (this.products = response.data))
+        .then((rowData) => (this.rowData = rowData));
     },
-    async changeProduct(arg) {
+    async fetchSeasonality() {
       const json = await axios
-        .get("/products/" + arg)
-        .then((response) => (this.requests = response.data));
-        this.product = json[0];
-      this.seasons = json[0].seasonInformation;
+        .get("/seasons")
+        .then((response) => (this.seasons = response.data));
     },
-    save() {
 
-      axios
-        .put(
-          "/products/" + this.product.id, 
-             JSON.stringify({
-            id: this.product.id,
-            quantities : this.product.quantities,
-    
-            seasonInformation: [{
-              seasonalityId: this.product.seasonInformation[0].seasonalityId,
-              startDate: this.product.seasonInformation[0].startDate,
-              endDate: this.product.seasonInformation[0].endDate
-            },
-            {
-              seasonalityId: this.product.seasonInformation[1].seasonalityId,
-              startDate: this.product.seasonInformation[1].startDate,
-              endDate: this.product.seasonInformation[1].endDate
-            },
-            {
-              seasonalityId: this.product.seasonInformation[2].seasonalityId,
-              startDate: this.product.seasonInformation[2].startDate,
-              endDate: this.product.seasonInformation[2].endDate
-            }]
-          })
-          
-        )
-        .then((response) => (this.requests = response.data));
+    selectColor(season) {
+      switch (season) {
+        case 1:
+          return "season1";
+        case 2:
+          return "season2";
+        case 3:
+          return "season3";
+        default:
+          return "season0";
+      }
     },
+    save() {  
+      axios.post("/products", this.products);
+    },
+    saveSeasons() {
+      axios.post("/seasons", this.seasons);
+    }
   },
 };
 </script>
-
-  <style>
-  #card1 {
-  border: solid;
-  border-color: #8DD3C7;
-  margin-top: 1px;
+<style >
+.season0 {
+  background-color: #fff !important;
 }
-#card2 {
-  border: solid;
-  border-color: #cf750f;
-  margin-top: 1px;
+.season1 {
+  background-color: #28a745 !important;
 }
-#card3 {
-  border: solid;
-  border-color: #BEBADA;
-  margin-top: 1px;
+.season2 {
+  background-color: #17a2b8 !important;
+}
+.season3 {
+  background-color: #ffc107 !important;
 }
 
-.card-body {
-  padding: 0px;
-}
-
-
-.b-form-btn-label-control.form-control > .form-control {
-  font-size: 0.7rem;
-}
-
-
-.legend-block{
-  border: 1px solid #999;
-  margin-right: 0px;
-   margin-left: 0px;
-   margin-top: 5px;
-  
-}
-
-.my-legend .legend-title{
-  text-align: left;
-  margin-bottom: 5px;
-  font-weight: bold;
-  font-size: 90%;
-}
-
-.my-legend .legend-scale ul{
-  margin: 0;
-  margin-bottom: 5px;
-  padding:0;
-  float: left;
-  list-style: none;
-}
-
-.my-legend .legend-scale ul li{
-  font-size: 80%;
-  list-style: none;
-  margin-left: 0;
-  line-height: 18px;
-  margin-bottom: 2px;
-}
-
-.my-legend ul.legend-labels li span{
+.ag-header-group-cell-label,
+.ag-header-cell-label {
   display: block;
-  float: left;
-  height: 16px;
-  width: 30px;
-  margin-right: 5px;
-  margin-left: 0;
-  border: 1px solid #999;
+  align-self: center;
+  overflow: hidden;
+  align-items: center;
+  text-overflow: ellipsis;
 
+  text-align: center;
 }
 
-.rowLegend{
-   border: 1px solid #999;
-   padding-bottom: 25px;
+.ag-theme-alpine .ag-cell,
+.ag-theme-alpine .ag-full-width-row .ag-cell-wrapper.ag-row-group {
+  border: 1px solid transparent;
+
+  padding-left: 3px;
+  padding-right: 0px;
+  -webkit-font-smoothing: subpixel-antialiased;
+  text-align: center;
 }
 
-</style> 
+.btn-success {
+    color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+}
+</style>

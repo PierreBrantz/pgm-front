@@ -204,7 +204,15 @@ export default {
     };
   },
   mounted() {
+     if (!this.currentUser) {
+      this.$router.push('/login');
+    }
     this.fetchProducers();
+  },
+    computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
+    }
   },
   methods: {
     async fetchProducers() {

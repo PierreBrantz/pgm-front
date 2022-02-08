@@ -1,43 +1,75 @@
 <template>
   <div style="display: flex; flex-direction: column; height: 100%">
-    <b-container>
-      <b-row
-        ><b-col cols="3">
-          <b-form-select
-            v-model="selectedProducer"
-            :options="producers"
-            v-on:change="changeProducer"
-            class="m-2"
-          ></b-form-select>
-        </b-col>
+    <b-container fluid>
+      <b-card-group deck>
+        <b-card class="m-1" align="center" style="height: 50px">
+          <b-row>
+            <b-col>
+              <b-form-select
+                v-if="showAdminBoard"
+                v-model="selectedProducer"
+                :options="producers"
+                v-on:change="changeProducer"
+                size="sm"
+              ></b-form-select>
+            </b-col>
+            <b-col>
+              <b-form-select
+                v-model="selectedProduct"
+                :options="productList"
+                size="sm"
+              ></b-form-select>
+            </b-col>
+            <b-col>
+              <b-button
+                variant="outline-primary"
+                @click="addProductClick"
+                size="sm"
+                ><b-icon icon="link" scale="1.3" aria-hidden="true"></b-icon
+              ></b-button>
+            </b-col>
+          </b-row>
+        </b-card>
 
-        <b-col cols="3">
-          <b-form-select
-            v-model="selectedProduct"
-            :options="productList"
-            class="m-2"
-          ></b-form-select>
-        </b-col>
+        <b-card
+          v-if="selectedProducer != null && selectedProducer != 0"
+          class="m-1"
+          style="height: 50px"
+          align="center"
+        >
+          <b-row>
+            <b-col>
+              <b-card-text>Enregistrer le contrat</b-card-text>
+            </b-col>
+            <b-col>
+              <b-button variant="outline-primary" @click="downloadPDF" size="sm"
+                ><b-icon icon="download" scale="1.3" aria-hidden="true"></b-icon
+              ></b-button>
+            </b-col>
+          </b-row>
+        </b-card>
 
-        <b-col cols="2">
-          <b-button
-            variant="outline-primary"
-            @click="addProductClick"
-            class="m-2"
-            >Associer Produit</b-button
-          >
-        </b-col>
-        <b-col cols="3">
-          <b-button v-if="selectedProducer != null && selectedProducer != 0"
-            variant="outline-primary"
-            @click="downloadPDF"
-            class="m-2"
-            ><b-icon icon="download" scale="1.3" aria-hidden="true"></b-icon
-            ></b-button>
-         
-          
-        </b-col>
-      </b-row>
+        <b-card v-if="seasons.length > 0" id="my-legend" class="m-1" style="width: 100%;height: 50px">
+          <b-row>
+            <b-col>
+              <ul>
+                <li><span style="background: #fff"></span>{{ seasons[0].name}}</li>
+                <li><span style="background: #28a745"></span>{{ seasons[1].name}}</li>
+              </ul>
+            </b-col>
+
+            <b-col>
+              <ul>
+                <li><span style="background: #17a2b8"></span>{{ seasons[2].name}}</li>
+                <li><span style="background: #ffc107"></span>{{ seasons[3].name}}</li>
+              </ul>
+            </b-col>
+          </b-row>
+        </b-card>
+      </b-card-group>
+      
+
+      <product-detail-modal :productDetail="productDetail"></product-detail-modal>
     </b-container>
     <div style="flex: 1 1 auto">
       <ag-grid-vue
@@ -48,6 +80,7 @@
         :rowData="rowData"
         :columnDefs="columnDefs"
         :modules="modules"
+        @cell-clicked="onCellClicked"
       ></ag-grid-vue>
     </div>
   </div>
@@ -61,16 +94,15 @@ import { AllCommunityModules } from "@ag-grid-community/all-modules";
 import axios from "axios";
 import jsPDF from "jspdf";
 import JsPDFAutotable from "jspdf-autotable";
-
-const TOTAL_COLOR = "#ccffb3";
+import ProductDetailModal from "../components/ProductDetailModal.vue";
 
 export default {
   data() {
     return {
       selectedProducer: null,
       selectedProduct: null,
-      producers: [{ value: null, text: "Choisir un producteur..." }],
-      productList: [{ value: null, text: "Choisir un produit..." }],
+      producers: [{ value: null, text: "Producteurs..." }],
+      productList: [{ value: null, text: "Produits..." }],
       gridOptions: null,
       gridApi: null,
       columnApi: null,
@@ -79,17 +111,48 @@ export default {
       modules: AllCommunityModules,
       producerId: null,
       productsByProducer: [],
+      productDetail: null,
+      products: [],
+      seasons: [],
+      producerInfo: null,
+      contractParam: null
+
     };
+  },
+  computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
+    showAdminBoard() {
+      if (this.currentUser && this.currentUser["roles"]) {
+        return this.currentUser["roles"].includes("ROLE_ADMIN");
+      }
+      return false;
+    },
+    showUserBoard() {
+      if (this.currentUser && this.currentUser["roles"]) {
+        return this.currentUser["roles"].includes("ROLE_USER");
+      }
+      return false;
+    },
   },
   components: {
     AgGridVue,
     JsPDFAutotable,
+    "product-detail-modal": ProductDetailModal,
   },
   mounted() {
+    if (!this.currentUser) {
+      this.$router.push("/login");
+    }
     this.fetchProducers();
     this.fetchProductList();
+    this.fetchSeasonalities();
     this.gridApi = this.gridOptions.api;
     this.gridColumnApi = this.gridOptions.columnApi;
+    this.changeProducer();
+    this.gridApi.sizeColumnsToFit();
+    this.fetchContractParams();
   },
   methods: {
     findProducerName(id) {
@@ -101,35 +164,91 @@ export default {
     },
 
     downloadPDF() {
+      
+      let producer = this.producerInfo.find((item) => {
+              if (item.id === this.producerId) {
+                return item;
+              }
+            });
+     
       const doc = new jsPDF();
-      doc.text("Contrat Maraichage", 10, 10);
+      doc.setFontSize(18);
+      doc.text(this.contractParam.title, 10, 10);
+      doc.setFontSize(10);
+   
+      doc.text(producer.firstName + " " + producer.name , 10, 20);
+     
+      doc.text("GSM: " + (producer.gsm != null ? producer.gsm : ""), 10, 25);
+      
+      doc.text("Tel.: " + (producer.phone != null ? producer.phone : ""), 10, 30);
+      doc.text("Mail: " + (producer.mail != null ? producer.mail : "") , 10, 35);
 
-      doc.line(0, 35, 400, 35);
+      doc.text((producer.company != null ? producer.company : ""), 80, 20);
+      doc.text((producer.number != null ?  producer.number : "") + ", " + (producer.road != null ? producer.road : "") , 80, 25);
+      doc.text((producer.postCode != null ? producer.postCode : "") + " " + (producer.town != null ? producer.town : "") , 80, 30);
+
+      doc.text("TVA: " + (producer.tva != null ? producer.tva : ""), 160, 20);
+  
+      doc.line(0, 40, 400, 35);
       let rows = [];
+      console.log(this.productsByProducer);
       this.productsByProducer.forEach((element) => {
-        if (element.realQuantities.length > 0) {
+        
+        if (element.currentRealQuantity) {
           var temp = [
             element.name,
             element.price + "€",
-            element.realQuantities[0].quantity6,
-            element.realQuantities[0].quantity7,
-            element.realQuantities[0].quantity8,
-            element.realQuantities[0].quantity9,
-            element.realQuantities[0].quantity10,
-            element.realQuantities[0].quantity11,
-            element.realQuantities[0].quantity12,
-            element.realQuantities[0].quantity1,
-            element.realQuantities[0].quantity2,
+        //    element.packaging.name,
+            element.currentRealQuantity.quantity1,
+            element.currentRealQuantity.quantity2,
+            element.currentRealQuantity.quantity3,
+            element.currentRealQuantity.quantity4,
+            element.currentRealQuantity.quantity5,
+            element.currentRealQuantity.quantity6,
+            element.currentRealQuantity.quantity7,
+            element.currentRealQuantity.quantity8,
+            element.currentRealQuantity.quantity9,
+            element.currentRealQuantity.quantity10,
+            element.currentRealQuantity.quantity11,
+            element.currentRealQuantity.quantity12,
+            (element.currentRealQuantity.quantity1 || 0) +
+            (element.currentRealQuantity.quantity2 || 0) +
+            (element.currentRealQuantity.quantity3 || 0) +
+            (element.currentRealQuantity.quantity4 || 0) +
+            (element.currentRealQuantity.quantity5 || 0) +
+            (element.currentRealQuantity.quantity6 || 0) +
+            (element.currentRealQuantity.quantity7 || 0) +
+            (element.currentRealQuantity.quantity8 || 0) +
+            (element.currentRealQuantity.quantity9 || 0) +
+            (element.currentRealQuantity.quantity10 || 0) +
+            (element.currentRealQuantity.quantity11 || 0) +
+            (element.currentRealQuantity.quantity12 || 0)
+            
+          
           ];
           rows.push(temp);
         }
       });
+      doc.text(this.contractParam.endTxt, 20, 240, {
+   //   align: 'right'
+    })
+       doc.text('Fait à .................., le ......../......./.......', 140, 265, {
+   //   align: 'right'
+    })
+         doc.text('Signature' , 140, 273, {
+   //   align: 'right'
+    })
 
       JsPDFAutotable(doc, {
         head: [
           [
             "Légume",
             "Prix",
+    //        "Condit#",
+            "Jan",
+            "Fev",
+            "Mar",
+            "Avr",
             "Mai",
             "Jui",
             "Jul",
@@ -138,8 +257,7 @@ export default {
             "Oct",
             "Nov",
             "Dec",
-            "Jan",
-            "Fev",
+            "Tot"
           ],
         ],
         margin: { top: 50 },
@@ -162,16 +280,32 @@ export default {
         .then((response) => (this.requests = response.data));
       json.forEach((element) =>
         this.producers.push({ value: element.id, text: element.abr })
+        
       );
+      this.producerInfo = json;
+    },
+
+     async fetchContractParams() {
+      const json = await axios
+        .get("/contractParams")
+        .then((response) => (this.requests = response.data));
+      this.contractParam = json;
+     
     },
 
     async fetchProductList() {
       const json = await axios
         .get("/products")
-        .then((response) => (this.requests = response.data));
+        .then((response) => (this.requests = response.data));  
+        this.products = json;      
       json.forEach((element) =>
         this.productList.push({ value: element.id, text: element.name })
       );
+    },
+    async fetchSeasonalities() {
+      const json = await axios
+        .get("/seasons")
+        .then((response) => (this.seasons = response.data));
     },
     onGridReady(params) {
       params.api.sizeColumnsToFit();
@@ -183,17 +317,28 @@ export default {
 
       params.api.sizeColumnsToFit();
     },
-    async changeProducer(arg) {
+    async findProducerByAbr(arg) {
       const json = await axios
-        .get("/products/producer/" + arg)
-        .then((response) => (this.requests = response.data))
-        .then((rowData) => (this.rowData = rowData));
-      this.producerId = arg;
-      this.productsByProducer = json;
+        .get("/producers/abr/" + arg)
+        .then((response) => (this.requests = response.data));
+
+      return json;
     },
 
-    addProducerClick() {
-      this.$root.$emit("bv::show::modal", "modal-addproducer", "#btnShow");
+    async changeProducer(arg) {
+      if (this.showUserBoard) {
+        arg = await this.findProducerByAbr(this.currentUser.username).Id;
+      }
+
+      if (arg) {
+        const json = await axios
+          .get("/products/producer/" + arg)
+          .then((response) => (this.requests = response.data))
+          .then((rowData) => (this.rowData = rowData));
+        this.producerId = arg;
+        this.productsByProducer = json;
+        this.selectedProducer = this.producerId;
+      }
     },
 
     async addProductClick() {
@@ -218,43 +363,53 @@ export default {
               this.selectedProduct
           )
           .then((response) => (this.requests = response.data));
-        await axios
+        const json = await axios
           .get("/products/producer/" + this.selectedProducer)
           .then((response) => (this.products = response.data))
           .then((rowData) => (this.rowData = rowData));
+      
+        this.productsByProducer = json;
+      
+      }
+    },
+    onCellClicked(params) {
+      if (params.column.colId == "name") {       
+        this.productDetail = this.products[params.data.id - 1];
+        this.$root.$emit("bv::show::modal", "product-detail-modal", "#btnShow");
       }
     },
   },
 
   beforeMount() {
+ 
     this.gridOptions = {
-      onCellValueChanged: function (event) {
-        axios
-          .put(
-            "/products/" + event.data.id + "/producer/" + event.data.producerId,
-            JSON.stringify({
-              id: event.data.id,
-              name: event.data.name,
-              packaging: event.data.packaging,
-              realQuantities: event.data.realQuantities,
-              price: event.data.price,
-            })
+      async onCellValueChanged (event) {
+      
+       const json = await axios
+          .post(
+            "/products/" +
+              event.data.id +
+              "/producer/" +
+              event.data.producers[0].id,
+            event.data
           )
           .then((response) => (this.requests = response.data));
+          this.producerProducts = json.producerProducts;
       },
     };
+
     this.columnDefs = [
       {
         headerName: "Légumes",
         field: "name",
-        width: 200,
+        width: 150,
         sortable: true,
         pinned: "left",
       },
       {
         headerName: "Condit#",
         field: "name",
-        width: 100,
+        width: 60,
         pinned: "left",
         valueGetter: function (params) {
           if (params.data.packaging.name != null) {
@@ -270,31 +425,138 @@ export default {
             return params.data.price + "€";
           }
         },
-        width: 100,
+        width: 50,
         pinned: "left",
+      },
+      {
+        field: "quantity1",
+        headerName: "Jan",
+        editable: true,
+        valueParser: numberParser,
+        cellStyle: cellStyleJan,
+        valueGetter: function (params) {
+          if (params.data.currentRealQuantity) {
+            return params.data.currentRealQuantity.quantity1;
+          }
+        },
+        valueSetter: function (params) {          
+          var newValInt = parseInt(params.newValue);
+          var valueChanged = params.data.b !== newValInt;
+          if (valueChanged) {
+            if (!params.data.currentRealQuantity) {
+              params.data.currentRealQuantity = {
+                id: params.data.id,
+                quantity1: newValInt                
+              };
+            } else {
+              params.data.currentRealQuantity.quantity1 = newValInt;
+            }
+          }
+          return valueChanged;
+        },
+        width: 70,
+      },
+      {
+        field: "quantity2",
+        headerName: "Fév",
+        editable: true,
+        valueParser: numberParser,
+        cellStyle: cellStyleFeb,
+        valueGetter: function (params) {
+          if (params.data.currentRealQuantity) {
+            return params.data.currentRealQuantity.quantity2;
+          }
+        },
+        valueSetter: function (params) {
+          var newValInt = parseInt(params.newValue);
+          var valueChanged = params.data.b !== newValInt;
+          if (params.data.b !== newValInt) {
+            if (!params.data.currentRealQuantity) {
+              params.data.currentRealQuantity = {
+                id: params.data.id,
+                quantity2: newValInt,
+              };
+            } else {
+              params.data.currentRealQuantity.quantity2 = newValInt;
+            }
+          }
+          return valueChanged;
+        },
+        width: 70,
+      },
+      {
+        field: "quantity3",
+        headerName: "Mar",
+        editable: true,
+        valueParser: numberParser,
+        cellStyle: cellStyleMar,
+        valueGetter: function (params) {
+          if (params.data.currentRealQuantity) {
+            return params.data.currentRealQuantity.quantity3;
+          }
+        },
+        valueSetter: function (params) {
+          var newValInt = parseInt(params.newValue);
+          var valueChanged = params.data.b !== newValInt;
+          if (!params.data.currentRealQuantity) {
+            params.data.currentRealQuantity = {
+              id: params.data.id,
+              quantity3: newValInt,
+            };
+          } else {
+            params.data.currentRealQuantity.quantity3 = newValInt;
+          }
+          return valueChanged;
+        },
+        width: 70,
+      },
+      {
+        field: "quantity4",
+        headerName: "Avr",
+        editable: true,
+        valueParser: numberParser,
+        cellStyle: cellStyleApr,
+        valueGetter: function (params) {
+          if (params.data.currentRealQuantity) {
+            return params.data.currentRealQuantity.quantity4;
+          }
+        },
+        valueSetter: function (params) {
+          var newValInt = parseInt(params.newValue);
+          var valueChanged = params.data.b !== newValInt;
+          if (!params.data.currentRealQuantity) {
+            params.data.currentRealQuantity = {
+              id: params.data.id,
+              quantity4: newValInt,
+            };
+          } else {
+            params.data.currentRealQuantity.quantity4 = newValInt;
+          }
+          return valueChanged;
+        },
+        width: 70,
       },
       {
         field: "quantity5",
         headerName: "Mai",
         editable: true,
         valueParser: numberParser,
+        cellStyle: cellStyleMay,
         valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            return params.data.realQuantities[0].quantity5;
+          if (params.data.currentRealQuantity) {
+            return params.data.currentRealQuantity.quantity5;
           }
         },
         valueSetter: function (params) {
           var newValInt = parseInt(params.newValue);
           var valueChanged = params.data.b !== newValInt;
-          if (valueChanged) {
-            if (typeof params.data.realQuantities[0] === "undefined") {
-              params.data.realQuantities[0] = {
-                id: params.data.id,
-                quantity5: newValInt,
-              };
-            } else {
-              params.data.realQuantities[0].quantity5 = newValInt;
-            }
+          if (!params.data.currentRealQuantity) {
+            params.data.currentRealQuantity = {
+              id: params.data.id,
+              quantity5: newValInt,
+            };
+          } else {
+            params.data.currentRealQuantity.quantity5 = newValInt;
           }
           return valueChanged;
         },
@@ -302,26 +564,25 @@ export default {
       },
       {
         field: "quantity6",
-        headerName: "Jui",
+        headerName: "Juin",
         editable: true,
         valueParser: numberParser,
+        cellStyle: cellStyleJun,
         valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            return params.data.realQuantities[0].quantity6;
+          if (params.data.currentRealQuantity) {
+            return params.data.currentRealQuantity.quantity6;
           }
         },
         valueSetter: function (params) {
           var newValInt = parseInt(params.newValue);
           var valueChanged = params.data.b !== newValInt;
-          if (valueChanged) {
-            if (typeof params.data.realQuantities[0] === "undefined") {
-              params.data.realQuantities[0] = {
-                id: params.data.id,
-                quantity6: newValInt,
-              };
-            } else {
-              params.data.realQuantities[0].quantity6 = newValInt;
-            }
+          if (!params.data.currentRealQuantity) {
+            params.data.currentRealQuantity = {
+              id: params.data.id,
+              quantity6: newValInt,
+            };
+          } else {
+            params.data.currentRealQuantity.quantity6 = newValInt;
           }
           return valueChanged;
         },
@@ -329,24 +590,25 @@ export default {
       },
       {
         field: "quantity7",
-        headerName: "Jul",
+        headerName: "Juil",
         editable: true,
         valueParser: numberParser,
+        cellStyle: cellStyleJul,
         valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            return params.data.realQuantities[0].quantity7;
+          if (params.data.currentRealQuantity) {
+            return params.data.currentRealQuantity.quantity7;
           }
         },
         valueSetter: function (params) {
           var newValInt = parseInt(params.newValue);
           var valueChanged = params.data.b !== newValInt;
-          if (typeof params.data.realQuantities[0] === "undefined") {
-            params.data.realQuantities[0] = {
+          if (!params.data.currentRealQuantity) {
+            params.data.currentRealQuantity = {
               id: params.data.id,
               quantity7: newValInt,
             };
           } else {
-            params.data.realQuantities[0].quantity7 = newValInt;
+            params.data.currentRealQuantity.quantity7 = newValInt;
           }
           return valueChanged;
         },
@@ -357,21 +619,22 @@ export default {
         headerName: "Aou",
         editable: true,
         valueParser: numberParser,
+        cellStyle: cellStyleAug,
         valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            return params.data.realQuantities[0].quantity8;
+          if (params.data.currentRealQuantity) {
+            return params.data.currentRealQuantity.quantity8;
           }
         },
         valueSetter: function (params) {
           var newValInt = parseInt(params.newValue);
           var valueChanged = params.data.b !== newValInt;
-          if (typeof params.data.realQuantities[0] === "undefined") {
-            params.data.realQuantities[0] = {
+          if (!params.data.currentRealQuantity) {
+            params.data.currentRealQuantity = {
               id: params.data.id,
               quantity8: newValInt,
             };
           } else {
-            params.data.realQuantities[0].quantity8 = newValInt;
+            params.data.currentRealQuantity.quantity8 = newValInt;
           }
           return valueChanged;
         },
@@ -382,21 +645,22 @@ export default {
         headerName: "Sep",
         editable: true,
         valueParser: numberParser,
+        cellStyle: cellStyleSep,
         valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            return params.data.realQuantities[0].quantity9;
+          if (params.data.currentRealQuantity) {
+            return params.data.currentRealQuantity.quantity9;
           }
         },
         valueSetter: function (params) {
           var newValInt = parseInt(params.newValue);
           var valueChanged = params.data.b !== newValInt;
-          if (typeof params.data.realQuantities[0] === "undefined") {
-            params.data.realQuantities[0] = {
+          if (!params.data.currentRealQuantity) {
+            params.data.currentRealQuantity = {
               id: params.data.id,
               quantity9: newValInt,
             };
           } else {
-            params.data.realQuantities[0].quantity9 = newValInt;
+            params.data.currentRealQuantity.quantity9 = newValInt;
           }
           return valueChanged;
         },
@@ -407,21 +671,22 @@ export default {
         headerName: "Oct",
         editable: true,
         valueParser: numberParser,
+        cellStyle: cellStyleOct,
         valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            return params.data.realQuantities[0].quantity10;
+          if (params.data.currentRealQuantity) {
+            return params.data.currentRealQuantity.quantity10;
           }
         },
         valueSetter: function (params) {
           var newValInt = parseInt(params.newValue);
           var valueChanged = params.data.b !== newValInt;
-          if (typeof params.data.realQuantities[0] === "undefined") {
-            params.data.realQuantities[0] = {
+          if (!params.data.currentRealQuantity) {
+            params.data.currentRealQuantity = {
               id: params.data.id,
               quantity10: newValInt,
             };
           } else {
-            params.data.realQuantities[0].quantity10 = newValInt;
+            params.data.currentRealQuantity.quantity10 = newValInt;
           }
           return valueChanged;
         },
@@ -432,21 +697,22 @@ export default {
         headerName: "Nov",
         editable: true,
         valueParser: numberParser,
+        cellStyle: cellStyleNov,
         valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            return params.data.realQuantities[0].quantity11;
+          if (params.data.currentRealQuantity) {
+            return params.data.currentRealQuantity.quantity11;
           }
         },
         valueSetter: function (params) {
           var newValInt = parseInt(params.newValue);
           var valueChanged = params.data.b !== newValInt;
-          if (typeof params.data.realQuantities[0] === "undefined") {
-            params.data.realQuantities[0] = {
+          if (!params.data.currentRealQuantity) {
+            params.data.currentRealQuantity = {
               id: params.data.id,
               quantity11: newValInt,
             };
           } else {
-            params.data.realQuantities[0].quantity11 = newValInt;
+            params.data.currentRealQuantity.quantity11 = newValInt;
           }
           return valueChanged;
         },
@@ -457,127 +723,96 @@ export default {
         headerName: "Dec",
         editable: true,
         valueParser: numberParser,
+        cellStyle: cellStyleDec,
         valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            return params.data.realQuantities[0].quantity12;
+          if (params.data.currentRealQuantity) {
+            return params.data.currentRealQuantity.quantity12;
           }
         },
         valueSetter: function (params) {
           var newValInt = parseInt(params.newValue);
           var valueChanged = params.data.b !== newValInt;
-          if (typeof params.data.realQuantities[0] === "undefined") {
-            params.data.realQuantities[0] = {
+          if (!params.data.currentRealQuantity) {
+            params.data.currentRealQuantity = {
               id: params.data.id,
               quantity12: newValInt,
             };
           } else {
-            params.data.realQuantities[0].quantity12 = newValInt;
+            params.data.currentRealQuantity.quantity12 = newValInt;
           }
           return valueChanged;
         },
         width: 70,
       },
       {
-        field: "quantity1",
-        headerName: "Jan",
-        editable: true,
-        valueParser: numberParser,
+        headerName: "Qte Tot",
+        width: 90,
+        pinned: "right",
         valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            return params.data.realQuantities[0].quantity1;
-          }
-        },
-        valueSetter: function (params) {
-          var newValInt = parseInt(params.newValue);
-          var valueChanged = params.data.b !== newValInt;
-          if (typeof params.data.realQuantities[0] === "undefined") {
-            params.data.realQuantities[0] = {
-              id: params.data.id,
-              quantity1: newValInt,
-            };
-          } else {
-            params.data.realQuantities[0].quantity1 = newValInt;
-            axios
-              .get("/products/producer/0")
-              .then((response) => (this.products = response.data))
-              .then((rowData) => (this.rowData = rowData));
-          }
-          return valueChanged;
-        },
-        width: 70,
-      },
-      {
-        field: "quantity2",
-        headerName: "Fev",
-        editable: true,
-        valueParser: numberParser,
-        valueGetter: function (params) {
-          if (params.data.realQuantities[0] != null) {
-            return params.data.realQuantities[0].quantity2;
-          }
-        },
-        valueSetter: function (params) {
-          var newValInt = parseInt(params.newValue);
-          var valueChanged = params.data.b !== newValInt;
-          axios
-            .get("/products/producer/0")
-            .then((response) => (this.products = response.data))
-            .then((rowData) => (this.rowData = rowData));
-          if (typeof params.data.realQuantities[0] === "undefined") {
-            params.data.realQuantities[0] = {
-              id: params.data.id,
-              quantity2: newValInt,
-            };
-          } else {
-            params.data.realQuantities[0].quantity2 = newValInt;
-          }
-          return valueChanged;
-        },
-        width: 70,
-      },
-      {
-        headerName: "Réel",
-        width: 70,
-        cellStyle: { "background-color": TOTAL_COLOR },
-        valueGetter: function (params) {
-          var sum = 0;
-          for (let i = 0; i < params.data.realQuantities.length; i++) {
-            sum +=
-              params.data.realQuantities[i].quantity1 +
-              params.data.realQuantities[i].quantity2 +
-              params.data.realQuantities[i].quantity3 +
-              params.data.realQuantities[i].quantity4 +
-              params.data.realQuantities[i].quantity5 +
-              params.data.realQuantities[i].quantity6 +
-              params.data.realQuantities[i].quantity7 +
-              params.data.realQuantities[i].quantity8 +
-              params.data.realQuantities[i].quantity9 +
-              params.data.realQuantities[i].quantity10;
-          }
-          return sum;
+          if (!params.data.currentRealQuantity) return 0;
+          return (
+            (params.data.currentRealQuantity.quantity1 || 0) +
+            (params.data.currentRealQuantity.quantity2 || 0) +
+            (params.data.currentRealQuantity.quantity3 || 0) +
+            (params.data.currentRealQuantity.quantity4 || 0) +
+            (params.data.currentRealQuantity.quantity5 || 0) +
+            (params.data.currentRealQuantity.quantity6 || 0) +
+            (params.data.currentRealQuantity.quantity7 || 0) +
+            (params.data.currentRealQuantity.quantity8 || 0) +
+            (params.data.currentRealQuantity.quantity9 || 0) +
+            (params.data.currentRealQuantity.quantity10 || 0) +
+            (params.data.currentRealQuantity.quantity11 || 0) +
+            (params.data.currentRealQuantity.quantity12 || 0)
+          );
         },
       },
 
       {
-        headerName: "Réel",
-        width: 70,
-        cellStyle: { "background-color": TOTAL_COLOR },
+        headerName: "Prix Tot",
+        width: 90,
+        pinned: "right",
         valueGetter: function (params) {
-          var sum = 0;
-          for (let i = 0; i < params.data.realQuantities.length; i++) {
-            sum +=
-              params.data.realQuantities[i].quantity1 * params.data.price +
-              params.data.realQuantities[i].quantity2 * params.data.price +
-              params.data.realQuantities[i].quantity3 * params.data.price +
-              params.data.realQuantities[i].quantity4 * params.data.price +
-              params.data.realQuantities[i].quantity5 * params.data.price +
-              params.data.realQuantities[i].quantity6 * params.data.price +
-              params.data.realQuantities[i].quantity7 * params.data.price +
-              params.data.realQuantities[i].quantity8 * params.data.price +
-              params.data.realQuantities[i].quantity9 * params.data.price +
-              params.data.realQuantities[i].quantity10 * params.data.price;
-          }
-          return sum + "€";
+          if (!params.data.currentRealQuantity) return 0;
+          return (
+            (
+              (params.data.currentRealQuantity.quantity1 *
+                params.data.price *
+                params.data.seasonalityProduct.january || 0) +
+              (params.data.currentRealQuantity.quantity2 *
+                params.data.price *
+                params.data.seasonalityProduct.february || 0) +
+              (params.data.currentRealQuantity.quantity3 *
+                params.data.price *
+                params.data.seasonalityProduct.march || 0) +
+              (params.data.currentRealQuantity.quantity4 *
+                params.data.price *
+                params.data.seasonalityProduct.april || 0) +
+              (params.data.currentRealQuantity.quantity5 *
+                params.data.price *
+                params.data.seasonalityProduct.may || 0) +
+              (params.data.currentRealQuantity.quantity6 *
+                params.data.price *
+                params.data.seasonalityProduct.june || 0) +
+              (params.data.currentRealQuantity.quantity7 *
+                params.data.price *
+                params.data.seasonalityProduct.july || 0) +
+              (params.data.currentRealQuantity.quantity8 *
+                params.data.price *
+                params.data.seasonalityProduct.august || 0) +
+              (params.data.currentRealQuantity.quantity9 *
+                params.data.price *
+                params.data.seasonalityProduct.september || 0) +
+              (params.data.currentRealQuantity.quantity10 *
+                params.data.price *
+                params.data.seasonalityProduct.october || 0) +
+              (params.data.currentRealQuantity.quantity11 *
+                params.data.price *
+                params.data.seasonalityProduct.november || 0) +
+              (params.data.currentRealQuantity.quantity12 *
+                params.data.price *
+                params.data.seasonalityProduct.december || 0)
+            ).toFixed(2) + "€"
+          );
         },
       },
     ];
@@ -590,7 +825,115 @@ export default {
 window.numberParser = function numberParser(params) {
   return Number(params.newValue);
 };
+
+window.cellStyleJan = function cellStyleJan(params) {
+  const color = numberToColor(params.data.seasonalityProduct.january);
+  return { backgroundColor: color };
+};
+
+window.cellStyleFeb = function cellStyleFeb(params) {
+  const color = numberToColor(params.data.seasonalityProduct.february);
+  return { backgroundColor: color };
+};
+window.cellStyleMar = function cellStyleMar(params) {
+  const color = numberToColor(params.data.seasonalityProduct.mars);
+  return { backgroundColor: color };
+};
+window.cellStyleApr = function cellStyleApr(params) {
+  const color = numberToColor(params.data.seasonalityProduct.april);
+  return { backgroundColor: color };
+};
+window.cellStyleMay = function cellStyleMay(params) {
+  const color = numberToColor(params.data.seasonalityProduct.may);
+  return { backgroundColor: color };
+};
+window.cellStyleJun = function cellStyleJun(params) {
+  const color = numberToColor(params.data.seasonalityProduct.june);
+  return { backgroundColor: color };
+};
+window.cellStyleJul = function cellStyleJul(params) {
+  const color = numberToColor(params.data.seasonalityProduct.july);
+  return { backgroundColor: color };
+};
+window.cellStyleAug = function cellStyleAug(params) {
+  const color = numberToColor(params.data.seasonalityProduct.august);
+  return { backgroundColor: color };
+};
+window.cellStyleSep = function cellStyleSep(params) {
+  const color = numberToColor(params.data.seasonalityProduct.september);
+  return { backgroundColor: color };
+};
+window.cellStyleOct = function cellStyleOct(params) {
+  const color = numberToColor(params.data.seasonalityProduct.october);
+  return { backgroundColor: color };
+};
+window.cellStyleNov = function cellStyleNov(params) {
+  const color = numberToColor(params.data.seasonalityProduct.november);
+  return { backgroundColor: color };
+};
+window.cellStyleDec = function cellStyleDec(params) {
+  const color = numberToColor(params.data.seasonalityProduct.december);
+  return { backgroundColor: color };
+};
+
+window.numberToColor = function numberToColor(val) {
+  if (val === 0) {
+    return "#fff";
+  } else if (val == 1) {
+    return "#28a745";
+  } else if (val == 2) {
+    return "#17a2b8";
+  } else {
+    return "#ffc107";
+  }
+};
 </script>
 
 <style>
+.ag-theme-alpine .ag-header-cell,
+.ag-theme-alpine .ag-header-group-cell {
+  margin-left: 5px;
+  padding-left: 5px;
+  padding-right: 3px;
+}
+
+.ag-theme-alpine .ag-cell,
+.ag-theme-alpine .ag-full-width-row .ag-cell-wrapper.ag-row-group {
+  margin-left: 0px;
+  padding-left: 5px;
+  padding-right: 3px;
+}
+
+.my-legend {
+  height: 50px;
+}
+
+#my-legend .legend-title {
+  text-align: left;
+
+  font-weight: bold;
+  font-size: 90%;
+}
+#my-legend ul {
+  float: left;
+  list-style: none;
+}
+#my-legend ul li {
+  list-style: none;
+
+  margin-left: 5px;
+}
+#my-legend ul li span {
+  float: left;
+  height: 16px;
+  width: 30px;
+  margin-right: 5px;
+
+  border: 1px solid #999;
+}
+
+.card-body {
+  padding: 0.4rem;
+  font-size: 80%;
+}
 </style>

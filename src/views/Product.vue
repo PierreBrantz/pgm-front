@@ -1,6 +1,6 @@
 <template>
-  <div style="display: flex; flex-direction: column; height: 100%">
-    <b-container>
+  <div style="display: flex; flex-direction: column; height: 100%;">
+    <b-container fluid>
       <b-row>
         <b-col cols="3">
           <b-form-select
@@ -25,29 +25,19 @@
             class="m-2"
             >Associer Producteur</b-button
           >
-          <!--
-          <b-button variant="outline-primary" @click="share" class="m-2"
-            >Répartir</b-button
-          >
-          -->
+        
         </b-col>
         <b-col cols="3"> </b-col>
       </b-row>
-
-      <div id="titleId">
-        <b-row v-if="product != null">{{ product.name }}</b-row>
-        <b-row v-if="product != null">{{
-          "Packaging: " + product.packaging.name
-        }}</b-row>
-      </div>
       <br />
       <b-row>
         <div>
           <b-table
             striped
             hover
-            bordered
+            
             fixed
+            small
             head-variant="dark"
             :items="items"
             :fields="fields"
@@ -65,13 +55,14 @@
 
       <b-row v-if="items2.length > 0" id="producerFieldId">Producteurs</b-row>
 
-      <b-row>
+      <b-row >
         <div>
           <b-editable-table
             striped
             hover
-            bordered
+           
             fixed
+            small
             head-variant="dark"
             :items="items2"
             :fields="fields2"
@@ -139,6 +130,9 @@ export default {
   },
   components: { BEditableTable },
   mounted() {
+    if (!this.currentUser) {
+      this.$router.push('/login');
+    }
     this.fetchProducers();
     this.fetchProductList();
   },
@@ -148,6 +142,9 @@ export default {
         return field.editable === true;
       });
     },
+    currentUser() {
+      return this.$store.state.auth.user;
+    }
   },
   methods: {
     async fetchProducers() {
@@ -168,82 +165,88 @@ export default {
       );
     },
     async changeProduct(arg) {
+
       const json = await axios
         .get("/products/" + arg)
         .then((response) => (this.requests = response.data));
-      this.product = json[0];
+
+
+      this.product = json;
+
       this.items2 = [];
       this.fields2 = [];
       this.items = [
         {
           col1: "Théo.",
-          Janvier: this.product.quantities[0].quantity1,
-          Février: this.product.quantities[0].quantity2,
-          Mars: this.product.quantities[0].quantity3,
-          Avril: this.product.quantities[0].quantity4,
-          Mai: this.product.quantities[0].quantity5,
-          Juin: this.product.quantities[0].quantity6,
-          Juillet: this.product.quantities[0].quantity7,
-          Août: this.product.quantities[0].quantity8,
-          Septembre: this.product.quantities[0].quantity9,
-          Octobre: this.product.quantities[0].quantity10,
-          Novembre: this.product.quantities[0].quantity11,
-          Décembre: this.product.quantities[0].quantity12,
+          Janvier: (this.product.quantities[0] ? this.product.quantities[0].quantity1 : 0),
+          Février: (this.product.quantities[0] ? this.product.quantities[0].quantity2 : 0),
+          Mars: (this.product.quantities[0] ? this.product.quantities[0].quantity3 : 0),
+          Avril: (this.product.quantities[0] ? this.product.quantities[0].quantity4 : 0),
+          Mai: (this.product.quantities[0] ? this.product.quantities[0].quantity5 : 0),
+          Juin: (this.product.quantities[0] ? this.product.quantities[0].quantity6 : 0),
+          Juillet: (this.product.quantities[0] ? this.product.quantities[0].quantity7 : 0),
+          Août: (this.product.quantities[0] ? this.product.quantities[0].quantity8 : 0),
+          Septembre: (this.product.quantities[0] ? this.product.quantities[0].quantity9 : 0),
+          Octobre: (this.product.quantities[0] ? this.product.quantities[0].quantity10 : 0),
+          Novembre: (this.product.quantities[0] ? this.product.quantities[0].quantity11 : 0),
+          Décembre: (this.product.quantities[0] ? this.product.quantities[0].quantity12 : 0)
         },
         {
           col1: "Diff.",
           Janvier:
             this.computeTotalQuantityForAMonth(1) -
-            this.product.quantities[0].quantity1,
+            (this.product.quantities[0] ? this.product.quantities[0].quantity1 : 0),
           Février:
             this.computeTotalQuantityForAMonth(2) -
-            this.product.quantities[0].quantity2,
+            (this.product.quantities[0] ? this.product.quantities[0].quantity2 : 0),
           Mars:
             this.computeTotalQuantityForAMonth(3) -
-            this.product.quantities[0].quantity3,
+            (this.product.quantities[0] ? this.product.quantities[0].quantity3 : 0),
           Avril:
             this.computeTotalQuantityForAMonth(4) -
-            this.product.quantities[0].quantity4,
+            (this.product.quantities[0] ? this.product.quantities[0].quantity4 : 0),
           Mai:
             this.computeTotalQuantityForAMonth(5) -
-            this.product.quantities[0].quantity5,
+            (this.product.quantities[0] ? this.product.quantities[0].quantity5 : 0),
           Juin:
             this.computeTotalQuantityForAMonth(6) -
-            this.product.quantities[0].quantity6,
+            (this.product.quantities[0] ? this.product.quantities[0].quantity6 : 0),
           Juillet:
             this.computeTotalQuantityForAMonth(7) -
-            this.product.quantities[0].quantity7,
+            (this.product.quantities[0] ? this.product.quantities[0].quantity7 : 0),
           Août:
             this.computeTotalQuantityForAMonth(8) -
-            this.product.quantities[0].quantity8,
+            (this.product.quantities[0] ? this.product.quantities[0].quantity8 : 0),
           Septembre:
             this.computeTotalQuantityForAMonth(9) -
-            this.product.quantities[0].quantity9,
+            (this.product.quantities[0] ? this.product.quantities[0].quantity9 : 0),
           Octobre:
             this.computeTotalQuantityForAMonth(10) -
-            this.product.quantities[0].quantity10,
+            (this.product.quantities[0] ? this.product.quantities[0].quantity10 : 0),
           Novembre:
             this.computeTotalQuantityForAMonth(11) -
-            this.product.quantities[0].quantity11,
+            (this.product.quantities[0] ? this.product.quantities[0].quantity11 : 0),
           Décembre:
             this.computeTotalQuantityForAMonth(12) -
-            this.product.quantities[0].quantity12,
+            (this.product.quantities[0] ? this.product.quantities[0].quantity12 : 0),
           _cellVariants: this.computeColor(),
         },
         {
+         
           col1: "Prix",
-          Janvier: this.product.price * this.product.seasons[0],
-          Février: this.product.price * this.product.seasons[1],
-          Mars: this.product.price * this.product.seasons[2],
-          Avril: this.product.price * this.product.seasons[3],
-          Mai: this.product.price * this.product.seasons[4],
-          Juin: this.product.price * this.product.seasons[5],
-          Juillet: this.product.price * this.product.seasons[6],
-          Août: this.product.price * this.product.seasons[7],
-          Septembre: this.product.price * this.product.seasons[8],
-          Octobre: this.product.price * this.product.seasons[9],
-          Novembre: this.product.price * this.product.seasons[10],
-          Décembre: this.product.price * this.product.seasons[11],
+          Janvier: (this.product.price * this.product.seasonalityProduct.january).toFixed(2),
+          Février: (this.product.price * this.product.seasonalityProduct.february).toFixed(2),
+          Mars: (this.product.price * this.product.seasonalityProduct.march).toFixed(2),
+          Avril: (this.product.price * this.product.seasonalityProduct.april).toFixed(2),
+          Mai: (this.product.price * this.product.seasonalityProduct.may).toFixed(2),
+          Juin: (this.product.price * this.product.seasonalityProduct.june).toFixed(2),
+          Juillet: (this.product.price * this.product.seasonalityProduct.july).toFixed(2),
+          Août: (this.product.price * this.product.seasonalityProduct.august).toFixed(2),
+          Septembre: (this.product.price * this.product.seasonalityProduct.september).toFixed(2),
+          Octobre: (this.product.price * this.product.seasonalityProduct.october).toFixed(2),
+          Novembre: (this.product.price * this.product.seasonalityProduct.november).toFixed(2),
+          Décembre: (this.product.price * this.product.seasonalityProduct.december).toFixed(2),
+          
         },
       ];
 
@@ -260,56 +263,59 @@ export default {
           q10 = 0,
           q11 = 0,
           q12 = 0;
-        if (this.product.producers[index].realQuantities.length > 0) {
+        if (this.product.producers[index].realQuantity) {
+         
           q1 =
-            this.product.producers[index].realQuantities[0].quantity1 > 0
-              ? this.product.producers[index].realQuantities[0].quantity1
+            this.product.producers[index].realQuantity.quantity1 > 0
+              ? this.product.producers[index].realQuantity.quantity1
               : 0;
           q2 =
-            this.product.producers[index].realQuantities[0].quantity2 > 0
-              ? this.product.producers[index].realQuantities[0].quantity2
+            this.product.producers[index].realQuantity.quantity2 > 0
+              ? this.product.producers[index].realQuantity.quantity2
               : 0;
           q3 =
-            this.product.producers[index].realQuantities[0].quantity3 > 0
-              ? this.product.producers[index].realQuantities[0].quantity3
+            this.product.producers[index].realQuantity.quantity3 > 0
+              ? this.product.producers[index].realQuantity.quantity3
               : 0;
           q4 =
-            this.product.producers[index].realQuantities[0].quantity4 > 0
-              ? this.product.producers[index].realQuantities[0].quantity4
+            this.product.producers[index].realQuantity.quantity4 > 0
+              ? this.product.producers[index].realQuantity.quantity4
               : 0;
           q5 =
-            this.product.producers[index].realQuantities[0].quantity5 > 0
-              ? this.product.producers[index].realQuantities[0].quantity5
+            this.product.producers[index].realQuantity.quantity5 > 0
+              ? this.product.producers[index].realQuantity.quantity5
               : 0;
           q6 =
-            this.product.producers[index].realQuantities[0].quantity6 > 0
-              ? this.product.producers[index].realQuantities[0].quantity6
+            this.product.producers[index].realQuantity.quantity6 > 0
+              ? this.product.producers[index].realQuantity.quantity6
               : 0;
           q7 =
-            this.product.producers[index].realQuantities[0].quantity7 > 0
-              ? this.product.producers[index].realQuantities[0].quantity7
+            this.product.producers[index].realQuantity.quantity7 > 0
+              ? this.product.producers[index].realQuantity.quantity7
               : 0;
           q8 =
-            this.product.producers[index].realQuantities[0].quantity8 > 0
-              ? this.product.producers[index].realQuantities[0].quantity8
-              : 0;
+            this.product.producers[index].realQuantity.quantity8 > 0
+              ? this.product.producers[index].realQuantity.quantity8
+              : 0;     
+   
           q9 =
-            this.product.producers[index].realQuantities[0].quantity9 > 0
-              ? this.product.producers[index].realQuantities[0].quantity9
+            this.product.producers[index].realQuantity.quantity9 > 0
+              ? this.product.producers[index].realQuantity.quantity9
               : 0;
           q10 =
-            this.product.producers[index].realQuantities[0].quantity10 > 0
-              ? this.product.producers[index].realQuantities[0].quantity10
+            this.product.producers[index].realQuantity.quantity10 > 0
+              ? this.product.producers[index].realQuantity.quantity10
               : 0;
           q11 =
-            this.product.producers[index].realQuantities[0].quantity11 > 0
-              ? this.product.producers[index].realQuantities[0].quantity11
+            this.product.producers[index].realQuantity.quantity11 > 0
+              ? this.product.producers[index].realQuantity.quantity11
               : 0;
           q12 =
-            this.product.producers[index].realQuantities[0].quantity12 > 0
-              ? this.product.producers[index].realQuantities[0].quantity12
+            this.product.producers[index].realQuantity.quantity12 > 0
+              ? this.product.producers[index].realQuantity.quantity12
               : 0;
         }
+       
         this.items2.push({
           id: index,
           col1: this.product.producers[index].abr,
@@ -330,7 +336,7 @@ export default {
 
       this.fields = [
         { key: "col1", label: "", variant: "dark" },
-        { key: "Janvier", label: "Jan.", type: "number", editable: true },
+        { key: "Janvier", label: "Jan.", type: "number", editable: false },
         { key: "Février", label: "Fév.", type: "number", editable: true },
         { key: "Mars", label: "Mars", type: "number", editable: true },
         { key: "Avril", label: "Avril", type: "number", editable: true },
@@ -352,7 +358,7 @@ export default {
 
       this.fields2 = [
         { key: "col1", label: "", variant: "dark" },
-        { key: "Janvier", label: "Janvier", type: "number", editable: true },
+      { key: "Janvier", label: "Jan.", type: "number", editable: true},
         { key: "Février", label: "Février", type: "number", editable: true },
         { key: "Mars", label: "Mars", type: "number", editable: true },
         { key: "Avril", label: "Avril", type: "number", editable: true },
@@ -457,84 +463,84 @@ export default {
         color12;
       if (
         this.computeTotalQuantityForAMonth(1) -
-          this.product.quantities[0].quantity1 >
+          (this.product.quantities[0] ? this.product.quantities[0].quantity1 : 0) >=
         0
       ) {
         color1 = "info";
       } else color1 = "danger";
       if (
         this.computeTotalQuantityForAMonth(2) -
-          this.product.quantities[0].quantity2 >
+          (this.product.quantities[0] ? this.product.quantities[0].quantity2 : 0) >=
         0
       ) {
         color2 = "info";
       } else color2 = "danger";
       if (
         this.computeTotalQuantityForAMonth(3) -
-          this.product.quantities[0].quantity3 >
+          (this.product.quantities[0] ? this.product.quantities[0].quantity3 : 0) >=
         0
       ) {
         color3 = "info";
       } else color3 = "danger";
       if (
         this.computeTotalQuantityForAMonth(4) -
-          this.product.quantities[0].quantity4 >
+          (this.product.quantities[0] ? this.product.quantities[0].quantity4 : 0) >=
         0
       ) {
         color4 = "info";
       } else color4 = "danger";
       if (
         this.computeTotalQuantityForAMonth(5) -
-          this.product.quantities[0].quantity5 >
+          (this.product.quantities[0] ? this.product.quantities[0].quantity5 : 0) >=
         0
       ) {
         color5 = "info";
       } else color5 = "danger";
       if (
         this.computeTotalQuantityForAMonth(6) -
-          this.product.quantities[0].quantity6 >
+          (this.product.quantities[0] ? this.product.quantities[0].quantity6 : 0) >=
         0
       ) {
         color6 = "info";
       } else color6 = "danger";
       if (
         this.computeTotalQuantityForAMonth(7) -
-          this.product.quantities[0].quantity7 >
+          (this.product.quantities[0] ? this.product.quantities[0].quantity7 : 0) >=
         0
       ) {
         color7 = "info";
       } else color7 = "danger";
       if (
         this.computeTotalQuantityForAMonth(8) -
-          this.product.quantities[0].quantity8 >
+          (this.product.quantities[0] ? this.product.quantities[0].quantity8 : 0) >=
         0
       ) {
         color8 = "info";
       } else color8 = "danger";
       if (
         this.computeTotalQuantityForAMonth(9) -
-          this.product.quantities[0].quantity9 >
+          (this.product.quantities[0] ? this.product.quantities[0].quantity9 : 0) >=
         0
       ) {
         color9 = "info";
       } else color9 = "danger";
       if (
         this.computeTotalQuantityForAMonth(10) -
-          this.product.quantities[0].quantity10 >
+          (this.product.quantities[0] ? this.product.quantities[0].quantity10 : 0) >=
         0
       ) {
         color10 = "info";
       } else color10 = "danger";
       if (
         this.computeTotalQuantityForAMonth(11) -
-          this.product.quantities[0].quantity11 >
+          (this.product.quantities[0] ? this.product.quantities[0].quantity11 : 0) >=
         0
       ) {
         color11 = "info";
       } else color11 = "danger";
       if (
         this.computeTotalQuantityForAMonth(12) -
-          this.product.quantities[0].quantity12 >
+          (this.product.quantities[0] ? this.product.quantities[0].quantity12 : 0) >=
         0
       ) {
         color12 = "info";
@@ -555,41 +561,10 @@ export default {
       };
     },
 
-    share() {
-       if (
-        this.computeTotalQuantityForAMonth(5) -
-          this.product.quantities[0].quantity5 >
-        0
-      ) {
-        let extraProducers = [];
-        let division =
-          this.computeTotalQuantityForAMonth(5) / this.product.producers.length;
-   
-        for (
-          let index = 0;
-          index < this.product.producers.length;
-          index++
-        ) {
-          if (this.product.producers[index].realQuantities[0].quantity5 <= division) {
-          
-          } else {
-            extraProducers.push(index);
-          }
-        }
-  
-        for (let index = 0; index < extraProducers.length; index++) {
-        
+    
 
-          (this.items2[index].Mai-= (this.computeTotalQuantityForAMonth(5) -
-          this.product.quantities[0].quantity5)/extraProducers.length).toFixed(2);
-        //this.userRow = this.items2[index];
-        }
-        
-      }
-    },
-
-    async deleteProduct(item) {
-      await axios
+    async deleteProduct(item) {     
+     await axios
         .delete(
           "/producers/" +
             this.product.producers[item.id].id +
@@ -598,24 +573,22 @@ export default {
         )
         .then((response) => (this.requests = response.data));
       this.changeProduct(this.product.id);
+      
     },
 
+
+
     async saveEdit(item) {
+      this.product.currentRealQuantity = this.product.producers[item.id].realQuantity;
       await axios
-        .put(
+        .post(
           "/products/" +
             this.product.id +
             "/producer/" +
             this.product.producers[item.id].id,
-          JSON.stringify({
-            id: this.product.id,
-            name: this.product.name,
-            packaging: this.product.packaging,
-            realQuantities: this.product.producers[item.id].realQuantities,
-            price: this.product.price,
-            seasonInformation: this.product.seasonInformation,
-          })
-        )
+            this.product
+          )
+        
         .then((response) => (this.requests = response.data));
 
       this.userRow = [];
@@ -623,146 +596,143 @@ export default {
     },
 
     async handleInput(value, data) {
-      let doEdit = true;
-      if (this.userRow.length > 0) {
-        doEdit = false;
-      }
 
-      if (doEdit) {
-        this.userRow.push({ ...data.item });
-  
-      }
+if(value.length == 0){
+  value = 0;
+}
 
+      
       switch (data.field.key) {
         case "Janvier":
-          if (this.product.producers[data.index].realQuantities.length == 0) {
-            this.product.producers[data.index].realQuantities[0] = {
+        
+          if (this.product.producers[data.index].realQuantity == null) {
+            this.product.producers[data.index].realQuantity = {
               id: this.product.id,
               quantity1: value,
             };
           } else {
-            this.product.producers[data.index].realQuantities[0].quantity1 =
+            this.product.producers[data.index].realQuantity.quantity1 =
               value;
           }
           break;
         case "Février":
-          if (this.product.producers[data.index].realQuantities.length == 0) {
-            this.product.producers[data.index].realQuantities[0] = {
+          if (this.product.producers[data.index].realQuantity == null) {
+            this.product.producers[data.index].realQuantity = {
               id: this.product.id,
               quantity2: value,
             };
           } else {
-            this.product.producers[data.index].realQuantities[0].quantity2 =
+            this.product.producers[data.index].realQuantity.quantity2 =
               value;
           }
           break;
         case "Mars":
-          if (this.product.producers[data.index].realQuantities.length == 0) {
-            this.product.producers[data.index].realQuantities[0] = {
+          if (this.product.producers[data.index].realQuantity == null) {
+            this.product.producers[data.index].realQuantity= {
               id: this.product.id,
               quantity3: value,
             };
           } else {
-            this.product.producers[data.index].realQuantities[0].quantity3 =
+            this.product.producers[data.index].realQuantity.quantity3 =
               value;
           }
           break;
         case "Avril":
-          if (this.product.producers[data.index].realQuantities.length == 0) {
-            this.product.producers[data.index].realQuantities[0] = {
+          if (this.product.producers[data.index].realQuantity == null) {
+            this.product.producers[data.index].realQuantity = {
               id: this.product.id,
               quantity4: value,
             };
           } else {
-            this.product.producers[data.index].realQuantities[0].quantity4 =
+            this.product.producers[data.index].realQuantity.quantity4 =
               value;
           }
           break;
         case "Mai":
-          if (this.product.producers[data.index].realQuantities.length == 0) {
-            this.product.producers[data.index].realQuantities[0] = {
+          if (this.product.producers[data.index].realQuantity == null) {
+            this.product.producers[data.index].realQuantity = {
               id: this.product.id,
               quantity5: value,
             };
           } else {
-            this.product.producers[data.index].realQuantities[0].quantity5 =
+            this.product.producers[data.index].realQuantity.quantity5 =
               value;
           }
           break;
         case "Juin":
-          if (this.product.producers[data.index].realQuantities.length == 0) {
-            this.product.producers[data.index].realQuantities[0] = {
+          if (this.product.producers[data.index].realQuantity == null) {
+            this.product.producers[data.index].realQuantity = {
               id: this.product.id,
               quantity6: value,
             };
           } else {
-            this.product.producers[data.index].realQuantities[0].quantity6 =
+            this.product.producers[data.index].realQuantity.quantity6 =
               value;
           }
           break;
         case "Juillet":
-          if (this.product.producers[data.index].realQuantities.length == 0) {
-            this.product.producers[data.index].realQuantities[0] = {
+          if (this.product.producers[data.index].realQuantity == null) {
+            this.product.producers[data.index].realQuantity = {
               id: this.product.id,
               quantity7: value,
             };
           } else {
-            this.product.producers[data.index].realQuantities[0].quantity7 =
+            this.product.producers[data.index].realQuantity.quantity7 =
               value;
           }
           break;
         case "Août":
-          if (this.product.producers[data.index].realQuantities.length == 0) {
-            this.product.producers[data.index].realQuantities[0] = {
+          if (this.product.producers[data.index].realQuantity == null) {
+            this.product.producers[data.index].realQuantity = {
               id: this.product.id,
               quantity8: value,
             };
           } else {
-            this.product.producers[data.index].realQuantities[0].quantity8 =
+            this.product.producers[data.index].realQuantity.quantity8 =
               value;
           }
           break;
         case "Septembre":
-          if (this.product.producers[data.index].realQuantities.length == 0) {
-            this.product.producers[data.index].realQuantities[0] = {
+          if (this.product.producers[data.index].realQuantity == null) {
+            this.product.producers[data.index].realQuantity = {
               id: this.product.id,
               quantity9: value,
             };
           } else {
-            this.product.producers[data.index].realQuantities[0].quantity9 =
+            this.product.producers[data.index].realQuantity.quantity9 =
               value;
           }
           break;
         case "Octobre":
-          if (this.product.producers[data.index].realQuantities.length == 0) {
-            this.product.producers[data.index].realQuantities[0] = {
+          if (this.product.producers[data.index].realQuantity == null) {
+            this.product.producers[data.index].realQuantity = {
               id: this.product.id,
               quantity10: value,
             };
           } else {
-            this.product.producers[data.index].realQuantities[0].quantity10 =
+            this.product.producers[data.index].realQuantity.quantity10 =
               value;
           }
           break;
         case "Novembre":
-          if (this.product.producers[data.index].realQuantities.length == 0) {
-            this.product.producers[data.index].realQuantities[0] = {
+          if (this.product.producers[data.index].realQuantity == null) {
+            this.product.producers[data.index].realQuantity = {
               id: this.product.id,
               quantity11: value,
             };
           } else {
-            this.product.producers[data.index].realQuantities[0].quantity11 =
+            this.product.producers[data.index].realQuantity.quantity11 =
               value;
           }
           break;
         case "Décembre":
-          if (this.product.producers[data.index].realQuantities.length == 0) {
-            this.product.producers[data.index].realQuantities[0] = {
-              id: this.produ18ct.id,
+          if (this.product.producers[data.index].realQuantity == null) {
+            this.product.producers[data.index].realQuantity = {
+              id: this.product.id,
               quantity12: value,
             };
           } else {
-            this.product.producers[data.index].realQuantities[0].quantity12 =
+            this.product.producers[data.index].realQuantity.quantity12 =
               value;
           }
           break;
@@ -770,44 +740,42 @@ export default {
         default:
           break;
       }
+    
+ 
+      this.saveEdit(data.item);
+
     },
   },
 };
 </script>
 
 <style scoped>
+
+
 .btn {
   font-size: 0.8rem;
 }
 
-#titleId {
-  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-  padding-left: 25px;
-  font-size: 1.5rem;
-  border-width: 1px;
-  border-style: none;
-  border-color: black;
-  border-radius: 25px;
-}
 
 .table {
   margin-left: 0px;
   margin-right: 0px;
-  font-size: 15px;
+  font-size: 0.8rem;
   width: 100%;
-  table-layout: fixed;
+
   margin-bottom: 0px;
   padding-left: 0px;
 }
+
 
 #producerFieldId {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   border: solid;
   padding-left: 6px;
-  font-size: 0.9rem;
+  font-size: 0.6rem;
   font-weight: bold;
-  background-color: rgb(42, 42, 216);
+  background-color: rgb(111, 111, 112);
   color: rgb(250, 250, 250);
-  border-color: rgb(42, 42, 216);
+  border-color:  rgb(111, 111, 112);
 }
 </style>
