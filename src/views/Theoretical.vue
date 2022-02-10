@@ -36,6 +36,7 @@ export default {
       columnDefs: null,
       modules: AllCommunityModules,
       headerHeight: null,
+      products: []
     };
   },
   computed: {
@@ -72,18 +73,15 @@ export default {
     this.headerHeight = 20;
     this.gridOptions = {
       onCellValueChanged: function (event) {
-        axios
-          .put(
-            "/products/" + event.data.id,
-            JSON.stringify({
-              price: event.data.price,
-              id: event.data.id,
-              name: event.data.name,
-              packaging: event.data.packaging,
-              quantities: event.data.quantities,
-            })
-          )
+        const json =
+          axios
+        .post(
+          "/products" ,
+            [event.data]
+        )
+          
           .then((response) => (this.requests = response.data));
+         
       },
     };
     this.columnDefs = [
@@ -785,10 +783,11 @@ export default {
       }]},
     ],
  
-    axios
+     axios
       .get("/products")
       .then((response) => (this.products = response.data))
       .then((rowData) => (this.rowData = rowData));
+      
   },
 };
 window.numberParser = function numberParser(params) {

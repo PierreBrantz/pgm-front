@@ -70,7 +70,8 @@ export default {
       this.$bvModal.hide("product-unit-modal");
     },
     deleteUnit(unit) {
-      this.productUnits.splice(unit.id, 1);
+      this.productUnits.splice(this.productUnits.indexOf(unit), 1);
+      axios.delete("/productUnits/" + unit.id);    
     },
     addUnit(arg) {
       this.productUnits.push({ id: this.productUnits.length + 1, name: "" });

@@ -72,7 +72,8 @@ export default {
       this.$bvModal.hide("packaging-modal");
     },
     deletePackaging(packaging) {
-      this.packagings.splice(packaging.id, 1);
+      this.packagings.splice(this.packagings.indexOf(packaging), 1);
+      axios.delete("/packagings/" + packaging.id);    
     },
     addPackaging(arg) {
       this.packagings.push({ id: this.packagings.length + 1, name: "" });

@@ -75,14 +75,13 @@ export default {
       axios.delete("/productTypes/" + type.id);    
     },
     addType(arg) {
-      
-      this.productTypes.push({ id: this.productTypes.length == 0 ? 0 :this.productTypes[this.productTypes.length - 1].id + 1, name: "" });
+      this.productTypes.push({ id: this.productTypes.length + 1, name: "" });
     },
     validType(type) {      
-      this.productTypes.splice(this.productTypes.indexOf(type), 1);
+      this.productTypes.splice(this.productTypes.length - 1, 1);
       this.productTypes.push({
-        id: type.id,
-        name: this.newProductType,
+        id :this.productTypes.length + 1,
+        name: this.newProductType, 
       });
       this.newProductType = "";
     },

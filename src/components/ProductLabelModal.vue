@@ -70,7 +70,8 @@ export default {
       this.$bvModal.hide("product-label-modal");
     },
     deleteLabel(label) {
-      this.productLabels.splice(label.id, 1);
+      this.productLabels.splice(this.productLabels.indexOf(label), 1);
+      axios.delete("/productLabels/" + label.id);    
     },
     addLabel(arg) {
       this.productLabels.push({ id: this.productLabels.length + 1, name: "" });

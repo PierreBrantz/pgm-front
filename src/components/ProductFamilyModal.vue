@@ -70,8 +70,9 @@ export default {
       event.preventDefault();
       this.$bvModal.hide("product-family-modal");
     },
-    deleteFamily(family) {
-      this.productFamilies.splice(family.id, 1);
+    deleteFamily(family) {     
+      this.productFamilies.splice(this.productFamilies.indexOf(family), 1);
+      axios.delete("/productFamilies/" + family.id);    
     },
     addFamily(arg) {
       this.productFamilies.push({ id: this.productFamilies.length + 1, name: "" });

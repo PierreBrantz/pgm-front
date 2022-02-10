@@ -70,7 +70,8 @@ export default {
       this.$bvModal.hide("product-origin-modal");
     },
     deleteOrigin(origin) {
-      this.productOrigins.splice(origin.id, 1);
+      this.productOrigins.splice(this.productOrigins.indexOf(origin), 1);
+      axios.delete("/productOrigins/" + origin.id);    
     },
     addOrigin(arg) {
       this.productOrigins.push({ id: this.productOrigins.length + 1, name: "" });
