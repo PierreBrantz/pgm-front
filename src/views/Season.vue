@@ -139,8 +139,9 @@ export default {
   beforeMount() {
     this.gridOptions = {
       onCellClicked: (event) => {
-        console.log(event.data);
+        if(!this.currentSeason) this.currentSeason = 0;
         switch (event.colDef.field) {
+          
           case "january": {
 
             event.data.seasonalityProduct.january = this.currentSeason;
