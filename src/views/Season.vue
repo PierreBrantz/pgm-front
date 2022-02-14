@@ -10,9 +10,11 @@
                   <b-button
                     variant="outline-secondary"
                     v-on:click="currentSeason = 0"
+                    v-on:dblclick="editSeasonName"
                     size="sm"
                     >{{ seasons[0].name }}</b-button
-                  >
+                  >               
+    
                 </b-col>
                 <b-col>
                   <b-form-input
@@ -30,6 +32,7 @@
                   <b-button
                     variant="success"
                     v-on:click="currentSeason = 1"
+                    v-on:dblclick="editSeasonName"
                     size="sm"
                     >{{ seasons[1].name }}</b-button
                   > </b-col
@@ -51,6 +54,7 @@
                   <b-button
                     variant="info"
                     v-on:click="currentSeason = 2"
+                    v-on:dblclick="editSeasonName"
                     size="sm"
                     >{{ seasons[2].name }}
                   </b-button>
@@ -71,6 +75,7 @@
                   <b-button
                     variant="warning"
                     v-on:click="currentSeason = 3"
+                    v-on:dblclick="editSeasonName"
                     size="sm"
                     >{{ seasons[3].name }}</b-button
                   > </b-col
@@ -87,6 +92,7 @@
         </b-card>
        
       </b-row>
+      <season-name-modal v-if="seasons.length > 0" :seasonId="currentSeason" :seasons="seasons"></season-name-modal>
     </b-container>
     <ag-grid-vue
       style="width: 100%; height: 100%"
@@ -102,6 +108,7 @@
 <script>
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+import SeasonNameModal from "../components/SeasonNameModal.vue"
 import axios from "axios";
 import { AgGridVue } from "ag-grid-vue";
 import CONST from "../services/constant.js";
@@ -125,6 +132,7 @@ export default {
   },
   components: {
     AgGridVue,
+    "season-name-modal": SeasonNameModal,
   },
   mounted() {
     if (!this.currentUser) {
@@ -347,6 +355,9 @@ export default {
     },
     saveSeasons() {
       axios.post("/seasons", this.seasons);
+    },
+    editSeasonName(arg){
+      this.$root.$emit("bv::show::modal", "season-name-modal", "#btnShow");
     }
   },
 };
