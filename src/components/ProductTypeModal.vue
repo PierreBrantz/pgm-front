@@ -51,7 +51,7 @@ import axios from "axios";
 
 export default {
   components: {},
-  props: ["productTypes"],
+  props: ["productTypes", "productTypeList"],
   data() {
     return {
       newProductType: "",
@@ -60,6 +60,8 @@ export default {
   mounted() {},
   methods: {
     onSubmit(event) {
+      event.preventDefault();
+      
       axios
         .post("/productTypes", this.productTypes)
         .then((response) => (this.requests = response.data));
@@ -72,17 +74,20 @@ export default {
     },
     deleteType(type) {
       this.productTypes.splice(this.productTypes.indexOf(type), 1);
+      this.productTypeList.splice(this.productTypes.indexOf(type), 1);
       axios.delete("/productTypes/" + type.id);    
     },
     addType(arg) {
       this.productTypes.push({ id: this.productTypes.length + 1, name: "" });
     },
-    validType(type) {      
+    validType(type) {  
+       
       this.productTypes.splice(this.productTypes.length - 1, 1);
       this.productTypes.push({
         id :this.productTypes.length + 1,
         name: this.newProductType, 
       });
+      this.productTypeList.push({ value: this.productTypes.length + 1, text: this.newProductType });
       this.newProductType = "";
     },
   },

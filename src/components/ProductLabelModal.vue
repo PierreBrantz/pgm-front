@@ -50,7 +50,7 @@ import axios from "axios";
 
 export default {
   components: {},
-  props: ["productLabels"],
+  props: ["productLabels", "productLabelList"],
   data() {
     return {
       newProductLabel: "",
@@ -59,6 +59,7 @@ export default {
   mounted() {},
   methods: {
     onSubmit(event) {
+      event.preventDefault();
       axios
         .post("/productLabels", this.productLabels)
         .then((response) => (this.requests = response.data));
@@ -71,6 +72,7 @@ export default {
     },
     deleteLabel(label) {
       this.productLabels.splice(this.productLabels.indexOf(label), 1);
+      this.productLabelList.splice(this.productLabels.indexOf(label), 1);
       axios.delete("/productLabels/" + label.id);    
     },
     addLabel(arg) {
@@ -82,6 +84,7 @@ export default {
         id: this.productLabels.length + 1,
         name: this.newProductLabel,
       });
+      this.productLabelList.push({ value: this.productLabels.length + 1, text: this.newProductLabel })
       this.newProductLabel = "";
     },
   },

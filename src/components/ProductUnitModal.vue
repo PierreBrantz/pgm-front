@@ -50,7 +50,7 @@ import axios from "axios";
 
 export default {
   components: {},
-  props: ["productUnits"],
+  props: ["productUnits","productUnitList"],
   data() {
     return {
       newProductUnit: "",
@@ -58,7 +58,9 @@ export default {
   },
   mounted() {},
   methods: {
+    
     onSubmit(event) {
+      event.preventDefault();
       axios
         .post("/productUnits", this.productUnits)
         .then((response) => (this.requests = response.data));
@@ -71,6 +73,7 @@ export default {
     },
     deleteUnit(unit) {
       this.productUnits.splice(this.productUnits.indexOf(unit), 1);
+      this.productUnitList.splice(this.productUnits.indexOf(unit), 1);
       axios.delete("/productUnits/" + unit.id);    
     },
     addUnit(arg) {
@@ -82,6 +85,7 @@ export default {
         id: this.productUnits.length + 1,
         name: this.newProductUnit,
       });
+      this.productUnitList.push({ value: this.productUnits.length + 1, text: this.newProductUnit })
       this.newProductUnit = "";
     },
   },

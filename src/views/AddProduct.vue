@@ -257,13 +257,13 @@
       <b-button class="m-3" type="submit" variant="primary">Sauver</b-button>
       <b-button class="m-3" type="delete" variant="danger">Supprimer</b-button>
     </b-form>
-    <product-name-modal :products="products" :productList="productList">></product-name-modal>
-    <product-type-modal :productTypes="productTypes">></product-type-modal>
-    <product-family-modal :productFamilies="productFamilies">></product-family-modal>
-    <product-unit-modal :productUnits="productUnits">></product-unit-modal>
-    <product-label-modal :productLabels="productLabels">></product-label-modal>
-    <packaging-modal :packagings="packagings">></packaging-modal>
-    <product-origin-modal :productOrigins="productOrigins"></product-origin-modal>
+    <product-name-modal :products="products" :productList="productList"></product-name-modal>
+    <product-type-modal :productTypes="productTypes" :productTypeList="productTypeList"></product-type-modal>
+    <product-family-modal :productFamilies="productFamilies" :productFamilyList="productFamilyList"></product-family-modal>
+    <product-unit-modal :productUnits="productUnits" :productUnitList="productUnitList"></product-unit-modal>
+    <product-label-modal :productLabels="productLabels" :productLabelList="productLabelList"></product-label-modal>
+    <packaging-modal :packagings="packagings" :packagingList="packagingList"></packaging-modal>
+    <product-origin-modal :productOrigins="productOrigins" :productOriginList="productOriginList"></product-origin-modal>
   </b-container>
 </template>
 

@@ -50,7 +50,7 @@ import axios from "axios";
 
 export default {
   components: {},
-  props: ["packagings"],
+  props: ["packagings", "packagingList"],
   data() {
     return {
       newPackaging: "",
@@ -59,8 +59,8 @@ export default {
   mounted() {},
   methods: {
     onSubmit(event) {
-     
-      const json =axios
+     event.preventDefault();
+      axios
         .post("/packagings", this.packagings)
         .then((response) => (this.requests = response.data));
        
@@ -73,6 +73,7 @@ export default {
     },
     deletePackaging(packaging) {
       this.packagings.splice(this.packagings.indexOf(packaging), 1);
+      this.packagingList.splice(this.packagings.indexOf(packaging), 1);
       axios.delete("/packagings/" + packaging.id);    
     },
     addPackaging(arg) {
@@ -84,6 +85,7 @@ export default {
         id: this.packagings.length + 1,
         name: this.newPackaging,
       });
+       this.packagingList.push({ value: this.packagingList.length + 1, text: this.newPackaging })
       this.newPackaging = "";
     },
   },

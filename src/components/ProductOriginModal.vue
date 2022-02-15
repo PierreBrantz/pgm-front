@@ -50,7 +50,7 @@ import axios from "axios";
 
 export default {
   components: {},
-  props: ["productOrigins"],
+  props: ["productOrigins","productOriginList"],
   data() {
     return {
       newProductOrigin: "",
@@ -59,6 +59,7 @@ export default {
   mounted() {},
   methods: {
     onSubmit(event) {
+      event.preventDefault();
       axios
         .post("/productOrigins", this.productOrigins)
         .then((response) => (this.requests = response.data));
@@ -71,6 +72,7 @@ export default {
     },
     deleteOrigin(origin) {
       this.productOrigins.splice(this.productOrigins.indexOf(origin), 1);
+      this.productOriginList.splice(this.productOrigins.indexOf(origin), 1);
       axios.delete("/productOrigins/" + origin.id);    
     },
     addOrigin(arg) {
@@ -82,6 +84,7 @@ export default {
         id: this.productOrigins.length + 1,
         name: this.newProductOrigin,
       });
+      this.productOriginList.push({ value: this.productOrigins.length + 1, text: this.newProductOrigin })
       this.newProductOrigin = "";
     },
   },

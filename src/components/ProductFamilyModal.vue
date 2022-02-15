@@ -50,7 +50,7 @@ import axios from "axios";
 
 export default {
   components: {},
-  props: ["productFamilies"],
+  props: ["productFamilies", "productFamilyList"],
   data() {
     return {
       newProductFamily: "",
@@ -59,7 +59,7 @@ export default {
   mounted() {},
   methods: {
     onSubmit(event) {
-      
+      event.preventDefault();
       axios
         .post("/productFamilies", this.productFamilies)
         .then((response) => (this.requests = response.data));
@@ -72,6 +72,7 @@ export default {
     },
     deleteFamily(family) {     
       this.productFamilies.splice(this.productFamilies.indexOf(family), 1);
+      this.productFamilyList.splice(this.productFamilies.indexOf(family), 1);
       axios.delete("/productFamilies/" + family.id);    
     },
     addFamily(arg) {
@@ -83,6 +84,7 @@ export default {
         id: this.productFamilies.length + 1,
         name: this.newProductFamily,
       });
+      this.productFamilyList.push({ value: this.productFamilies.length + 1, text: this.newProductFamily })
       this.newProductFamily = "";
     },
   },

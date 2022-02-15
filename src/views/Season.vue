@@ -1,8 +1,36 @@
 <template>
   <div style="display: flex; flex-direction: column; height: 100%">
     <b-container fluid>
-      <b-row>
+      
         <b-card  no-body v-if="seasons.length > 0" class="m-1 p-1" style="max-width: 23rem;">
+          <b-row v-for="season in seasons" :key="season.id" class='mb-1'>
+            <b-col>
+              <b-row>
+              <b-col>
+                <b-button
+
+                
+                    :variant="selectButtonColor(season.id)"
+                    v-on:click="currentSeason = season.id"
+                    v-on:dblclick="editSeasonName"
+                    size="sm"
+                    >{{ season.name }}</b-button
+                  > 
+              </b-col>
+              <b-col>
+                <b-form-input
+                    v-model="season.percent"
+                    type="number"
+                    size="sm"
+                    @change="saveSeasons"
+                  ></b-form-input>
+              </b-col>
+              </b-row>
+            </b-col>
+          </b-row>
+
+
+       <!--  
           <b-row class='mb-1'>
             <b-col>
               <b-row>
@@ -13,8 +41,7 @@
                     v-on:dblclick="editSeasonName"
                     size="sm"
                     >{{ seasons[0].name }}</b-button
-                  >               
-    
+                  > 
                 </b-col>
                 <b-col>
                   <b-form-input
@@ -47,7 +74,7 @@
               </b-row>
             </b-col>
           </b-row>
-          <b-row>
+          <b-row class='mb-1'>
             <b-col>
               <b-row>
                 <b-col>
@@ -89,9 +116,10 @@
               ></b-row>
             </b-col>
           </b-row>
+          -->
         </b-card>
        
-      </b-row>
+  
       <season-name-modal v-if="seasons.length > 0" :seasonId="currentSeason" :seasons="seasons"></season-name-modal>
     </b-container>
     <ag-grid-vue
@@ -121,7 +149,7 @@ export default {
       rowData: null,
       gridOptions: null,
       seasons: [],
-      currentSeason: 0,
+      currentSeason: 1,
       seasonalityProduct: null
     };
   },
@@ -147,7 +175,7 @@ export default {
   beforeMount() {
     this.gridOptions = {
       onCellClicked: (event) => {
-        if(!this.currentSeason) this.currentSeason = 0;
+        if(!this.currentSeason) this.currentSeason = 1;
         switch (event.colDef.field) {
           
           case "january": {
@@ -218,7 +246,7 @@ export default {
         field: "january",
         headerName: "janvier",
         cellClass: (params) => {
-          if (params.data.seasonalityProduct != null) {
+           if (params.data.seasonalityProduct != null) {
             return this.selectColor(params.data.seasonalityProduct.january);
           }
         },
@@ -346,8 +374,25 @@ export default {
           return "season2";
         case 3:
           return "season3";
+        case 4:
+          return "season4";
         default:
-          return "season0";
+          return "season1";
+      }
+    },
+    selectButtonColor(season){
+      switch (season) {
+        case 1:
+          return "outline-secondary";
+        case 2:
+          return "success";
+        case 3:
+          return "info";
+        case 4:
+          return "warning";
+
+        default:
+          return "outline-secondary";
       }
     },
     save() {  
@@ -363,16 +408,16 @@ export default {
 };
 </script>
 <style >
-.season0 {
+.season1 {
   background-color: #fff !important;
 }
-.season1 {
+.season2 {
   background-color: #28a745 !important;
 }
-.season2 {
+.season3 {
   background-color: #17a2b8 !important;
 }
-.season3 {
+.season4 {
   background-color: #ffc107 !important;
 }
 
