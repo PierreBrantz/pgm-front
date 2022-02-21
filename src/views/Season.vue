@@ -1,126 +1,58 @@
 <template>
   <div style="display: flex; flex-direction: column; height: 100%">
     <b-container fluid>
-      
-        <b-card  no-body v-if="seasons.length > 0" class="m-1 p-1" style="max-width: 23rem;">
-          <b-row v-for="season in seasons" :key="season.id" class='mb-1'>
-            <b-col>
-              <b-row>
+      <b-row>
+        <b-col cols="2" v-for="(season, count) in seasons" :key="season.id">
+          <b-card no-body class="m-1 p-1" style="max-width: 10rem">
+            <b-row>
               <b-col>
                 <b-button
-
-                
-                    :variant="selectButtonColor(season.id)"
-                    v-on:click="currentSeason = season.id"
-                    v-on:dblclick="editSeasonName"
-                    size="sm"
-                    >{{ season.name }}</b-button
-                  > 
+                  :variant="selectButtonColor(count)"
+                  v-on:click="currentSeason = season.id"
+                  v-on:dblclick="editSeasonName(count)"
+                  size="sm"
+                  >{{ season.name }}</b-button
+                >
               </b-col>
               <b-col>
                 <b-form-input
-                    v-model="season.percent"
-                    type="number"
-                    size="sm"
-                    @change="saveSeasons"
-                  ></b-form-input>
+                  v-model="season.percent"
+                  type="number"
+                  size="sm"
+                  @change="saveSeasons"
+                ></b-form-input>
               </b-col>
-              </b-row>
-            </b-col>
-          </b-row>
+            </b-row>
+          </b-card>
+        </b-col>
+        <b-col class="mt-3">
+          <b-icon
+            @click="addSeason"
+            variant="success"
+            icon="plus"
+            scale="3"
+            class="mr-3"
+          ></b-icon>
 
+          <b-icon
+            @click="deleteSeason"
+            variant="danger"
+            icon="trash"
+            scale="2"
+          ></b-icon>
+        </b-col>
+      </b-row>
 
-       <!--  
-          <b-row class='mb-1'>
-            <b-col>
-              <b-row>
-                <b-col>
-                  <b-button
-                    variant="outline-secondary"
-                    v-on:click="currentSeason = 0"
-                    v-on:dblclick="editSeasonName"
-                    size="sm"
-                    >{{ seasons[0].name }}</b-button
-                  > 
-                </b-col>
-                <b-col>
-                  <b-form-input
-                    v-model="seasons[0].percent"
-                    type="number"
-                    size="sm"
-                    @change="saveSeasons"
-                  ></b-form-input>
-                </b-col>
-              </b-row>
-            </b-col>  
-            <b-col>
-              <b-row>
-                <b-col>
-                  <b-button
-                    variant="success"
-                    v-on:click="currentSeason = 1"
-                    v-on:dblclick="editSeasonName"
-                    size="sm"
-                    >{{ seasons[1].name }}</b-button
-                  > </b-col
-                ><b-col
-                  ><b-form-input
-                    v-model="seasons[1].percent"
-                    type="number"
-                    size="sm"
-                    @change="saveSeasons"
-                  ></b-form-input>
-                </b-col>
-              </b-row>
-            </b-col>
-          </b-row>
-          <b-row class='mb-1'>
-            <b-col>
-              <b-row>
-                <b-col>
-                  <b-button
-                    variant="info"
-                    v-on:click="currentSeason = 2"
-                    v-on:dblclick="editSeasonName"
-                    size="sm"
-                    >{{ seasons[2].name }}
-                  </b-button>
-                </b-col>
-                <b-col>
-                  <b-form-input
-                    v-model="seasons[2].percent"
-                    type="number"
-                    size="sm"
-                    @change="saveSeasons"
-                  ></b-form-input>
-                </b-col>
-              </b-row>
-            </b-col>
-            <b-col>
-              <b-row>
-                <b-col>
-                  <b-button
-                    variant="warning"
-                    v-on:click="currentSeason = 3"
-                    v-on:dblclick="editSeasonName"
-                    size="sm"
-                    >{{ seasons[3].name }}</b-button
-                  > </b-col
-                ><b-col
-                  ><b-form-input
-                    v-model="seasons[3].percent"
-                    type="number"
-                    size="sm"
-                    @change="saveSeasons"
-                  ></b-form-input> </b-col
-              ></b-row>
-            </b-col>
-          </b-row>
-          -->
-        </b-card>
-       
-  
-      <season-name-modal v-if="seasons.length > 0" :seasonId="currentSeason" :seasons="seasons"></season-name-modal>
+      <season-name-modal
+        v-if="seasons.length > 0"
+        :seasonIndex="seasonIndex"
+        :seasons="seasons"
+      ></season-name-modal>
+      <add-season-modal
+        v-if="seasons.length > 0"
+        :seasonId="currentSeason"
+        :seasons="seasons"
+      ></add-season-modal>
     </b-container>
     <ag-grid-vue
       style="width: 100%; height: 100%"
@@ -136,10 +68,12 @@
 <script>
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
-import SeasonNameModal from "../components/SeasonNameModal.vue"
+import SeasonNameModal from "../components/SeasonNameModal.vue";
+import AddSeasonModal from "../components/AddSeasonModal.vue";
 import axios from "axios";
 import { AgGridVue } from "ag-grid-vue";
 import CONST from "../services/constant.js";
+
 
 export default {
   name: "App",
@@ -149,8 +83,12 @@ export default {
       rowData: null,
       gridOptions: null,
       seasons: [],
+
       currentSeason: 1,
-      seasonalityProduct: null
+      seasonalityProduct: null, 
+      lastSeasonIndex : 0,
+      seasonIndex: 1,
+      ready : false
     };
   },
   computed: {
@@ -158,9 +96,11 @@ export default {
       return this.$store.state.auth.user;
     },
   },
+
   components: {
     AgGridVue,
     "season-name-modal": SeasonNameModal,
+    "add-season-modal": AddSeasonModal,
   },
   mounted() {
     if (!this.currentUser) {
@@ -171,15 +111,15 @@ export default {
     this.gridApi.sizeColumnsToFit();
     this.fetchProductList();
     this.fetchSeasonality();
+
   },
+  
   beforeMount() {
     this.gridOptions = {
       onCellClicked: (event) => {
-        if(!this.currentSeason) this.currentSeason = 1;
+        if (!this.currentSeason) this.currentSeason = 1;
         switch (event.colDef.field) {
-          
           case "january": {
-
             event.data.seasonalityProduct.january = this.currentSeason;
             break;
           }
@@ -237,16 +177,15 @@ export default {
       {
         field: "name",
         width: 300,
-        resizable: true,
-        cellClass: (params) => {
-          return this.selectColor(params.value);
-        },
+        resizable: true
+        
       },
       {
+        
         field: "january",
         headerName: "janvier",
-        cellClass: (params) => {
-           if (params.data.seasonalityProduct != null) {
+        cellClass: (params) => {          
+          if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.january);
           }
         },
@@ -255,7 +194,7 @@ export default {
         field: "february",
         headerName: "Février",
         cellClass: (params) => {
-          if (params.data.seasonalityProduct != null) {
+          if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.february);
           }
         },
@@ -264,7 +203,7 @@ export default {
         field: "march",
         headerName: "Mars",
         cellClass: (params) => {
-          if (params.data.seasonalityProduct != null) {
+          if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.march);
           }
         },
@@ -273,7 +212,7 @@ export default {
         field: "april",
         headerName: "Avril",
         cellClass: (params) => {
-          if (params.data.seasonalityProduct != null) {
+          if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.april);
           }
         },
@@ -282,7 +221,7 @@ export default {
         field: "may",
         headerName: "Mai",
         cellClass: (params) => {
-          if (params.data.seasonalityProduct != null) {
+          if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.may);
           }
         },
@@ -291,7 +230,7 @@ export default {
         field: "june",
         headerName: "Juin",
         cellClass: (params) => {
-          if (params.data.seasonalityProduct != null) {
+          if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.june);
           }
         },
@@ -300,7 +239,7 @@ export default {
         field: "july",
         headerName: "Juillet",
         cellClass: (params) => {
-          if (params.data.seasonalityProduct != null) {
+          if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.july);
           }
         },
@@ -309,7 +248,7 @@ export default {
         field: "august",
         headerName: "Août",
         cellClass: (params) => {
-          if (params.data.seasonalityProduct != null) {
+          if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.august);
           }
         },
@@ -318,7 +257,7 @@ export default {
         field: "september",
         headerName: "Septembre",
         cellClass: (params) => {
-          if (params.data.seasonalityProduct != null) {
+          if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.september);
           }
         },
@@ -327,7 +266,7 @@ export default {
         field: "october",
         headerName: "Octobre",
         cellClass: (params) => {
-          if (params.data.seasonalityProduct != null) {
+          if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.october);
           }
         },
@@ -336,7 +275,7 @@ export default {
         field: "november",
         headerName: "Novembre",
         cellClass: (params) => {
-          if (params.data.seasonalityProduct != null) {
+          if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.november);
           }
         },
@@ -345,7 +284,7 @@ export default {
         field: "december",
         headerName: "Décembre",
         cellClass: (params) => {
-          if (params.data.seasonalityProduct != null) {
+          if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.december);
           }
         },
@@ -355,54 +294,83 @@ export default {
 
   methods: {
     async fetchProductList() {
-      const json = await axios
+      await axios
         .get("/products")
         .then((response) => (this.products = response.data))
         .then((rowData) => (this.rowData = rowData));
     },
-    async fetchSeasonality() {
-      const json = await axios
+     async fetchSeasonality() {
+     await axios
         .get("/seasons")
-        .then((response) => (this.seasons = response.data));
+        .then((response) =>(
+
+          this.seasons = response.data));
+       
+        
     },
 
-    selectColor(season) {
-      switch (season) {
-        case 1:
+     selectColor(seasonId) {
+   
+  
+      switch (seasonId) {
+        case this.products[0].seasonalities[0] != null && this.products[0].seasonalities[0].id:
           return "season1";
-        case 2:
+        case this.products[0].seasonalities[1] != null && this.products[0].seasonalities[1].id:
           return "season2";
-        case 3:
+        case this.products[0].seasonalities[2] != null && this.products[0].seasonalities[2].id:
           return "season3";
-        case 4:
+       
+       case this.products[0].seasonalities[3] != null && this.products[0].seasonalities[3].id:
           return "season4";
+        case this.products[0].seasonalities[4] != null && this.products[0].seasonalities[4].id:
+          return "season5";
+        case this.products[0].seasonalities[5] != null && this.products[0].seasonalities[5].id:
+          return "season6";
         default:
           return "season1";
       }
+ 
     },
-    selectButtonColor(season){
-      switch (season) {
-        case 1:
+    selectButtonColor(count) {
+      
+      switch (count) {
+        case 0:
           return "outline-secondary";
-        case 2:
+        case 1:
           return "success";
-        case 3:
+        case 2:
           return "info";
-        case 4:
+        case 3:
           return "warning";
-
+        case 4:
+          return "danger";
+        case 5:
+          return "secondary";
         default:
           return "outline-secondary";
       }
     },
-    save() {  
+    save() {
       axios.post("/products", this.products);
     },
     saveSeasons() {
       axios.post("/seasons", this.seasons);
     },
-    editSeasonName(arg){
+    editSeasonName(arg) {
+      this.ready = true;
+      this.seasonIndex = arg;
       this.$root.$emit("bv::show::modal", "season-name-modal", "#btnShow");
+    },
+     addSeason() {
+       this.$root.$emit("bv::show::modal", "add-season-modal", "#btnShow");
+    },
+    
+    deleteSeason(){
+
+      axios.delete("/seasons/" + this.seasons[this.seasons.length - 1].id);
+      this.seasons.splice(this.seasons.length - 1, 1);
+
+     
     }
   },
 };
@@ -443,8 +411,8 @@ export default {
 }
 
 .btn-success {
-    color: #fff;
-    background-color: #28a745;
-    border-color: #28a745;
+  color: #fff;
+  background-color: #28a745;
+  border-color: #28a745;
 }
 </style>

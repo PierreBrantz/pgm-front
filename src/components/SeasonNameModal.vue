@@ -4,7 +4,7 @@
       <b-form @submit="onSubmit" @reset="onCancel">
         <b-row>
           <b-col>
-            <b-form-input v-model="seasons[seasonId - 1].name"></b-form-input>
+            <b-form-input v-if="seasons.length > 0" v-model="newName"></b-form-input>
           </b-col>
         </b-row>
 
@@ -20,9 +20,18 @@ import axios from "axios";
 
 export default {
   components: {},
-  props: ["seasonId", "seasons"],
+  props: ["seasonIndex", "seasons"],
+  data(){
+return {
+ newName : this.seasons[this.seasonIndex].name
+}},
+mounted() {
+ // this.newName = this.seasons[this.seasonIndex].name;
+},
+  
   methods: {
     onSubmit(event) {
+      this.seasons[this.seasonIndex].name = this.newName;
       event.preventDefault();
       axios.post("/seasons", this.seasons);
 
