@@ -23,7 +23,7 @@
         </b-col>
       </b-row>
       
-      <b-form @submit="onSubmit">
+      <b-form>
         <b-row class="m-1">
           <b-col sm="3">
             <label>Nom :</label>
@@ -180,10 +180,10 @@
             ></b-form-input>
           </b-col>
         </b-row>
-
-        <b-button class="m-3" type="submit"  variant="primary">Sauver</b-button>
+</b-form>
+        <b-button class="m-3" @click="onSubmit" type="submit"  variant="primary">Sauver</b-button>
        
-      </b-form>
+      
    
     </b-container>
 
@@ -230,7 +230,7 @@ export default {
       this.form= json;        
     },
     onSubmit(event) {      
-   
+      
            axios
           .post(
             "/producers",
@@ -251,7 +251,16 @@ export default {
               tva : this.form.tva
             })
           )
-          .then((response) => (this.requests = response.data));
+          .then((response) => (this.requests = response.data))
+          this.form = [{ id : "", name: "", firstName: "", abr: "", company: "", number: "", road: "", postCode: "", town: "", phone: "",gsm: "",  mail: "", account: "", tva: "" }];
+      this.fetchProducers();
+
+        
+        this.$bvToast.toast("Producteur sauvé.", {
+          title: "Info",
+          variant: "success",
+          solid: true,
+        });
 
  
     },

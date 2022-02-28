@@ -31,6 +31,7 @@ export default {
   mounted() {},
   methods: {
     onSubmit(event) {
+    
       axios
         .post("/products/name/" + this.newName);
       this.$bvModal.hide("product-name-modal");

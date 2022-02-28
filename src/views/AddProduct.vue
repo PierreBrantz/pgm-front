@@ -1,6 +1,6 @@
 <template>
   <b-container fluid>
-    <b-form @submit="onSubmit" @delete="onDelete">
+    <b-form>
       <b-row class="m-1">
         <b-col class="p-1" cols="3">
           <label>Nom :</label>
@@ -137,7 +137,7 @@
         <b-col class="p-1" cols="3">
           <b-form-input
             id="seasonMarginId"
-            v-model="form.seasonMargin"
+            v-model="form.margin"
           ></b-form-input>
         </b-col>
       </b-row>
@@ -254,9 +254,10 @@
           <b-form-input id="remarkId" v-model="form.remark"></b-form-input>
         </b-col>
       </b-row>
-      <b-button class="m-3" type="submit" variant="primary">Sauver</b-button>
-      <b-button class="m-3" type="delete" variant="danger">Supprimer</b-button>
-    </b-form>
+      </b-form>
+      <b-button class="m-3" @click="onSubmit" variant="primary">Sauver</b-button>
+      <b-button class="m-3" @click="onDelete" type="delete" variant="danger">Supprimer</b-button>
+    
     <product-name-modal :products="products" :productList="productList"></product-name-modal>
     <product-type-modal :productTypes="productTypes" :productTypeList="productTypeList"></product-type-modal>
     <product-family-modal :productFamilies="productFamilies" :productFamilyList="productFamilyList"></product-family-modal>
@@ -404,6 +405,13 @@ export default {
         .get("/products/" + arg)
         .then((response) => (this.requests = response.data));
       this.form = json;
+
+      this.selectedProductType= null,
+      this.selectedProductFamily= null,
+      this.selectedProductUnit= null,
+      this.selectedProductLabel= null,
+      this.selectedPackaging= null,
+      this.selectedProductOrigin= null;
      
      if(this.form.packaging != null)
       this.selectedPackaging = this.form.packaging.id;
@@ -447,8 +455,10 @@ export default {
       this.$root.$emit("bv::show::modal", "product-origin-modal", "#btnShow");
     },
     onSubmit(event) {
+          event.preventDefault();
          
-             this.form.productType =  this.productTypes.find((item) => {
+     
+     this.form.productType =  this.productTypes.find((item) => {
               if (item.id === this.selectedProductType) {
                 return item;
               }
@@ -484,10 +494,19 @@ export default {
             [this.form]
         )
         .then((response) => (this.requests = response.data));
+        this.$bvToast.toast("Produit sauvé.", {
+          title: "Info",
+          variant: "success",
+          solid: true,
+        });
+        
     },
   onDelete(event) {
-       axios.delete("/products/" + this.selectedProduct);
+  //  event.preventDefault();
+    
+      axios.delete("/products/" + this.selectedProduct);
       this.productList = [{ value: null, text: "Choisir un produit..." }];
+      
       this.form =[];
       this.selectedProduct= null,
       this.selectedProductType= null,
@@ -495,7 +514,14 @@ export default {
       this.selectedProductUnit= null,
       this.selectedProductLabel= null,
       this.selectedPackaging= null,
-      this.selectedProductOrigin= null,
+      this.selectedProductOrigin= null;
+
+      this.$bvToast.toast("Produit supprimé.", {
+          title: "Info",
+          variant: "success",
+          solid: true,
+        });
+      
       this.fetchProducts();
     }
   }
