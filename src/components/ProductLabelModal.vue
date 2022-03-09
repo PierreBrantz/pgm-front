@@ -1,18 +1,33 @@
 <template>
-  <b-modal id="product-label-modal" :hide-footer="true" title="Labels">
+  <b-modal
+    id="product-label-modal"
+    :hide-footer="true"
+    title="Labels"
+    hide-header-close
+  >
     <b-container fluid>
-      <b-form @submit="onSubmit" @reset="onCancel">
-        <div v-for="productLabel in productLabels" :key="productLabel.id">
+      <b-form @submit="onSubmit" @reset="onCancel" >
+        <div
+          v-for="(productLabel, index) in productLabels"
+          :key="productLabel.id"
+        >
           <b-row v-if="productLabel.id">
             <b-col v-if="productLabel.name !== ''">
               {{ productLabel.name }}
             </b-col>
             <b-col v-else>
-              <b-form-input v-model="newProductLabel"></b-form-input>
+              <b-form-input
+                :state="nameState"
+                trim
+                v-model="newProductLabel"
+              ></b-form-input>
+              <b-form-invalid-feedback id="input-live-feedback">
+                Le nom ne peut pas être vide et unique.
+              </b-form-invalid-feedback>
             </b-col>
             <b-col v-if="productLabel.name !== ''">
               <b-icon
-                @click="deleteLabel(productLabel)"
+                @click="deleteLabel(productLabel, index)"
                 variant="danger"
                 icon="trash"
                 scale="1"
@@ -20,7 +35,7 @@
             </b-col>
             <b-col v-else>
               <b-icon
-                @click="validLabel"
+                @click="validLabel(index)"
                 variant="success"
                 icon="check"
                 scale="1"
@@ -31,7 +46,7 @@
         <b-row class="mt-2">
           <b-col>
             <b-icon
-              @click="addLabel"
+              @click="addLabel()"
               variant="success"
               icon="plus"
               scale="1.5"
@@ -54,38 +69,97 @@ export default {
   data() {
     return {
       newProductLabel: "",
+      canAdd: true,
+      canSave: false,
+      currval: 0,
     };
   },
-  mounted() {},
+  computed: {
+    nameState(arg) {
+      var exists = this.productLabels.some((field) => {
+        return field.name == this.newProductLabel;
+      });
+
+      var length = this.newProductLabel.length > 0 ? true : false;
+
+      if (!exists && length) {
+        return true;
+      } else return false;
+    },
+  },
+  mounted() {
+    this.fetchCurrVal();
+  },
   methods: {
+    async fetchCurrVal() {
+      await axios
+        .get("/productLabels/sequencecurrVal")
+        .then((response) => (this.currval = response.data));
+    },
     onSubmit(event) {
       event.preventDefault();
-      axios
-        .post("/productLabels", this.productLabels)
-        .then((response) => (this.requests = response.data));
+
+      this.newProductLabel = "";
+      if (this.canSave) {
+        axios
+          .post("/productLabels", this.productLabels)
+          .then((response) => (this.requests = response.data));
+        this.canSave = false;
+      }
 
       this.$bvModal.hide("product-label-modal");
     },
     onCancel(event) {
       event.preventDefault();
+      this.newProductLabel = "";
       this.$bvModal.hide("product-label-modal");
     },
-    deleteLabel(label) {
-      this.productLabels.splice(this.productLabels.indexOf(label), 1);
-      this.productLabelList.splice(this.productLabels.indexOf(label), 1);
-      axios.delete("/productLabels/" + label.id);    
+    deleteLabel(label, index) {
+      if (!this.canSave) {
+      axios
+        .delete("/productLabels/" + label.id)
+        .then((response) => {
+          this.productLabels.splice(index, 1);
+          this.productLabelList.splice(index + 1, 1);
+        })
+        .catch((e) => {
+          this.$bvToast.toast("Impossible de supprimer cet élément", {
+            title: "Info",
+            variant: "danger",
+            solid: true,
+          });
+        });
+      }else{
+        this.productLabels.splice(index, 1);
+        this.productLabelList.splice(index + 1, 1);
+      }
     },
-    addLabel(arg) {
-      this.productLabels.push({ id: this.productLabels.length + 1, name: "" });
+    addLabel() {
+      if (this.canAdd) {
+        this.productLabels.push({
+          id: this.currval + 1,
+          name: "",
+        });
+        this.newProductLabel = "";
+        this.canAdd = false;
+      }
     },
-    validLabel() {
-      this.productLabels.splice(this.productLabels.length - 1, 1);
-      this.productLabels.push({
-        id: this.productLabels.length + 1,
-        name: this.newProductLabel,
-      });
-      this.productLabelList.push({ value: this.productLabels.length + 1, text: this.newProductLabel })
-      this.newProductLabel = "";
+
+    validLabel(index) {
+      if (this.nameState) {
+        this.productLabels.splice(index, 1);
+        this.productLabels.push({
+          id: this.currval + 1,
+          name: this.newProductLabel,
+        });
+        this.productLabelList.push({
+          value: this.currval + 1,
+          text: this.newProductLabel,
+        });
+        this.currval++;
+        this.canAdd = true;
+        this.canSave = true;
+      }
     },
   },
 };

@@ -1,218 +1,254 @@
 <template>
-  
-    <b-container fluid>
-      <b-row
-        ><b-col cols="3">
-          <b-form-select
-            v-model="selectedProducer"
-            :options="producers"
-            v-on:change="changeProducer"
-            class="m-2"
-          ></b-form-select>
+  <b-container fluid>
+    <b-row
+      ><b-col cols="3">
+        <b-form-select
+          v-model="selectedProducer"
+          :options="producers"
+          v-on:change="changeProducer"
+          class="m-2"
+        ></b-form-select>
+      </b-col>
+      <b-col cols="3">
+        <b-icon
+          @click="deleteProducer"
+          variant="danger"
+          icon="trash"
+          scale="1.5"
+          aria-hidden="true"
+          class="m-3"
+        ></b-icon>
+      </b-col>
+    </b-row>
+
+    <b-form>
+      <b-row class="m-1">
+        <b-col sm="3">
+          <label>Nom :</label>
         </b-col>
-        <b-col cols="3">
-          <b-icon
-                  
-                  @click="deleteProducer"
-                  variant="danger"
-                  icon="trash"
-                  scale="1.5"
-                  aria-hidden="true"
-                  class="m-3"
-                ></b-icon>
+        <b-col sm="9">
+          <b-form-input
+            id="nameId"
+            v-model="form.name"
+            :state="form.name != null && form.name.length > 0"
+            size="sm"
+          ></b-form-input>
+          <b-form-invalid-feedback id="input-live-feedback">
+            Le nom ne peut pas être vide.
+          </b-form-invalid-feedback>
         </b-col>
       </b-row>
-      
-      <b-form>
-        <b-row class="m-1">
-          <b-col sm="3">
-            <label>Nom :</label>
-          </b-col>
-          <b-col sm="9">
-            <b-form-input
-              id="nameId"
-              v-model="form.name"
-              size="sm"
-            ></b-form-input>
-          </b-col>
-        </b-row>
-        <b-row class="m-1">
-          <b-col sm="3">
-            <label>Prénom :</label>
-          </b-col>
-          <b-col sm="9">
-            <b-form-input
-              id="firstNameId"
-              v-model="form.firstName"
-              size="sm"
-            ></b-form-input>
-          </b-col>
-        </b-row>
-        <b-row class="m-1">
-          <b-col sm="3">
-            <label>Abréviation :</label>
-          </b-col>
-          <b-col sm="9">
-            <b-form-input
-              id="abrId"
-              v-model="form.abr"
-              size="sm"
-            ></b-form-input>
-          </b-col>
-        </b-row>
-         <b-row class="m-1">
-          <b-col sm="3">
-            <label>Entreprise :</label>
-          </b-col>
-          <b-col sm="9">
-            <b-form-input
-              id="companyId"
-              v-model="form.company"
-              size="sm"
-            ></b-form-input>
-          </b-col>
-        </b-row>
-         <b-row class="m-1">
-          <b-col sm="3">
-            <label>N° :</label>
-          </b-col>
-          <b-col sm="9">
-            <b-form-input
-              id="numberId"
-              v-model="form.number"
-              size="sm"
-            ></b-form-input>
-          </b-col>
-        </b-row>
-         <b-row class="m-1">
-          <b-col sm="3">
-            <label>Voirie :</label>
-          </b-col>
-          <b-col sm="9">
-            <b-form-input
-              id="roadId"
-              v-model="form.road"
-              size="sm"
-            ></b-form-input>
-          </b-col>
-        </b-row>
-         <b-row class="m-1">
-          <b-col sm="3">
-            <label>Code postal :</label>
-          </b-col>
-          <b-col sm="9">
-            <b-form-input
-              id="postCodeId"
-              v-model="form.postCode"
-              size="sm"
-            ></b-form-input>
-          </b-col>
-        </b-row>
-         <b-row class="m-1">
-          <b-col sm="3">
-            <label>Localité :</label>
-          </b-col>
-          <b-col sm="9">
-            <b-form-input
-              id="townId"
-              v-model="form.town"
-              size="sm"
-            ></b-form-input>
-          </b-col>
-        </b-row>
-         <b-row class="m-1">
-          <b-col sm="3">
-            <label>Téléphone :</label>
-          </b-col>
-          <b-col sm="9">
-            <b-form-input
-              id="phoneId"
-              v-model="form.phone"
-              size="sm"
-            ></b-form-input>
-          </b-col>
-        </b-row>
-         <b-row class="m-1">
-          <b-col sm="3">
-            <label>GSM :</label>
-          </b-col>
-          <b-col sm="9">
-            <b-form-input
-              id="gsmId"
-              v-model="form.gsm"
-              size="sm"
-            ></b-form-input>
-          </b-col>
-        </b-row>
-         <b-row class="m-1">
-          <b-col sm="3">
-            <label>Courriel :</label>
-          </b-col>
-          <b-col sm="9">
-            <b-form-input
-              id="mailId"
-              v-model="form.mail"
-              size="sm"
-            ></b-form-input>
-          </b-col>
-        </b-row>
-         <b-row class="m-1">
-          <b-col sm="3">
-            <label># Compte :</label>
-          </b-col>
-          <b-col sm="9">
-            <b-form-input
-              id="accountId"
-              v-model="form.account"
-              size="sm"
-            ></b-form-input>
-          </b-col>
-        </b-row>
-         <b-row class="m-1">
-          <b-col sm="3">
-            <label># TVA :</label>
-          </b-col>
-          <b-col sm="9">
-            <b-form-input
-              id="tvaId"
-              v-model="form.tva"
-              size="sm"
-            ></b-form-input>
-          </b-col>
-        </b-row>
-</b-form>
-        <b-button class="m-3" @click="onSubmit" type="submit"  variant="primary">Sauver</b-button>
-       
-      
-   
-    </b-container>
-
+      <b-row class="m-1">
+        <b-col sm="3">
+          <label>Prénom :</label>
+        </b-col>
+        <b-col sm="9">
+          <b-form-input
+            id="firstNameId"
+            v-model="form.firstName"
+            :state="form.firstName != null && form.firstName.length > 0"
+            size="sm"
+          ></b-form-input>
+          <b-form-invalid-feedback id="input-live-feedback">
+            Le prénom ne peut pas être vide.
+          </b-form-invalid-feedback>
+        </b-col>
+      </b-row>
+      <b-row class="m-1">
+        <b-col sm="3">
+          <label>Abréviation :</label>
+        </b-col>
+        <b-col sm="9">
+          <b-form-input
+            id="abrId"
+            v-model="form.abr"
+            :state="form.abr != null && form.abr.length == 3"
+            size="sm"
+          ></b-form-input>
+          <b-form-invalid-feedback id="input-live-feedback">
+            L'abréviation doit faire 3 caractères.
+          </b-form-invalid-feedback>
+        </b-col>
+      </b-row>
+      <b-row class="m-1">
+        <b-col sm="3">
+          <label>Entreprise :</label>
+        </b-col>
+        <b-col sm="9">
+          <b-form-input
+            id="companyId"
+            v-model="form.company"
+            size="sm"
+          ></b-form-input>
+        </b-col>
+      </b-row>
+      <b-row class="m-1">
+        <b-col sm="3">
+          <label>N° :</label>
+        </b-col>
+        <b-col sm="9">
+          <b-form-input
+            id="numberId"
+            v-model="form.number"
+            size="sm"
+          ></b-form-input>
+        </b-col>
+      </b-row>
+      <b-row class="m-1">
+        <b-col sm="3">
+          <label>Voirie :</label>
+        </b-col>
+        <b-col sm="9">
+          <b-form-input
+            id="roadId"
+            v-model="form.road"
+            size="sm"
+          ></b-form-input>
+        </b-col>
+      </b-row>
+      <b-row class="m-1">
+        <b-col sm="3">
+          <label>Code postal :</label>
+        </b-col>
+        <b-col sm="9">
+          <b-form-input
+            id="postCodeId"
+            v-model="form.postCode"
+            size="sm"
+          ></b-form-input>
+        </b-col>
+      </b-row>
+      <b-row class="m-1">
+        <b-col sm="3">
+          <label>Localité :</label>
+        </b-col>
+        <b-col sm="9">
+          <b-form-input
+            id="townId"
+            v-model="form.town"
+            size="sm"
+          ></b-form-input>
+        </b-col>
+      </b-row>
+      <b-row class="m-1">
+        <b-col sm="3">
+          <label>Téléphone :</label>
+        </b-col>
+        <b-col sm="9">
+          <b-form-input
+            id="phoneId"
+            v-model="form.phone"
+            size="sm"
+          ></b-form-input>
+        </b-col>
+      </b-row>
+      <b-row class="m-1">
+        <b-col sm="3">
+          <label>GSM :</label>
+        </b-col>
+        <b-col sm="9">
+          <b-form-input id="gsmId" v-model="form.gsm" size="sm"></b-form-input>
+        </b-col>
+      </b-row>
+      <b-row class="m-1">
+        <b-col sm="3">
+          <label>Courriel :</label>
+        </b-col>
+        <b-col sm="9">
+          <b-form-input
+            id="mailId"
+            v-model="form.mail"
+            size="sm"
+          ></b-form-input>
+        </b-col>
+      </b-row>
+      <b-row class="m-1">
+        <b-col sm="3">
+          <label># Compte :</label>
+        </b-col>
+        <b-col sm="9">
+          <b-form-input
+            id="accountId"
+            v-model="form.account"
+            size="sm"
+          ></b-form-input>
+        </b-col>
+      </b-row>
+      <b-row class="m-1">
+        <b-col sm="3">
+          <label># TVA :</label>
+        </b-col>
+        <b-col sm="9">
+          <b-form-input id="tvaId" v-model="form.tva" size="sm"></b-form-input>
+        </b-col>
+      </b-row>
+    </b-form>
+    <b-button
+      class="m-3"
+      :disabled="
+        (form.abr == null ||
+        form.abr.length != 3 ) ||
+        (form.name == null ||
+        form.name.length < 1) ||
+        (form.firstName == null ||
+        form.firstName.length < 1)
+      "
+      @click="onSubmit"
+      type="submit"
+      variant="primary"
+      >Sauver</b-button
+    >
+    <b-button
+      class="m-3"      
+      @click="clean"
+      type="submit"
+      variant="warning"
+      >Vider</b-button
+    >
+  </b-container>
 </template>
 
 <script>
 import axios from "axios";
-
 
 export default {
   components: {},
   props: [],
   data() {
     return {
-      form: [{ id : "", name: "", firstName: "", abr: "", company: "", number: "", road: "", postCode: "", town: "", phone: "",gsm: "",  mail: "", account: "", tva: "" }],
+      form: [
+        {
+          id: "",
+          name: "",
+          firstName: "",
+          abr: "",
+          company: "",
+          number: "",
+          road: "",
+          postCode: "",
+          town: "",
+          phone: "",
+          gsm: "",
+          mail: "",
+          account: "",
+          tva: "",
+        },
+      ],
       selectedProducer: null,
-      producers: [{ value: null, text: "Choisir un producteur..." }]
+      producers: [{ value: null, text: "Choisir un producteur..." }],
     };
   },
+
   mounted() {
-     if (!this.currentUser) {
-      this.$router.push('/login');
+    if (!this.currentUser) {
+      this.$router.push("/login");
     }
     this.fetchProducers();
   },
-    computed: {
+  computed: {
     currentUser() {
       return this.$store.state.auth.user;
-    }
+    },
   },
   methods: {
     async fetchProducers() {
@@ -227,50 +263,74 @@ export default {
       const json = await axios
         .get("/producers/" + arg)
         .then((response) => (this.requests = response.data));
-      this.form= json;        
+      this.form = json;
     },
-    onSubmit(event) {      
+    onSubmit(event) {
+      axios
+        .post(
+          "/producers",
+          JSON.stringify({
+            id: this.form.id,
+            name: this.form.name,
+            firstName: this.form.firstName,
+            abr: this.form.abr,
+            company: this.form.company,
+            number: this.form.number,
+            road: this.form.road,
+            postCode: this.form.postCode,
+            town: this.form.town,
+            phone: this.form.phone,
+            gsm: this.form.gsm,
+            mail: this.form.mail,
+            account: this.form.account,
+            tva: this.form.tva,
+          })
+        )
+        .then((response) => (this.producers.push({ value: response.data.id, text: response.data.abr})));
       
-           axios
-          .post(
-            "/producers",
-            JSON.stringify({
-              id: this.form.id,
-              name : this.form.name,
-              firstName : this.form.firstName,
-              abr : this.form.abr,
-              company : this.form.company,
-              number : this.form.number,
-              road : this.form.road,
-              postCode : this.form.postCode,
-              town : this.form.town,
-              phone : this.form.phone,
-              gsm : this.form.gsm,
-              mail : this.form.mail,
-              account : this.form.account,
-              tva : this.form.tva
-            })
-          )
-          .then((response) => (this.requests = response.data))
-          this.form = [{ id : "", name: "", firstName: "", abr: "", company: "", number: "", road: "", postCode: "", town: "", phone: "",gsm: "",  mail: "", account: "", tva: "" }];
-      this.fetchProducers();
+      this.clean();
 
-        
-        this.$bvToast.toast("Producteur sauvé.", {
-          title: "Info",
-          variant: "success",
-          solid: true,
-        });
+      this.$bvToast.toast("Producteur sauvé.", {
+        title: "Info",
+        variant: "success",
+        solid: true,
+      });
+      
+    },
+
+    deleteProducer(prod) {
+
+      axios.delete("/producers/" + this.selectedProducer);
+  
+      this.clean();
+      this.$bvToast.toast("Producteur effacé.", {
+        title: "Info",
+        variant: "success",
+        solid: true,
+      });
 
  
+      this.producers.splice(this.producers.findIndex(x => x.value === this.selectedProducer), 1);
+     
     },
-
-    deleteProducer(){
-      axios.delete("/producers/" + this.selectedProducer);
-      this.producers = [{ value: null, text: "Choisir un producteur..." }];
-      this.form = [{ id : "", name: "", firstName: "", abr: "", company: "", number: "", road: "", postCode: "", town: "", phone: "",gsm: "",  mail: "", account: "", tva: "" }];
-      this.fetchProducers();
-
+    clean(){
+      this.form = [
+        {
+          id: "",
+          name: "",
+          firstName: "",
+          abr: "",
+          company: "",
+          number: "",
+          road: "",
+          postCode: "",
+          town: "",
+          phone: "",
+          gsm: "",
+          mail: "",
+          account: "",
+          tva: "",
+        },]
     }
   },
 };

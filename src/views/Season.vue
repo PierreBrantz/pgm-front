@@ -32,7 +32,7 @@
             icon="plus"
             scale="3"
             class="mr-3"
-          ></b-icon>
+            ></b-icon>
 
           <b-icon
             @click="deleteSeason"
@@ -87,8 +87,8 @@ export default {
       currentSeason: 1,
       seasonalityProduct: null, 
       lastSeasonIndex : 0,
-      seasonIndex: 1,
-      ready : false
+      seasonIndex: 1
+      
     };
   },
   computed: {
@@ -322,12 +322,14 @@ export default {
        
        case this.products[0].seasonalities[3] != null && this.products[0].seasonalities[3].id:
           return "season4";
-        case this.products[0].seasonalities[4] != null && this.products[0].seasonalities[4].id:
+      /*
+      case this.products[0].seasonalities[4] != null && this.products[0].seasonalities[4].id:
           return "season5";
         case this.products[0].seasonalities[5] != null && this.products[0].seasonalities[5].id:
           return "season6";
+          */
         default:
-          return "season1";
+          return "season5";
       }
  
     },
@@ -342,12 +344,14 @@ export default {
           return "info";
         case 3:
           return "warning";
-        case 4:
+      
+      /*case 4:
           return "danger";
         case 5:
           return "secondary";
+          */
         default:
-          return "outline-secondary";
+          return "danger";
       }
     },
     save() {
@@ -356,19 +360,31 @@ export default {
     saveSeasons() {
       axios.post("/seasons", this.seasons);
     },
-    editSeasonName(arg) {
-      this.ready = true;
+    editSeasonName(arg) {      
       this.seasonIndex = arg;
       this.$root.$emit("bv::show::modal", "season-name-modal", "#btnShow");
     },
      addSeason() {
+       if(this.seasons.length < 5 ){
        this.$root.$emit("bv::show::modal", "add-season-modal", "#btnShow");
+       }
     },
     
     deleteSeason(){
-
-      axios.delete("/seasons/" + this.seasons[this.seasons.length - 1].id);
-      this.seasons.splice(this.seasons.length - 1, 1);
+      if(this.seasons.length > 4 ){
+          axios
+        .delete("/seasons/" + this.seasons[this.seasons.length - 1].id)
+        .then((response) => {
+          this.seasons.splice(this.seasons.length - 1, 1);
+        })
+        .catch((e) => {
+          this.$bvToast.toast("Impossible de supprimer cet élément", {
+            title: "Info",
+            variant: "danger",
+            solid: true,
+          });
+        });
+      }
 
      
     }
@@ -388,6 +404,10 @@ export default {
 .season4 {
   background-color: #ffc107 !important;
 }
+.season5 {
+  background-color: #dc3545 !important;
+}
+
 
 .ag-header-group-cell-label,
 .ag-header-cell-label {

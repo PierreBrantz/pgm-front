@@ -21,29 +21,34 @@ import axios from "axios";
 export default {
   components: {},
   props: ["seasonId", "seasons"],
-  data(){
+  data() {
     return {
-      newName:"",
-      seasonsTmp : null,
-      newSeason: null
+      newName: "",
+      seasonsTmp: null,
+      newSeason: null,
     };
   },
   methods: {
     onSubmit(event) {
       event.preventDefault();
-     
-     this.seasons.push({
-        name: this.newName,
-        percent: 1
+      this.seasons.push({          
+          name: this.newName,
+          percent: 1,
+        });
+      axios.post("/seasons", this.seasons).then((response) => {
+        this.seasons.splice(this.seasons.length - 1, 1);
+        this.seasons.push({
+          id: response.data[response.data.length - 1].id,
+          name: this.newName,
+          percent: 1,
+        });
       });
-      axios.post("/seasons", this.seasons);
       this.$bvModal.hide("add-season-modal");
     },
     onCancel(event) {
       event.preventDefault();
       this.$bvModal.hide("add-season-modal");
-    },   
-    
+    },
   },
 };
 </script>

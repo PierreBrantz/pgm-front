@@ -54,7 +54,7 @@
             <b-col>
               <ul>
                 <li><span style="background: #fff"></span>{{ seasons[0].name}}</li>
-                <li><span style="background: #28a745"></span>{{ seasons[1].name}}</li>
+                <li><span style="background: #28a745"></span>{{ seasons[1].name}}</li>                
               </ul>
             </b-col>
 
@@ -62,6 +62,11 @@
               <ul>
                 <li><span style="background: #17a2b8"></span>{{ seasons[2].name}}</li>
                 <li><span style="background: #ffc107"></span>{{ seasons[3].name}}</li>
+              </ul>
+            </b-col>
+            <b-col v-if="seasons.length > 4">
+              <ul>
+                <li><span style="background: #dc3545"></span>{{ seasons[4].name}}</li>                
               </ul>
             </b-col>
           </b-row>
@@ -164,6 +169,10 @@ export default {
     },
 
     downloadPDF() {
+      const doc = new jsPDF('l');
+      const pageSize = doc.internal.pageSize;
+            const pageWidth = pageSize.width ? pageSize.width : pageSize.getWidth();
+            const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
       
       let producer = this.producerInfo.find((item) => {
               if (item.id === this.producerId) {
@@ -171,8 +180,8 @@ export default {
               }
             });
      
-      const doc = new jsPDF();
-      doc.setFontSize(18);
+      
+      doc.setFontSize(15);
       doc.text(this.contractParam.title, 10, 10);
       doc.setFontSize(10);
    
@@ -191,26 +200,26 @@ export default {
   
       doc.line(0, 40, 400, 35);
       let rows = [];
-      console.log(this.productsByProducer);
+     
       this.productsByProducer.forEach((element) => {
         
         if (element.currentRealQuantity) {
           var temp = [
             element.name,
             element.price + "€",
-        //    element.packaging.name,
-            element.currentRealQuantity.quantity1,
-            element.currentRealQuantity.quantity2,
-            element.currentRealQuantity.quantity3,
-            element.currentRealQuantity.quantity4,
-            element.currentRealQuantity.quantity5,
-            element.currentRealQuantity.quantity6,
-            element.currentRealQuantity.quantity7,
-            element.currentRealQuantity.quantity8,
-            element.currentRealQuantity.quantity9,
-            element.currentRealQuantity.quantity10,
-            element.currentRealQuantity.quantity11,
-            element.currentRealQuantity.quantity12,
+            element.packaging.name,
+            (element.currentRealQuantity.quantity1 == null ? 0 : element.currentRealQuantity.quantity1) + '(' + (element.price * element.seasonalityProduct.january).toFixed(2) + '€)',
+            (element.currentRealQuantity.quantity2 == null ? 0 : element.currentRealQuantity.quantity2) + '(' + (element.price * element.seasonalityProduct.february).toFixed(2) + '€)',
+            (element.currentRealQuantity.quantity3 == null ? 0 : element.currentRealQuantity.quantity3) + '(' + (element.price * element.seasonalityProduct.march).toFixed(2) + '€)',
+            (element.currentRealQuantity.quantity4 == null ? 0 : element.currentRealQuantity.quantity4) + '(' + (element.price * element.seasonalityProduct.april).toFixed(2) + '€)',
+            (element.currentRealQuantity.quantity5 == null ? 0 : element.currentRealQuantity.quantity5) + '(' + (element.price * element.seasonalityProduct.may).toFixed(2) + '€)',
+            (element.currentRealQuantity.quantity6 == null ? 0 : element.currentRealQuantity.quantity6) + '(' + (element.price * element.seasonalityProduct.june).toFixed(2)+ '€)',
+            (element.currentRealQuantity.quantity7 == null ? 0 : element.currentRealQuantity.quantity7) + '(' + (element.price * element.seasonalityProduct.july).toFixed(2) + '€)',
+            (element.currentRealQuantity.quantity8 == null ? 0 : element.currentRealQuantity.quantity8) + '(' + (element.price * element.seasonalityProduct.august).toFixed(2) + '€)',
+            (element.currentRealQuantity.quantity9 == null ? 0 : element.currentRealQuantity.quantity9) + '(' + (element.price * element.seasonalityProduct.september).toFixed(2) + '€)',
+            (element.currentRealQuantity.quantity10 == null ? 0 : element.currentRealQuantity.quantity10) + '(' + (element.price * element.seasonalityProduct.october).toFixed(2) + '€)',
+            (element.currentRealQuantity.quantity11 == null ? 0 : element.currentRealQuantity.quantity11) + '(' + (element.price * element.seasonalityProduct.november).toFixed(2) + '€)',
+            (element.currentRealQuantity.quantity12 == null ? 0 : element.currentRealQuantity.quantity12) + '(' + (element.price * element.seasonalityProduct.december).toFixed(2) + '€)',
             (element.currentRealQuantity.quantity1 || 0) +
             (element.currentRealQuantity.quantity2 || 0) +
             (element.currentRealQuantity.quantity3 || 0) +
@@ -222,29 +231,72 @@ export default {
             (element.currentRealQuantity.quantity9 || 0) +
             (element.currentRealQuantity.quantity10 || 0) +
             (element.currentRealQuantity.quantity11 || 0) +
-            (element.currentRealQuantity.quantity12 || 0)
+            (element.currentRealQuantity.quantity12 || 0) +
+            
+              '(' + ((element.currentRealQuantity.quantity1 *
+                element.price *
+                element.seasonalityProduct.january || 0) +
+              (element.currentRealQuantity.quantity2 *
+                element.price *
+                element.seasonalityProduct.february || 0) +
+              (element.currentRealQuantity.quantity3 *
+                element.price *
+                element.seasonalityProduct.march || 0) +
+              (element.currentRealQuantity.quantity4 *
+                element.price *
+                element.seasonalityProduct.april || 0) +
+              (element.currentRealQuantity.quantity5 *
+                element.price *
+                element.seasonalityProduct.may || 0) +
+              (element.currentRealQuantity.quantity6 *
+                element.price *
+                element.seasonalityProduct.june || 0) +
+              (element.currentRealQuantity.quantity7 *
+                element.price *
+                element.seasonalityProduct.july || 0) +
+              (element.currentRealQuantity.quantity8 *
+                element.price *
+                element.seasonalityProduct.august || 0) +
+              (element.currentRealQuantity.quantity9 *
+                element.price *
+                element.seasonalityProduct.september || 0) +
+              (element.currentRealQuantity.quantity10 *
+                element.price *
+                element.seasonalityProduct.october || 0) +
+              (element.currentRealQuantity.quantity11 *
+                element.price *
+                element.seasonalityProduct.november || 0) +
+              (element.currentRealQuantity.quantity12 *
+                element.price *
+                element.seasonalityProduct.december || 0)
+            ).toFixed(2) + "€)"
             
           
           ];
           rows.push(temp);
         }
       });
-      doc.text(this.contractParam.endTxt, 20, 240, {
+
+      doc.text(this.contractParam.endTxt, 20, pageHeight - 40, { });
+
+
+ //     doc.text(this.contractParam.endTxt, 20, pageHeight - 15, {
+   //   align: 'right'
+   // })
+       doc.text('Fait à .................., le ......../......./.......', 200, pageHeight - 30, {
    //   align: 'right'
     })
-       doc.text('Fait à .................., le ......../......./.......', 140, 265, {
-   //   align: 'right'
-    })
-         doc.text('Signature' , 140, 273, {
+         doc.text('Signature' , 200, pageHeight - 23, {
    //   align: 'right'
     })
 
+      
       JsPDFAutotable(doc, {
         head: [
           [
             "Légume",
             "Prix",
-    //        "Condit#",
+            "Condit#",
             "Jan",
             "Fev",
             "Mar",
@@ -261,6 +313,7 @@ export default {
           ],
         ],
         margin: { top: 50 },
+        styles: { fontSize: 7 },
         body: rows,
       }),
         doc.save(
@@ -412,7 +465,7 @@ export default {
         width: 60,
         pinned: "left",
         valueGetter: function (params) {
-          if (params.data.packaging.name != null) {
+          if (params.data.packaging && params.data.packaging.name != null) {
             return params.data.packaging.name;
           }
         },
@@ -836,7 +889,7 @@ window.cellStyleFeb = function cellStyleFeb(params) {
   return { backgroundColor: color };
 };
 window.cellStyleMar = function cellStyleMar(params) {
-  const color = numberToColor(params.data.seasonalityProduct.mars);
+  const color = numberToColor(params.data.seasonalityProduct.march);
   return { backgroundColor: color };
 };
 window.cellStyleApr = function cellStyleApr(params) {
@@ -877,14 +930,17 @@ window.cellStyleDec = function cellStyleDec(params) {
 };
 
 window.numberToColor = function numberToColor(val) {
-  if (val === 0) {
+
+  if (val === 1) {
     return "#fff";
-  } else if (val == 1) {
+  } else if (val === 2) {
     return "#28a745";
-  } else if (val == 2) {
+  } else if (val === 3) {
     return "#17a2b8";
-  } else {
+  } else if (val === 4) {
     return "#ffc107";
+  }else {
+    return "#dc3545";
   }
 };
 </script>

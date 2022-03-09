@@ -135,9 +135,10 @@
           <label>Marge par saison :</label>
         </b-col>
         <b-col class="p-1" cols="3">
-          <b-form-input
+          <b-form-input 
             id="seasonMarginId"
             v-model="form.margin"
+            type="number"
           ></b-form-input>
         </b-col>
       </b-row>
@@ -150,7 +151,12 @@
           <b-form-input
             id="purchasePriceId"
             v-model="form.price"
+            type="number"
+            :state="form.price != null && form.price > 0"
           ></b-form-input>
+           <b-form-invalid-feedback id="input-live-feedback">
+            Le prix ne peut pas être vide ni négatif.
+          </b-form-invalid-feedback>
         </b-col>
       </b-row>
 
@@ -183,6 +189,7 @@
           <b-form-input
             id="nbByPackagingId"
             v-model="form.nbByPackaging"
+             type="number"
           ></b-form-input>
         </b-col>
       </b-row>
@@ -242,7 +249,7 @@
           <label>ID dans l'e-shop :</label>
         </b-col>
         <b-col cols="3" class="p-1">
-          <b-form-input id="eshopId" v-model="form.eshop"></b-form-input>
+          <b-form-input id="eshopId" v-model="form.eshopId"  type="number"></b-form-input>
         </b-col>
       </b-row>
 
@@ -255,7 +262,7 @@
         </b-col>
       </b-row>
       </b-form>
-      <b-button class="m-3" @click="onSubmit" variant="primary">Sauver</b-button>
+      <b-button class="m-3" @click="onSubmit" :disabled="form.price == null || form.price == '' || form.price < 0" variant="primary">Sauver</b-button>
       <b-button class="m-3" @click="onDelete" type="delete" variant="danger">Supprimer</b-button>
     
     <product-name-modal :products="products" :productList="productList"></product-name-modal>

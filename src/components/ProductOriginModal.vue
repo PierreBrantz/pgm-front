@@ -1,18 +1,33 @@
 <template>
-  <b-modal id="product-origin-modal" :hide-footer="true" title="Origines">
+  <b-modal
+    id="product-origin-modal"
+    :hide-footer="true"
+    title="Origines"
+    hide-header-close
+  >
     <b-container fluid>
-      <b-form @submit="onSubmit" @reset="onCancel">
-        <div v-for="productOrigin in productOrigins" :key="productOrigin.id">
+      <b-form @submit="onSubmit" @reset="onCancel" >
+        <div
+          v-for="(productOrigin, index) in productOrigins"
+          :key="productOrigin.id"
+        >
           <b-row v-if="productOrigin.id">
             <b-col v-if="productOrigin.name !== ''">
               {{ productOrigin.name }}
             </b-col>
             <b-col v-else>
-              <b-form-input v-model="newProductOrigin"></b-form-input>
+              <b-form-input
+                :state="nameState"
+                trim
+                v-model="newProductOrigin"
+              ></b-form-input>
+              <b-form-invalid-feedback id="input-live-feedback">
+                Le nom ne peut pas être vide et unique.
+              </b-form-invalid-feedback>
             </b-col>
             <b-col v-if="productOrigin.name !== ''">
               <b-icon
-                @click="deleteOrigin(productOrigin)"
+                @click="deleteOrigin(productOrigin, index)"
                 variant="danger"
                 icon="trash"
                 scale="1"
@@ -20,7 +35,7 @@
             </b-col>
             <b-col v-else>
               <b-icon
-                @click="validOrigin"
+                @click="validOrigin(index)"
                 variant="success"
                 icon="check"
                 scale="1"
@@ -31,7 +46,7 @@
         <b-row class="mt-2">
           <b-col>
             <b-icon
-              @click="addOrigin"
+              @click="addOrigin()"
               variant="success"
               icon="plus"
               scale="1.5"
@@ -50,42 +65,101 @@ import axios from "axios";
 
 export default {
   components: {},
-  props: ["productOrigins","productOriginList"],
+  props: ["productOrigins", "productOriginList"],
   data() {
     return {
       newProductOrigin: "",
+      canAdd: true,
+      canSave: false,
+      currval: 0,
     };
   },
-  mounted() {},
+  computed: {
+    nameState(arg) {
+      var exists = this.productOrigins.some((field) => {
+        return field.name == this.newProductOrigin;
+      });
+
+      var length = this.newProductOrigin.length > 0 ? true : false;
+
+      if (!exists && length) {
+        return true;
+      } else return false;
+    },
+  },
+  mounted() {
+    this.fetchCurrVal();
+  },
   methods: {
+    async fetchCurrVal() {
+      await axios
+        .get("/productOrigins/sequencecurrVal")
+        .then((response) => (this.currval = response.data));
+    },
     onSubmit(event) {
       event.preventDefault();
-      axios
-        .post("/productOrigins", this.productOrigins)
-        .then((response) => (this.requests = response.data));
+
+      this.newProductOrigin = "";
+      if (this.canSave) {
+        axios
+          .post("/productOrigins", this.productOrigins)
+          .then((response) => (this.requests = response.data));
+        this.canSave = false;
+      }
 
       this.$bvModal.hide("product-origin-modal");
     },
     onCancel(event) {
       event.preventDefault();
+      this.newProductOrigin = "";
       this.$bvModal.hide("product-origin-modal");
     },
-    deleteOrigin(origin) {
-      this.productOrigins.splice(this.productOrigins.indexOf(origin), 1);
-      this.productOriginList.splice(this.productOrigins.indexOf(origin), 1);
-      axios.delete("/productOrigins/" + origin.id);    
+    deleteOrigin(origin, index) {
+      if (!this.canSave) {
+      axios
+        .delete("/productOrigins/" + origin.id)
+        .then((response) => {
+          this.productOrigins.splice(index, 1);
+          this.productOriginList.splice(index + 1, 1);
+        })
+        .catch((e) => {
+          this.$bvToast.toast("Impossible de supprimer cet élément", {
+            title: "Info",
+            variant: "danger",
+            solid: true,
+          });
+        });
+      }else{
+        this.productOrigins.splice(index, 1);
+        this.productOriginList.splice(index + 1, 1);
+      }
     },
-    addOrigin(arg) {
-      this.productOrigins.push({ id: this.productOrigins.length + 1, name: "" });
+    addOrigin() {
+      if (this.canAdd) {
+        this.productOrigins.push({
+          id: this.currval + 1,
+          name: "",
+        });
+        this.newProductOrigin = "";
+        this.canAdd = false;
+      }
     },
-    validOrigin() {
-      this.productOrigins.splice(this.productOrigins.length - 1, 1);
-      this.productOrigins.push({
-        id: this.productOrigins.length + 1,
-        name: this.newProductOrigin,
-      });
-      this.productOriginList.push({ value: this.productOrigins.length + 1, text: this.newProductOrigin })
-      this.newProductOrigin = "";
+
+    validOrigin(index) {
+      if (this.nameState) {
+        this.productOrigins.splice(index, 1);
+        this.productOrigins.push({
+          id: this.currval + 1,
+          name: this.newProductOrigin,
+        });
+        this.productOriginList.push({
+          value: this.currval + 1,
+          text: this.newProductOrigin,
+        });
+        this.currval++;
+        this.canAdd = true;
+        this.canSave = true;
+      }
     },
   },
 };
