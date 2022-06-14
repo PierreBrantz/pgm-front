@@ -23,6 +23,7 @@
     "ag-grid": "^18.1.2",
     "ag-grid-community": "^25.3.0",
     "ag-grid-vue": "^25.3.0",
+    "ag-grid-vue3": "^27.1.0",
     "axios": "^0.21.1",
     "bootstrap-vue": "~2.21.2",
     "bootstrap-vue-editable-table": "^0.1.0-beta.9",

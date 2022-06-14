@@ -77,6 +77,12 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AddProduct.vue")
   },
+  {
+    path: '/editproduct',
+    name: 'editproduct',
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/EditProduct.vue")
+  },
 
   {
     path: '/paramcontract',

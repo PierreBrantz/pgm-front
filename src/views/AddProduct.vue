@@ -323,8 +323,11 @@ export default {
     };
   },
 
-  mounted() {
-
+  mounted() {   
+    if(this.$route.query.product){
+      this.selectedProduct = this.$route.query.product;
+      this.changeProduct(this.$route.query.product);
+    }
     if (!this.currentUser) {
       this.$router.push("/login");
     }
@@ -510,7 +513,7 @@ export default {
     },
   onDelete(event) {
   //  event.preventDefault();
-    
+      console.
       axios.delete("/products/" + this.selectedProduct);
       this.productList = [{ value: null, text: "Choisir un produit..." }];
       

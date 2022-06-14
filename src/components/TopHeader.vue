@@ -19,8 +19,9 @@
         <b-nav-item href="/season" v-if="showAdminBoard">Saisons</b-nav-item>
 
         <b-nav-item-dropdown text="Paramètres" v-if="showAdminBoard">
-          <b-dropdown-item href="/addproducer">Producteur</b-dropdown-item>
-          <b-dropdown-item href="/addproduct">Produit</b-dropdown-item>
+          <b-dropdown-item href="/addproducer">Création Producteur</b-dropdown-item>
+          <b-dropdown-item href="/addproduct">Création Produit</b-dropdown-item>
+          <b-dropdown-item href="/editproduct">Edition Produit</b-dropdown-item>
           <b-dropdown-item href="/paramcontract">Contrat</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>

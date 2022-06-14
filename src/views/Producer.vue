@@ -86,6 +86,7 @@
         :columnDefs="columnDefs"
         :modules="modules"
         @cell-clicked="onCellClicked"
+        @cell-value-changed="onCellValueChanged"
       ></ag-grid-vue>
     </div>
   </div>
@@ -160,6 +161,21 @@ export default {
     this.fetchContractParams();
   },
   methods: {
+
+     async onCellValueChanged(event) {       
+       const json = await axios
+          .post(
+            "/products/" +
+              event.data.id +
+              "/producer/" +
+              this.selectedProducer,
+            event.data
+          )
+          .then((response) => (this.requests = response.data));
+          this.producerProducts = json.producerProducts;
+            
+            },
+
     findProducerName(id) {
       this.producers.find((item) => {
         if (item.value === id) {
@@ -200,14 +216,13 @@ export default {
   
       doc.line(0, 40, 400, 35);
       let rows = [];
-     
+    
       this.productsByProducer.forEach((element) => {
-        
         if (element.currentRealQuantity) {
           var temp = [
             element.name,
             element.price + "€",
-            element.packaging.name,
+            element.packaging == null ? '' : element.packaging.name,
             (element.currentRealQuantity.quantity1 == null ? 0 : element.currentRealQuantity.quantity1) + '(' + (element.price * element.seasonalityProduct.january).toFixed(2) + '€)',
             (element.currentRealQuantity.quantity2 == null ? 0 : element.currentRealQuantity.quantity2) + '(' + (element.price * element.seasonalityProduct.february).toFixed(2) + '€)',
             (element.currentRealQuantity.quantity3 == null ? 0 : element.currentRealQuantity.quantity3) + '(' + (element.price * element.seasonalityProduct.march).toFixed(2) + '€)',
@@ -274,6 +289,7 @@ export default {
           
           ];
           rows.push(temp);
+          
         }
       });
 
@@ -420,8 +436,7 @@ export default {
           .get("/products/producer/" + this.selectedProducer)
           .then((response) => (this.products = response.data))
           .then((rowData) => (this.rowData = rowData));
-      
-        this.productsByProducer = json;
+          this.productsByProducer = json;
       
       }
     },
@@ -436,8 +451,9 @@ export default {
   beforeMount() {
  
     this.gridOptions = {
-      async onCellValueChanged (event) {
-      
+  /*
+  async onCellValueChanged (event) {
+      console.log(this.selectedProducer);
        const json = await axios
           .post(
             "/products/" +
@@ -449,6 +465,8 @@ export default {
           .then((response) => (this.requests = response.data));
           this.producerProducts = json.producerProducts;
       },
+      */
+    
     };
 
     this.columnDefs = [
