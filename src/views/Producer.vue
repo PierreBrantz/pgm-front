@@ -112,7 +112,7 @@ export default {
       gridOptions: null,
       gridApi: null,
       columnApi: null,
-      rowData: null,
+      rowData: [],
       columnDefs: null,
       modules: AllCommunityModules,
       producerId: null,
@@ -162,7 +162,8 @@ export default {
   },
   methods: {
 
-     async onCellValueChanged(event) {       
+     async onCellValueChanged(event) {  
+       console.log(event.data);     
        const json = await axios
           .post(
             "/products/" +
@@ -887,10 +888,6 @@ export default {
         },
       },
     ];
-    axios
-      .get("/products/producer/0")
-      .then((response) => (this.products = response.data))
-      .then((rowData) => (this.rowData = rowData));
   },
 };
 window.numberParser = function numberParser(params) {

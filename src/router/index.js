@@ -6,11 +6,6 @@ import Register from "../components/Register.vue";
 // lazy-loaded
 const Profile = () => import("../components/Profile.vue")
 
-
-
-import 'fullcalendar/dist/fullcalendar.css'
-Vue.use(FullCalendar);
-
 Vue.use(VueRouter)
 
 const routes = [
@@ -34,6 +29,12 @@ const routes = [
     name: 'producer',
     component: () =>
     import(/* webpackChunkName: "about" */ "../views/Producer.vue")
+  },
+  {
+    path: '/weeklyPlanner',
+    name: 'weeklyPlanner',
+    component: () =>
+    import(/* webpackChunkName: "about" */ "../views/WeeklyPlanner.vue")
   },
   {
     path: '/product',

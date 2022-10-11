@@ -7,6 +7,12 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import axios from "axios";
+import moment from 'moment-timezone'
+
+
+moment.tz.setDefault('europe/berlin')
+
+Date.prototype.toJSON = function(){ return moment(this).format(); }
 
 axios.defaults.baseURL = "https://pgm-services.herokuapp.com/";
 //axios.defaults.baseURL = "http://localhost:8081/";

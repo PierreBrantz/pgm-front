@@ -17,6 +17,8 @@
         <b-nav-item v-if="showUserBoard" href="/producer">Contrat</b-nav-item >
 
         <b-nav-item href="/season" v-if="showAdminBoard">Saisons</b-nav-item>
+        
+        <b-nav-item href="/weeklyPlanner" v-if="showAdminBoard">Semainier</b-nav-item>
 
         <b-nav-item-dropdown text="Paramètres" v-if="showAdminBoard">
           <b-dropdown-item href="/addproducer">Création Producteur</b-dropdown-item>

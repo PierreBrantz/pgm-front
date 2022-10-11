@@ -35,7 +35,7 @@ export default {
       rowData: null,
       columnDefs: null,
       modules: AllCommunityModules,
-      headerHeight: null,
+      headerHeight: 20,
       products: []
     };
   },
@@ -70,8 +70,7 @@ export default {
    // this.gridApi.sizeColumnsToFit();
   },
   beforeMount() {
-    this.headerHeight = 20;
-    this.gridOptions = {
+     this.gridOptions = {
       onCellValueChanged: function (event) {
         const json =
           axios
