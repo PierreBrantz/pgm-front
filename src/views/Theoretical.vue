@@ -735,18 +735,18 @@ export default {
           var sum = 0;
           for (let i = 0; i < params.data.quantities.length; i++) {
             sum +=
-              (params.data.quantities[i].quantity1 * params.data.price * params.data.seasonalityProduct.january || 0) +
-              (params.data.quantities[i].quantity2 * params.data.price * params.data.seasonalityProduct.february || 0) +
-              (params.data.quantities[i].quantity3 * params.data.price * params.data.seasonalityProduct.march || 0) +
-              (params.data.quantities[i].quantity4 * params.data.price * params.data.seasonalityProduct.april || 0) +
-              (params.data.quantities[i].quantity5 * params.data.price * params.data.seasonalityProduct.may || 0) +
-              (params.data.quantities[i].quantity6 * params.data.price * params.data.seasonalityProduct.june || 0) +
-              (params.data.quantities[i].quantity7 * params.data.price * params.data.seasonalityProduct.july || 0) +
-              (params.data.quantities[i].quantity8 * params.data.price * params.data.seasonalityProduct.august || 0) +
-              (params.data.quantities[i].quantity9 * params.data.price * params.data.seasonalityProduct.september || 0) +
-              (params.data.quantities[i].quantity10 * params.data.price * params.data.seasonalityProduct.october || 0) +
-              (params.data.quantities[i].quantity11 * params.data.price * params.data.seasonalityProduct.november || 0) +
-              (params.data.quantities[i].quantity12 * params.data.price * params.data.seasonalityProduct.december || 0);
+              (params.data.quantities[i].quantity1 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.january-1].percent || 0) +
+              (params.data.quantities[i].quantity2 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.february-1].percent || 0) +
+              (params.data.quantities[i].quantity3 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.march-1].percent || 0) +
+              (params.data.quantities[i].quantity4 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.april-1].percent || 0) +
+              (params.data.quantities[i].quantity5 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.may-1].percent || 0) +
+              (params.data.quantities[i].quantity6 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.june-1].percent || 0) +
+              (params.data.quantities[i].quantity7 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.july-1].percent || 0) +
+              (params.data.quantities[i].quantity8 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.august-1].percent || 0) +
+              (params.data.quantities[i].quantity9 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.september-1].percent || 0) +
+              (params.data.quantities[i].quantity10 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.october-1].percent || 0) +
+              (params.data.quantities[i].quantity11 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.november-1].percent || 0) +
+              (params.data.quantities[i].quantity12 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.december-1].percent || 0);
           }
           
             return sum.toFixed(2)  + '€';
@@ -763,18 +763,19 @@ export default {
           var sum = 0;
           for (let i = 0; i < params.data.realQuantities.length; i++) {
             sum +=
-              (params.data.realQuantities[i].quantity1 * params.data.price * params.data.seasonalityProduct.january || 0) +
-              (params.data.realQuantities[i].quantity2 * params.data.price * params.data.seasonalityProduct.february || 0) +
-              (params.data.realQuantities[i].quantity3 * params.data.price * params.data.seasonalityProduct.march || 0) +
-              (params.data.realQuantities[i].quantity4 * params.data.price * params.data.seasonalityProduct.april || 0) +
-              (params.data.realQuantities[i].quantity5 * params.data.price * params.data.seasonalityProduct.may || 0) +
-              (params.data.realQuantities[i].quantity6 * params.data.price * params.data.seasonalityProduct.june || 0) +
-              (params.data.realQuantities[i].quantity7 * params.data.price * params.data.seasonalityProduct.july || 0) +
-              (params.data.realQuantities[i].quantity8 * params.data.price * params.data.seasonalityProduct.august || 0) +
-              (params.data.realQuantities[i].quantity9 * params.data.price * params.data.seasonalityProduct.september || 0) +
-              (params.data.realQuantities[i].quantity10 * params.data.price * params.data.seasonalityProduct.october || 0) +
-              (params.data.realQuantities[i].quantity11 * params.data.price * params.data.seasonalityProduct.november || 0) +
-              (params.data.realQuantities[i].quantity12 * params.data.price * params.data.seasonalityProduct.december || 0) ;
+              
+               (params.data.realQuantities[i].quantity1 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.january - 1].percent || 0) +
+              (params.data.realQuantities[i].quantity2 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.february - 1].percent || 0) +
+              (params.data.realQuantities[i].quantity3 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.march - 1].percent || 0) +
+              (params.data.realQuantities[i].quantity4 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.april - 1].percent || 0) +
+              (params.data.realQuantities[i].quantity5 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.may - 1 ].percent || 0) +
+              (params.data.realQuantities[i].quantity6 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.june - 1].percent || 0) +
+              (params.data.realQuantities[i].quantity7 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.july - 1].percent || 0) +
+              (params.data.realQuantities[i].quantity8 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.august - 1].percent || 0) +
+              (params.data.realQuantities[i].quantity9 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.september - 1].percent || 0) +
+              (params.data.realQuantities[i].quantity10 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.october - 1].percent || 0) +
+              (params.data.realQuantities[i].quantity11 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.november - 1].percent || 0) +
+              (params.data.realQuantities[i].quantity12 * params.data.price * params.data.seasonalities[params.data.seasonalityProduct.december - 1].percent || 0);
           }
           
             return sum.toFixed(2)  + '€';

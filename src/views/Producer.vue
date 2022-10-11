@@ -844,45 +844,46 @@ export default {
         width: 90,
         pinned: "right",
         valueGetter: function (params) {
+          console.log(params.data);
           if (!params.data.currentRealQuantity) return 0;
           return (
             (
               (params.data.currentRealQuantity.quantity1 *
                 params.data.price *
-                params.data.seasonalityProduct.january || 0) +
+                params.data.seasonalities[params.data.seasonalityProduct.january-1].percent || 0) +
               (params.data.currentRealQuantity.quantity2 *
                 params.data.price *
-                params.data.seasonalityProduct.february || 0) +
+                params.data.seasonalities[params.data.seasonalityProduct.february-1].percent || 0) +
               (params.data.currentRealQuantity.quantity3 *
                 params.data.price *
-                params.data.seasonalityProduct.march || 0) +
+                params.data.seasonalities[params.data.seasonalityProduct.march-1].percent || 0) +
               (params.data.currentRealQuantity.quantity4 *
                 params.data.price *
-                params.data.seasonalityProduct.april || 0) +
+                params.data.seasonalities[params.data.seasonalityProduct.april-1].percent || 0) +
               (params.data.currentRealQuantity.quantity5 *
                 params.data.price *
-                params.data.seasonalityProduct.may || 0) +
+                params.data.seasonalities[params.data.seasonalityProduct.may-1].percent || 0) +
               (params.data.currentRealQuantity.quantity6 *
                 params.data.price *
-                params.data.seasonalityProduct.june || 0) +
+                params.data.seasonalities[params.data.seasonalityProduct.june-1].percent || 0) +
               (params.data.currentRealQuantity.quantity7 *
                 params.data.price *
-                params.data.seasonalityProduct.july || 0) +
+                params.data.seasonalities[params.data.seasonalityProduct.july-1].percent || 0) +
               (params.data.currentRealQuantity.quantity8 *
                 params.data.price *
-                params.data.seasonalityProduct.august || 0) +
+                params.data.seasonalities[params.data.seasonalityProduct.august-1].percent || 0) +
               (params.data.currentRealQuantity.quantity9 *
                 params.data.price *
-                params.data.seasonalityProduct.september || 0) +
+                params.data.seasonalities[params.data.seasonalityProduct.september-1].percent || 0) +
               (params.data.currentRealQuantity.quantity10 *
                 params.data.price *
-                params.data.seasonalityProduct.october || 0) +
+                params.data.seasonalities[params.data.seasonalityProduct.october-1].percent || 0) +
               (params.data.currentRealQuantity.quantity11 *
                 params.data.price *
-                params.data.seasonalityProduct.november || 0) +
+                params.data.seasonalities[params.data.seasonalityProduct.november-1].percent || 0) +
               (params.data.currentRealQuantity.quantity12 *
                 params.data.price *
-                params.data.seasonalityProduct.december || 0)
+                params.data.seasonalities[params.data.seasonalityProduct.december-1].percent || 0)
             ).toFixed(2) + "€"
           );
         },
