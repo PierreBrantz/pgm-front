@@ -249,7 +249,7 @@
           <label>ID dans l'e-shop :</label>
         </b-col>
         <b-col cols="3" class="p-1">
-          <b-form-input id="eshopId" v-model="form.eshopId"  type="number"></b-form-input>
+          <b-form-input id="eshopId" v-model="form.eshopId" ></b-form-input>
         </b-col>
       </b-row>
 

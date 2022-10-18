@@ -10,7 +10,15 @@
         :columnDefs="columnDefs"
         :modules="modules"
         :headerHeight="headerHeight"
+         @cell-clicked="onCellClicked"
       ></ag-grid-vue>
+
+      <theorical-add-product-to-producer-modal
+      v-if="currentProduct != null"
+        :product="currentProduct"
+        
+      >
+      </theorical-add-product-to-producer-modal>
     </div>
   </div>
 </template>
@@ -21,6 +29,7 @@ import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { AllCommunityModules } from "@ag-grid-community/all-modules";
 import axios from "axios";
+import TheoricalAddProductToProducerModal from "../components/TheoricalAddProductToProducerModal.vue";
 
 const THEORETICAL_QUANTITY_COLOR = "#15b3d629";
 const TOTAL_THEO_COLOR = "#d9ffc6b8";
@@ -36,7 +45,8 @@ export default {
       columnDefs: null,
       modules: AllCommunityModules,
       headerHeight: 20,
-      products: []
+      products: [],
+      currentProduct: null
     };
   },
   computed: {
@@ -48,6 +58,7 @@ export default {
 
   components: {
     AgGridVue,
+    "theorical-add-product-to-producer-modal": TheoricalAddProductToProducerModal,
   },
   methods: {
     onGridReady(params) {
@@ -59,6 +70,10 @@ export default {
       });
 
       params.api.sizeColumnsToFit();
+    },
+    onCellClicked(arg) {   
+      this.currentProduct = arg.data;  
+      this.$root.$emit("bv::show::modal", "theorical-add-product-to-producer-modal", "#btnShow");
     },
   },
   mounted() {

@@ -72,7 +72,7 @@ import SeasonNameModal from "../components/SeasonNameModal.vue";
 import AddSeasonModal from "../components/AddSeasonModal.vue";
 import axios from "axios";
 import { AgGridVue } from "ag-grid-vue";
-import CONST from "../services/constant.js";
+
 
 
 export default {
