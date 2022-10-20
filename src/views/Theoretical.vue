@@ -10,7 +10,7 @@
         :columnDefs="columnDefs"
         :modules="modules"
         :headerHeight="headerHeight"
-         @cell-clicked="onCellClicked"
+    
       ></ag-grid-vue>
 
       <theorical-add-product-to-producer-modal
