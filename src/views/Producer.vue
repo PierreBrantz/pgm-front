@@ -163,8 +163,7 @@ export default {
   methods: {
 
      async onCellValueChanged(event) {  
-       console.log(event.data);     
-       const json = await axios
+         const json = await axios
           .post(
             "/products/" +
               event.data.id +
@@ -387,18 +386,19 @@ export default {
 
       params.api.sizeColumnsToFit();
     },
-    async findProducerByAbr(arg) {
-      const json = await axios
-        .get("/producers/abr/" + arg)
-        .then((response) => (this.requests = response.data));
-
-      return json;
-    },
+    
 
     async changeProducer(arg) {
+      
       if (this.showUserBoard) {
-        arg = await this.findProducerByAbr(this.currentUser.username).Id;
+        await axios
+          .get("/producers/abr/" + this.currentUser.username)
+          .then((response) => {
+            (this.requests = response.data)})
+            arg = this.requests.id;
+          ;
       }
+
 
       if (arg) {
         const json = await axios
@@ -412,6 +412,7 @@ export default {
     },
 
     async addProductClick() {
+      console.log(this.selectedProducer);
       if (this.selectedProducer == null) {
         this.$bvToast.toast("Veuillez choisir un producteur...", {
           title: "Info",

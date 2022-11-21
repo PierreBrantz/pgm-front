@@ -70,6 +70,7 @@
           </b-form-invalid-feedback>
         </b-col>
       </b-row>
+      
       <b-row class="m-1">
         <b-col sm="3">
           <label>Entreprise :</label>
@@ -82,6 +83,56 @@
           ></b-form-input>
         </b-col>
       </b-row>
+
+
+      <b-row class="m-1">
+         <b-col sm="3">
+          <label>Certification :</label>
+        </b-col>
+         <b-col sm="8">
+          <b-form-select
+            v-model="selectedCertificate"
+            :options="certificateList"
+          ></b-form-select>
+        </b-col>
+        <!--
+        <b-col sm="1">
+          <b-icon
+            @click="editCertificate"
+            variant="primary"
+            icon="pencil"
+            scale="1.5"
+            aria-hidden="true"
+          ></b-icon>
+        </b-col>
+        -->
+      </b-row>
+
+
+
+      <b-row class="m-1">
+         <b-col sm="3">
+          <label>Type :</label>
+        </b-col>
+         <b-col sm="8">
+          <b-form-select
+            v-model="selectedProducerType"
+            :options="producerTypeList"
+          ></b-form-select>
+        </b-col>
+        <!--
+        <b-col sm="1">
+          <b-icon
+            @click="editProducerType"
+            variant="primary"
+            icon="pencil"
+            scale="1.5"
+            aria-hidden="true"
+          ></b-icon>
+        </b-col>
+        -->
+      </b-row>
+
       <b-row class="m-1">
         <b-col sm="3">
           <label>N° :</label>
@@ -231,11 +282,18 @@ export default {
           gsm: "",
           mail: "",
           account: "",
-          tva: "",
+          tva: ""
         },
       ],
       selectedProducer: null,
       producers: [{ value: null, text: "Choisir un producteur..." }],
+      selectedCertificate: null,
+      certificates: [],
+      certificateList: [{ value: null, text: "Choisir une certification..." }],
+      selectedProducerType: null,
+      producerTypes: [],
+      producerTypeList: [{ value: null, text: "Choisir un type..." }]
+
     };
   },
 
@@ -244,6 +302,8 @@ export default {
       this.$router.push("/login");
     }
     this.fetchProducers();
+    this.fetchCertificates();
+    this.fetchProducerTypes();
   },
   computed: {
     currentUser() {
@@ -264,8 +324,53 @@ export default {
         .get("/producers/" + arg)
         .then((response) => (this.requests = response.data));
       this.form = json;
+       if(this.form.certificate != null)
+          this.selectedCertificate = this.form.certificate.id;
+        if(this.form.producerType != null)
+          this.selectedProducerType = this.form.producerType.id;
     },
+    async fetchCertificates() {
+      const json = await axios
+        .get("/certificates")
+        .then((response) => (this.requests = response.data));
+        this.certificates = json;
+      json.forEach((element) =>
+        this.certificateList.push({ value: element.id, text: element.name })
+      );
+    },
+    async fetchProducerTypes() {
+      const json = await axios
+        .get("/producerTypes")
+        .then((response) => (this.requests = response.data));
+        this.producerTypes = json;
+      json.forEach((element) =>
+        this.producerTypeList.push({ value: element.id, text: element.name })
+      );
+    },
+       editCertificate(arg){ 
+      //this.$root.$emit("bv::show::modal", "product-label-modal", "#btnShow");
+       },
+
+         editProducerType(arg){ 
+      //this.$root.$emit("bv::show::modal", "product-label-modal", "#btnShow");
+       },
+    
     onSubmit(event) {
+      event.preventDefault();
+
+        this.form.certificate =  this.certificates.find((item) => {
+              if (item.id === this.selectedCertificate) {
+                return item.id;
+              }
+        });
+
+        this.form.producerType =  this.producerTypes.find((item) => {
+              if (item.id === this.selectedProducerType) {
+                return item.id;
+              }
+        });
+
+
       axios
         .post(
           "/producers",
@@ -284,9 +389,19 @@ export default {
             mail: this.form.mail,
             account: this.form.account,
             tva: this.form.tva,
+            certificate : this.form.certificate,
+            producerType: this.form.producerType
           })
         )
-        .then((response) => (this.producers.push({ value: response.data.id, text: response.data.abr})));
+        .then((response) => {
+          var add = true;
+        this.producers.find((item) => {
+        if (item.text === response.data.abr)
+          add = false;
+        });
+        if(add)
+          this.producers.push({ value: response.data.id, text: response.data.abr});
+          });
       
       this.clean();
 
@@ -330,7 +445,11 @@ export default {
           mail: "",
           account: "",
           tva: "",
-        },]
+          certificate: ""
+        },],
+        this.selectedCertificate = null;
+        this.selectedProducer = null;
+        this.selectedProducerType = null;
     }
   },
 };

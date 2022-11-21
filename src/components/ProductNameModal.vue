@@ -30,11 +30,28 @@ export default {
   methods: {
     onSubmit(event) {
       event.preventDefault();
+      var add = true;
+      this.products.find((item) => {
+        if (item.name === this.newName)
+          add = false;
+        });
+    
+      if(add){
       axios
         .post("/products/name/" + this.newName)
-        .then((response) => {          
-          this.productList.push({ value: response.data, text: this.newName });
-          });    
+        .then((response) => { 
+           this.productList.push({ value: response.data, text: this.newName });
+        });
+      }
+        else{
+          this.$bvToast.toast("Le nom de produit existe déja.", {
+          title: "Info",
+          variant: "danger",
+          solid: true,
+        });
+        }
+        
+           
 
       this.$bvModal.hide("product-name-modal");
     },
