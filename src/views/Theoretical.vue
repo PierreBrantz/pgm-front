@@ -77,12 +77,8 @@ export default {
     },
     async handleUpdate(products) {
       await axios.post("/products", products);
+        this.gridApi.setRowData(this.rowData);
 
-      const json = await axios
-        .get("/products")
-        .then((response) => (this.requests = response.data))
-        .then((rowData) => (this.rowData = rowData));
-      this.rowData = json;
     },
     onCellDoubleClicked(arg) {
       if (arg.column.colId == "realJanuary" || 
@@ -166,6 +162,7 @@ export default {
             editable: true,
             valueParser: numberParser,
             resizable: true,
+            
             cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
             valueGetter: function (params) {
               if (params.data.quantities[0]) {
@@ -194,6 +191,7 @@ export default {
             field: "realJanuary",
             editable: false,
             resizable: true,
+           valueFormatter : numberCellFormatter,
             valueParser: numberParser,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
@@ -244,6 +242,7 @@ export default {
             editable: false,
             field: "realFebruary",
             valueParser: numberParser,
+            valueFormatter : numberCellFormatter,
             resizable: true,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
@@ -294,6 +293,7 @@ export default {
             editable: false,
             resizable: true,
             valueParser: numberParser,
+            valueFormatter : numberCellFormatter,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -343,6 +343,7 @@ export default {
             editable: false,
             resizable: true,
             valueParser: numberParser,
+            valueFormatter : numberCellFormatter,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -392,6 +393,7 @@ export default {
             editable: false,
             resizable: true,
             valueParser: numberParser,
+            valueFormatter : numberCellFormatter,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -441,6 +443,7 @@ export default {
             editable: false,
             resizable: true,
             valueParser: numberParser,
+            valueFormatter : numberCellFormatter,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -490,6 +493,7 @@ export default {
             editable: false,
             resizable: true,
             valueParser: numberParser,
+            valueFormatter : numberCellFormatter,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -539,6 +543,7 @@ export default {
             editable: false,
             resizable: true,
             valueParser: numberParser,
+            valueFormatter : numberCellFormatter,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -561,6 +566,7 @@ export default {
             editable: true,
             resizable: true,
             valueParser: numberParser,
+            valueFormatter : numberCellFormatter,
             cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
@@ -588,6 +594,7 @@ export default {
             editable: false,
             resizable: true,
             valueParser: numberParser,
+            valueFormatter : numberCellFormatter,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -637,6 +644,7 @@ export default {
             editable: false,
             resizable: true,
             valueParser: numberParser,
+            valueFormatter : numberCellFormatter,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -687,6 +695,7 @@ export default {
             editable: false,
             resizable: true,
             valueParser: numberParser,
+            valueFormatter : numberCellFormatter,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -734,6 +743,7 @@ export default {
           {
             headerName: "Réel",
             field: "realDecember",
+            valueFormatter : numberCellFormatter,
             editable: false,
             resizable: true,
             valueParser: numberParser,
@@ -786,23 +796,26 @@ export default {
             width: 70,
             pinned: "right",
             resizable: true,
+            type: 'numericColumn',
+            valueFormatter: numberCellFormatter,
+          
             cellStyle: { "background-color": TOTAL_REAL_COLOR },
             valueGetter: function (params) {
               var sum = 0;
               for (let i = 0; i < params.data.realQuantities.length; i++) {
                 sum +=
-                  params.data.realQuantities[i].quantity1 +
-                  params.data.realQuantities[i].quantity2 +
-                  params.data.realQuantities[i].quantity3 +
-                  params.data.realQuantities[i].quantity4 +
-                  params.data.realQuantities[i].quantity5 +
-                  params.data.realQuantities[i].quantity6 +
-                  params.data.realQuantities[i].quantity7 +
-                  params.data.realQuantities[i].quantity8 +
-                  params.data.realQuantities[i].quantity9 +
-                  params.data.realQuantities[i].quantity10 +
-                  params.data.realQuantities[i].quantity11 +
-                  params.data.realQuantities[i].quantity12;
+                  (params.data.realQuantities[i].quantity1 == null ? 0 : Number(params.data.realQuantities[i].quantity1)) +
+                  (params.data.realQuantities[i].quantity2 == null ? 0 : Number(params.data.realQuantities[i].quantity2)) +
+                  (params.data.realQuantities[i].quantity3 == null ? 0 : Number(params.data.realQuantities[i].quantity3)) +
+                  (params.data.realQuantities[i].quantity4 == null ? 0 : Number(params.data.realQuantities[i].quantity4)) +
+                  (params.data.realQuantities[i].quantity5 == null ? 0 : Number(params.data.realQuantities[i].quantity5)) +
+                  (params.data.realQuantities[i].quantity6 == null ? 0 : Number(params.data.realQuantities[i].quantity6)) +
+                  (params.data.realQuantities[i].quantity7 == null ? 0 : Number(params.data.realQuantities[i].quantity7)) +
+                  (params.data.realQuantities[i].quantity8 == null ? 0 : Number(params.data.realQuantities[i].quantity8)) +
+                  (params.data.realQuantities[i].quantity9 == null ? 0 : Number(params.data.realQuantities[i].quantity9)) +
+                  (params.data.realQuantities[i].quantity10 == null ? 0 : Number(params.data.realQuantities[i].quantity10)) +
+                  (params.data.realQuantities[i].quantity11 == null ? 0 : Number(params.data.realQuantities[i].quantity11)) +
+                  (params.data.realQuantities[i].quantity12 == null ? 0 : Number(params.data.realQuantities[i].quantity12));
               }
 
               return sum;
@@ -895,6 +908,7 @@ export default {
             width: 70,
             pinned: "right",
             resizable: true,
+            
             cellStyle: { "background-color": TOTAL_REAL_COLOR },
             valueGetter: function (params) {
               var sum = 0;
@@ -976,6 +990,12 @@ export default {
 };
 window.numberParser = function numberParser(params) {
   return Number(params.newValue);
+};
+
+window.numberCellFormatter = function numberCellFormatter(params) {
+  return Math.floor(params.value)
+    .toString()
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1');
 };
 </script>
  
