@@ -197,7 +197,7 @@ export default {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
                 for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += params.data.realQuantities[i].quantity1;
+                  sum += Number(params.data.realQuantities[i].quantity1);
                 }
                 return sum;
               }
@@ -248,7 +248,7 @@ export default {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
                 for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += params.data.realQuantities[i].quantity2;
+                  sum += Number(params.data.realQuantities[i].quantity2);
                 }
                 return sum;
               }
@@ -298,7 +298,7 @@ export default {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
                 for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += params.data.realQuantities[i].quantity3;
+                  sum += Number(params.data.realQuantities[i].quantity3);
                 }
                 return sum;
               }
@@ -348,7 +348,7 @@ export default {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
                 for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += params.data.realQuantities[i].quantity4;
+                  sum += Number(params.data.realQuantities[i].quantity4);
                 }
                 return sum;
               }
@@ -398,7 +398,7 @@ export default {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
                 for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += params.data.realQuantities[i].quantity5;
+                  sum += Number(params.data.realQuantities[i].quantity5);
                 }
                 return sum;
               }
@@ -448,7 +448,7 @@ export default {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
                 for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += params.data.realQuantities[i].quantity6;
+                  sum += Number(params.data.realQuantities[i].quantity6);
                 }
                 return sum;
               }
@@ -498,7 +498,7 @@ export default {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
                 for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += params.data.realQuantities[i].quantity7;
+                  sum += Number(params.data.realQuantities[i].quantity7);
                 }
                 return sum;
               }
@@ -548,7 +548,7 @@ export default {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
                 for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += params.data.realQuantities[i].quantity8;
+                  sum += Number(params.data.realQuantities[i].quantity8);
                 }
                 return sum;
               }
@@ -599,7 +599,7 @@ export default {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
                 for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += params.data.realQuantities[i].quantity9;
+                  sum += Number(params.data.realQuantities[i].quantity9);
                 }
                 return sum;
               }
@@ -649,7 +649,7 @@ export default {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
                 for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += params.data.realQuantities[i].quantity10;
+                  sum += Number(params.data.realQuantities[i].quantity10);
                 }
                 return sum;
               }
@@ -700,7 +700,7 @@ export default {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
                 for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += params.data.realQuantities[i].quantity11;
+                  sum += Number(params.data.realQuantities[i].quantity11);
                 }
                 return sum;
               }
@@ -751,7 +751,7 @@ export default {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
                 for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += params.data.realQuantities[i].quantity12;
+                  sum += Number(params.data.realQuantities[i].quantity12);
                 }
                 return sum;
               }
