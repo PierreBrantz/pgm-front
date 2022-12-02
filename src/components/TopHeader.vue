@@ -24,7 +24,7 @@
           <b-dropdown-item href="/addproducer">Création Producteur</b-dropdown-item>
           <b-dropdown-item href="/addproduct">Création Produit</b-dropdown-item>
           <b-dropdown-item href="/editproduct">Edition Produit</b-dropdown-item>
-          <b-dropdown-item href="/paramcontract">Contrat</b-dropdown-item>
+          <b-dropdown-item href="/paramcontract">Paramètres</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
 

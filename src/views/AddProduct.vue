@@ -85,6 +85,40 @@
         </b-col>
       </b-row>
 
+        <b-row class="m-1">
+        <b-col class="p-1" cols="3">
+          <label>Quantité :</label>
+        </b-col>
+        <b-col class="p-1" cols="3">
+          <b-form-input
+            id="quantityId"
+            v-model="form.quantity"
+          ></b-form-input>
+        </b-col>
+      </b-row>
+
+      <b-row class="m-1">
+        <b-col cols="3" class="p-1">
+          <label>Affichage condensé :</label>
+        </b-col>
+        <b-col cols="3" class="p-1">
+          <b-form-checkbox v-model="form.compactDisplay" name="check-button" switch>
+          </b-form-checkbox>
+        </b-col>
+      </b-row>
+
+        <b-row class="m-1">
+        <b-col class="p-1" cols="3">
+          <label>Calibrage :</label>
+        </b-col>
+        <b-col class="p-1" cols="3">
+          <b-form-input
+            id="calibrationId"
+            v-model="form.calibration"
+          ></b-form-input>
+        </b-col>
+      </b-row>
+
       <b-row class="m-1">
         <b-col class="p-1" cols="3">
           <label>Label :</label>
@@ -103,18 +137,6 @@
             scale="1.5"
             aria-hidden="true"
           ></b-icon>
-        </b-col>
-      </b-row>
-
-      <b-row class="m-1">
-        <b-col class="p-1" cols="3">
-          <label>Calibrage :</label>
-        </b-col>
-        <b-col class="p-1" cols="3">
-          <b-form-input
-            id="calibrationId"
-            v-model="form.calibration"
-          ></b-form-input>
         </b-col>
       </b-row>
 
@@ -512,8 +534,8 @@ export default {
         
     },
   onDelete(event) {
-  //  event.preventDefault();
-      console.
+    event.preventDefault();
+      
       axios.delete("/products/" + this.selectedProduct);
       this.productList = [{ value: null, text: "Choisir un produit..." }];
       

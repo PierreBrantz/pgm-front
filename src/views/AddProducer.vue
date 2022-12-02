@@ -133,6 +133,31 @@
         -->
       </b-row>
 
+
+
+      <b-row class="m-1">
+         <b-col sm="3">
+          <label>Origine :</label>
+        </b-col>
+         <b-col sm="8">
+          <b-form-select
+            v-model="selectedProducerOrigin"
+            :options="producerOriginList"
+          ></b-form-select>
+        </b-col>
+        <!--
+        <b-col sm="1">
+          <b-icon
+            @click="editProducerType"
+            variant="primary"
+            icon="pencil"
+            scale="1.5"
+            aria-hidden="true"
+          ></b-icon>
+        </b-col>
+        -->
+      </b-row>
+
       <b-row class="m-1">
         <b-col sm="3">
           <label>N° :</label>
@@ -267,24 +292,7 @@ export default {
   props: [],
   data() {
     return {
-      form: [
-        {
-          id: "",
-          name: "",
-          firstName: "",
-          abr: "",
-          company: "",
-          number: "",
-          road: "",
-          postCode: "",
-          town: "",
-          phone: "",
-          gsm: "",
-          mail: "",
-          account: "",
-          tva: ""
-        },
-      ],
+      form: [],
       selectedProducer: null,
       producers: [{ value: null, text: "Choisir un producteur..." }],
       selectedCertificate: null,
@@ -292,7 +300,10 @@ export default {
       certificateList: [{ value: null, text: "Choisir une certification..." }],
       selectedProducerType: null,
       producerTypes: [],
-      producerTypeList: [{ value: null, text: "Choisir un type..." }]
+      producerTypeList: [{ value: null, text: "Choisir un type..." }],
+      selectedProducerOrigin: null,
+      producerOrigins: [],
+      producerOriginList: [{ value: null, text: "Choisir une origine..." }]
 
     };
   },
@@ -304,6 +315,7 @@ export default {
     this.fetchProducers();
     this.fetchCertificates();
     this.fetchProducerTypes();
+    this.fetchProducerOrigins();
   },
   computed: {
     currentUser() {
@@ -328,6 +340,8 @@ export default {
           this.selectedCertificate = this.form.certificate.id;
         if(this.form.producerType != null)
           this.selectedProducerType = this.form.producerType.id;
+            if(this.form.producerOrigin != null)
+          this.selectedProducerOrigin = this.form.producerOrigin.id;
     },
     async fetchCertificates() {
       const json = await axios
@@ -347,6 +361,15 @@ export default {
         this.producerTypeList.push({ value: element.id, text: element.name })
       );
     },
+    async fetchProducerOrigins() {
+      const json = await axios
+        .get("/producerOrigins")
+        .then((response) => (this.requests = response.data));
+        this.producerOrigins = json;
+      json.forEach((element) =>
+        this.producerOriginList.push({ value: element.id, text: element.name })
+      );
+    },
        editCertificate(arg){ 
       //this.$root.$emit("bv::show::modal", "product-label-modal", "#btnShow");
        },
@@ -357,7 +380,7 @@ export default {
     
     onSubmit(event) {
       event.preventDefault();
-
+     
         this.form.certificate =  this.certificates.find((item) => {
               if (item.id === this.selectedCertificate) {
                 return item.id;
@@ -370,28 +393,17 @@ export default {
               }
         });
 
+        this.form.producerOrigin =  this.producerOrigins.find((item) => {
+              if (item.id === this.selectedProducerOrigin) {
+                return item.id;
+              }
+        });
+
 
       axios
         .post(
           "/producers",
-          JSON.stringify({
-            id: this.form.id,
-            name: this.form.name,
-            firstName: this.form.firstName,
-            abr: this.form.abr,
-            company: this.form.company,
-            number: this.form.number,
-            road: this.form.road,
-            postCode: this.form.postCode,
-            town: this.form.town,
-            phone: this.form.phone,
-            gsm: this.form.gsm,
-            mail: this.form.mail,
-            account: this.form.account,
-            tva: this.form.tva,
-            certificate : this.form.certificate,
-            producerType: this.form.producerType
-          })
+            this.form
         )
         .then((response) => {
           var add = true;
@@ -429,27 +441,11 @@ export default {
      
     },
     clean(){
-      this.form = [
-        {
-          id: "",
-          name: "",
-          firstName: "",
-          abr: "",
-          company: "",
-          number: "",
-          road: "",
-          postCode: "",
-          town: "",
-          phone: "",
-          gsm: "",
-          mail: "",
-          account: "",
-          tva: "",
-          certificate: ""
-        },],
+      this.form = [],
         this.selectedCertificate = null;
         this.selectedProducer = null;
         this.selectedProducerType = null;
+        this.selectedProducerOrigin = null;
     }
   },
 };

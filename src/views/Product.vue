@@ -172,13 +172,13 @@ export default {
 
 
       this.product = json;
-      console.log(this.product);
+     
 
       this.items2 = [];
       this.fields2 = [];
       this.items = [
         {
-          col1: "Théo.",
+          col1: "Prop.",
           Janvier: (this.product.quantities[0] ? this.product.quantities[0].quantity1 : 0),
           Février: (this.product.quantities[0] ? this.product.quantities[0].quantity2 : 0),
           Mars: (this.product.quantities[0] ? this.product.quantities[0].quantity3 : 0),
@@ -590,18 +590,24 @@ export default {
             this.product
           )
         
-        .then((response) => (this.requests = response.data));
+        .then((response) => 
+          {
+            
+            this.requests = response.data;
+            this.changeProduct(this.product.id);
+          });
+
+
 
       this.userRow = [];
-      this.changeProduct(this.product.id);
+      //this.changeProduct(this.product.id);
     },
 
     async handleInput(value, data) {
 
-if(value.length == 0){
-  value = 0;
-}
-
+    if(value.length == 0){
+      value = 0;
+    }
       
       switch (data.field.key) {
         case "Janvier":
@@ -615,6 +621,7 @@ if(value.length == 0){
             this.product.producers[data.index].realQuantity.quantity1 =
               value;
           }
+          
           break;
         case "Février":
           if (this.product.producers[data.index].realQuantity == null) {
@@ -742,8 +749,8 @@ if(value.length == 0){
           break;
       }
     
- 
-      this.saveEdit(data.item);
+ this.saveEdit(data.item);
+     
 
     },
   },

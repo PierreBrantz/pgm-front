@@ -74,11 +74,16 @@ export default {
       });
 
       params.api.sizeColumnsToFit();
+       
     },
     async handleUpdate(products) {
-      await axios.post("/products", products);
-        this.gridApi.setRowData(this.rowData);
-
+       await axios.post("/products", products);
+       var params = {
+          force: true,
+          suppressFlash: true,
+          rowNodes: this.rowNodes
+        };
+      this.gridApi.refreshCells(params);
     },
     onCellDoubleClicked(arg) {
       if (arg.column.colId == "realJanuary" || 
@@ -125,10 +130,46 @@ export default {
       {
         headerName: "Légumes",
         field: "name",
-        width: 150,
+        width: 180,
         sortable: true,
         pinned: "left",
         resizable: true,
+        valueGetter: function (params) {
+          if (params.data.calibration) {
+            return params.data.name + " (" + params.data.calibration + ")";
+          }
+          else{
+            return params.data.name;
+          }
+        },
+      },
+       {
+        headerName: "Label",
+        field: "productLabel",
+        width: 80,
+        sortable: true,
+        pinned: "left",
+        resizable: true,
+        filter: 'agTextColumnFilter',
+        valueGetter: function (params) {
+          if (params.data.productLabel && params.data.productLabel.name) {
+            return params.data.productLabel.name;
+          }
+        },
+      },
+       {
+        headerName: "Origine",
+        field: "productOrigin",
+        width: 60,
+        sortable: true,
+        pinned: "left",
+        resizable: true,
+        filter: 'agTextColumnFilter',
+        valueGetter: function (params) {
+          if (params.data.productOrigin && params.data.productOrigin.name) {
+            return params.data.productOrigin.name;
+          }
+        },
       },
       {
         headerName: "Condit#",
@@ -137,9 +178,16 @@ export default {
         resizable: true,
 
         valueGetter: function (params) {
-          if (params.data.packaging && params.data.packaging.name) {
-            return params.data.packaging.name;
+          
+         if(params.data.productUnit != null){  
+          if(params.data.compactDisplay){
+              return (params.data.nbByPackaging * params.data.quantity) + params.data.productUnit.name;
           }
+          else{
+            return params.data.nbByPackaging + "*" + params.data.quantity + params.data.productUnit.name;
+          }
+         }
+          
         },
       },
       {
@@ -158,7 +206,7 @@ export default {
         headerName: "Janvier",
         children: [
           {
-            headerName: "Théo.",
+            headerName: "Prop.",
             editable: true,
             valueParser: numberParser,
             resizable: true,
@@ -187,7 +235,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Réel",
+            headerName: "Cmd",
             field: "realJanuary",
             editable: false,
             resizable: true,
@@ -210,7 +258,7 @@ export default {
         headerName: "Février",
         children: [
           {
-            headerName: "Théo.",
+            headerName: "Prop.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -238,7 +286,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Réel",
+            headerName: "Cmd",
             editable: false,
             field: "realFebruary",
             valueParser: numberParser,
@@ -262,7 +310,7 @@ export default {
         headerName: "Mars",
         children: [
           {
-            headerName: "Théo.",
+            headerName: "Prop.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -288,7 +336,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Réel",
+            headerName: "Cmd",
             field: "realMarch",
             editable: false,
             resizable: true,
@@ -312,7 +360,7 @@ export default {
         headerName: "Avril",
         children: [
           {
-            headerName: "Théo.",
+            headerName: "Prop.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -338,7 +386,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Réel",
+            headerName: "Cmd",
             field: "realApril",
             editable: false,
             resizable: true,
@@ -362,7 +410,7 @@ export default {
         headerName: "Mai",
         children: [
           {
-            headerName: "Théo.",
+            headerName: "Prop.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -388,7 +436,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Réel",
+            headerName: "Cmd",
             field: "realMay",
             editable: false,
             resizable: true,
@@ -412,7 +460,7 @@ export default {
         headerName: "Juin",
         children: [
           {
-            headerName: "Théo.",
+            headerName: "Prop.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -438,7 +486,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Réel",
+            headerName: "Cmd",
             field: "realJune",
             editable: false,
             resizable: true,
@@ -462,7 +510,7 @@ export default {
         headerName: "Juillet",
         children: [
           {
-            headerName: "Théo.",
+            headerName: "Prop.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -488,7 +536,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Réel",
+            headerName: "Cmd",
             field: "realJuly",
             editable: false,
             resizable: true,
@@ -512,7 +560,7 @@ export default {
         headerName: "Août",
         children: [
           {
-            headerName: "Théo.",
+            headerName: "Prop.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -538,7 +586,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Réel",
+            headerName: "Cmd",
             field: "realAugust",
             editable: false,
             resizable: true,
@@ -562,7 +610,7 @@ export default {
         headerName: "Septembre",
         children: [
           {
-            headerName: "Théo.",
+            headerName: "Prop.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -589,7 +637,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Réel",
+            headerName: "Cmd",
             field: "realSeptember",
             editable: false,
             resizable: true,
@@ -613,7 +661,7 @@ export default {
         headerName: "Octobre",
         children: [
           {
-            headerName: "Théo.",
+            headerName: "Prop.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -639,7 +687,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Réel",
+            headerName: "Cmd",
             field: "realOctober",
             editable: false,
             resizable: true,
@@ -664,7 +712,7 @@ export default {
         headerName: "Novembre",
         children: [
           {
-            headerName: "Théo.",
+            headerName: "Prop.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -690,7 +738,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Réel",
+            headerName: "Cmd",
             field: "realNovember",
             editable: false,
             resizable: true,
@@ -715,7 +763,7 @@ export default {
         headerName: "Décembre",
         children: [
           {
-            headerName: "Théo.",
+            headerName: "Prop.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -741,7 +789,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Réel",
+            headerName: "Cmd",
             field: "realDecember",
             valueFormatter : numberCellFormatter,
             editable: false,
@@ -766,7 +814,7 @@ export default {
         marryChildren: true,
         children: [
           {
-            headerName: "Théo.",
+            headerName: "Prop.",
             width: 70,
             pinned: "right",
             resizable: true,
@@ -792,7 +840,7 @@ export default {
             },
           },
           {
-            headerName: "Réel",
+            headerName: "Cmd",
             width: 70,
             pinned: "right",
             resizable: true,
@@ -829,7 +877,7 @@ export default {
         marryChildren: true,
         children: [
           {
-            headerName: "Théo.",
+            headerName: "Prop.",
             pinned: "right",
             resizable: true,
             width: 70,
@@ -904,7 +952,7 @@ export default {
             },
           },
           {
-            headerName: "Réel",
+            headerName: "Cmd",
             width: 70,
             pinned: "right",
             resizable: true,

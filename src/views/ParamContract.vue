@@ -25,6 +25,17 @@
         </b-col>
       </b-row>
 
+   <b-row class="m-1">
+        <b-col cols="3" class="p-1">
+          <label>Colonne "Proposition" (vue producteur)</label>
+        </b-col>
+        <b-col cols="3" class="p-1">
+          <b-form-checkbox v-model="form.propositionColumn" name="check-button" switch>
+          </b-form-checkbox>
+        </b-col>
+      </b-row>
+
+
       <b-button class="m-3" type="submit" variant="primary">Sauver</b-button>
       </b-form>
   </b-container>
