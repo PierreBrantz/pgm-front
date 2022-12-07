@@ -117,6 +117,7 @@ export default {
   beforeMount() {
     this.gridOptions = {
       onCellClicked: (event) => {
+        console.log(event.data);
         if (!this.currentSeason) this.currentSeason = 1;
         switch (event.colDef.field) {
           case "january": {
@@ -339,11 +340,11 @@ export default {
         case 0:
           return "outline-secondary";
         case 1:
-          return "success";
+          return "warning";warning
         case 2:
-          return "info";
+          return "success";success
         case 3:
-          return "warning";
+          return "info";info
       
       /*case 4:
           return "danger";

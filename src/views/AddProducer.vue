@@ -383,27 +383,63 @@ export default {
      
         this.form.certificate =  this.certificates.find((item) => {
               if (item.id === this.selectedCertificate) {
-                return item.id;
+                return item;
               }
         });
 
         this.form.producerType =  this.producerTypes.find((item) => {
               if (item.id === this.selectedProducerType) {
-                return item.id;
+                return item;
               }
         });
 
         this.form.producerOrigin =  this.producerOrigins.find((item) => {
               if (item.id === this.selectedProducerOrigin) {
-                return item.id;
+                return item;
               }
         });
 
-
+console.log(JSON.stringify({
+              id: this.form.id,
+              name : this.form.name,
+              firstName : this.form.firstName,
+              abr : this.form.abr,
+              company : this.form.company,
+              number : this.form.number,
+              road : this.form.road,
+              postCode : this.form.postCode,
+              town : this.form.town,
+              phone : this.form.phone,
+              gsm : this.form.gsm,
+              mail : this.form.mail,
+              account : this.form.account,
+              tva : this.form.tva,
+              certificate : this.form.certificate,
+              producerType : this.form.producerType,
+              producerOrigin :this.form.producerOrigin}));
       axios
         .post(
           "/producers",
-            this.form
+            JSON.stringify({
+              id: this.form.id,
+              name : this.form.name,
+              firstName : this.form.firstName,
+              abr : this.form.abr,
+              company : this.form.company,
+              number : this.form.number,
+              road : this.form.road,
+              postCode : this.form.postCode,
+              town : this.form.town,
+              phone : this.form.phone,
+              gsm : this.form.gsm,
+              mail : this.form.mail,
+              account : this.form.account,
+              tva : this.form.tva,
+              certificate : this.form.certificate,
+              producerType : this.form.producerType,
+              producerOrigin :this.form.producerOrigin
+
+            })
         )
         .then((response) => {
           var add = true;
@@ -413,9 +449,10 @@ export default {
         });
         if(add)
           this.producers.push({ value: response.data.id, text: response.data.abr});
+         
           });
+       this.clean();
       
-      this.clean();
 
       this.$bvToast.toast("Producteur sauvé.", {
         title: "Info",

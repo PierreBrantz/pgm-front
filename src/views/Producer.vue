@@ -174,7 +174,7 @@ export default {
     }
     this.fetchProducers();
     this.changeProducer();
-
+    this.fetchProductList();
     this.fetchSeasonalities();
     this.gridApi = this.gridOptions.api;
     this.gridColumnApi = this.gridOptions.columnApi;
@@ -509,6 +509,7 @@ export default {
     },
 
     async fetchProductList() {
+      
       const json = await axios
         .get("/products?producerId=" + this.selectedProducer)
         .then((response) => (this.requests = response.data));
