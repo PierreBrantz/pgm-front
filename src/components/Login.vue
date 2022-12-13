@@ -24,7 +24,7 @@
               >
             </div>
           </b-form>
-
+         <b-link to="/changePassword">Mot de passe oublié?</b-link>
           <div class="form-group">
             <div v-if="message" class="alert alert-danger" role="alert">
               {{ message }}
@@ -68,7 +68,6 @@ export default {
           this.$router.push("/");
         },
         (error) => {
-          console.log(error.response);
           this.loading = false;
           this.message = error.response.data.error;
         }

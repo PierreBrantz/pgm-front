@@ -3,6 +3,8 @@ import VueRouter from 'vue-router'
 import FullCalendar from "vue-full-calendar";
 import Login from "../components/Login.vue";
 import Register from "../components/Register.vue";
+import ChangePassword from "../components/ChangePassword.vue";
+
 // lazy-loaded
 const Profile = () => import("../components/Profile.vue")
 
@@ -16,6 +18,10 @@ const routes = [
   {
     path: "/register",
     component: Register,
+  },
+  {
+    path: "/changePassword",
+    component: ChangePassword,
   },
   {
     path: "/profile",

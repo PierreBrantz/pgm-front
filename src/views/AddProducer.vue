@@ -336,6 +336,7 @@ export default {
         .get("/producers/" + arg)
         .then((response) => (this.requests = response.data));
       this.form = json;
+      this.selectedProducer = arg;
        if(this.form.certificate != null)
           this.selectedCertificate = this.form.certificate.id;
         if(this.form.producerType != null)
@@ -399,24 +400,6 @@ export default {
               }
         });
 
-console.log(JSON.stringify({
-              id: this.form.id,
-              name : this.form.name,
-              firstName : this.form.firstName,
-              abr : this.form.abr,
-              company : this.form.company,
-              number : this.form.number,
-              road : this.form.road,
-              postCode : this.form.postCode,
-              town : this.form.town,
-              phone : this.form.phone,
-              gsm : this.form.gsm,
-              mail : this.form.mail,
-              account : this.form.account,
-              tva : this.form.tva,
-              certificate : this.form.certificate,
-              producerType : this.form.producerType,
-              producerOrigin :this.form.producerOrigin}));
       axios
         .post(
           "/producers",
@@ -463,7 +446,6 @@ console.log(JSON.stringify({
     },
 
     deleteProducer(prod) {
-
       axios.delete("/producers/" + this.selectedProducer);
   
       this.clean();
@@ -472,13 +454,14 @@ console.log(JSON.stringify({
         variant: "success",
         solid: true,
       });
+      this.producers= [{ value: null, text: "Choisir un producteur..." }];
 
- 
-      this.producers.splice(this.producers.findIndex(x => x.value === this.selectedProducer), 1);
+      this.fetchProducers();
+    //  this.producers.splice(this.producers.findIndex(x => x.value === this.selectedProducer), 1);
      
     },
     clean(){
-      this.form = [],
+        this.form = [],
         this.selectedCertificate = null;
         this.selectedProducer = null;
         this.selectedProducerType = null;

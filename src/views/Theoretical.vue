@@ -210,6 +210,7 @@ export default {
             editable: true,
             valueParser: numberParser,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.january == 1,
             
             cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
             valueGetter: function (params) {
@@ -221,7 +222,7 @@ export default {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
               if (valueChanged) {
-                if (typeof params.data.quantities[0] === "undefined") {
+                if (params.data.quantities[0] == null) {
                   params.data.quantities[0] = {
                     id: params.data.id,
                     quantity1: newValInt,
@@ -239,9 +240,11 @@ export default {
             field: "realJanuary",
             editable: false,
             resizable: true,
-           valueFormatter : numberCellFormatter,
+            suppressNavigable:(params) => params.data.seasonalityProduct.january == 1,
+            valueFormatter : numberCellFormatter,
             valueParser: numberParser,
             valueGetter: function (params) {
+              console.log(params.data);
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
                 for (let i = 0; i < params.data.realQuantities.length; i++) {
@@ -249,6 +252,7 @@ export default {
                 }
                 return sum;
               }
+              else return 0;
             },
             width: 60,
           },
@@ -262,6 +266,7 @@ export default {
             editable: true,
             resizable: true,
             valueParser: numberParser,
+            suppressNavigable:(params) => params.data.seasonalityProduct.february == 1,
             cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
@@ -272,7 +277,7 @@ export default {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
               if (valueChanged) {
-                if (typeof params.data.quantities[0] === "undefined") {
+                if (params.data.quantities[0] == null) {
                   params.data.quantities[0] = {
                     id: params.data.id,
                     quantity2: newValInt,
@@ -292,6 +297,7 @@ export default {
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.february == 1,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -300,6 +306,7 @@ export default {
                 }
                 return sum;
               }
+              else return 0;
             },
 
             width: 60,
@@ -314,6 +321,7 @@ export default {
             editable: true,
             resizable: true,
             valueParser: numberParser,
+            suppressNavigable:(params) => params.data.seasonalityProduct.march == 1,
             cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
@@ -323,7 +331,7 @@ export default {
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (typeof params.data.quantities[0] === "undefined") {
+              if (params.data.quantities[0] == null) {
                 params.data.quantities[0] = {
                   id: params.data.id,
                   quantity3: newValInt,
@@ -342,6 +350,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
+            suppressNavigable:(params) => params.data.seasonalityProduct.march == 1,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -349,7 +358,9 @@ export default {
                   sum += Number(params.data.realQuantities[i].quantity3);
                 }
                 return sum;
+                
               }
+              else return 0;
             },
 
             width: 60,
@@ -364,6 +375,7 @@ export default {
             editable: true,
             resizable: true,
             valueParser: numberParser,
+            suppressNavigable:(params) => params.data.seasonalityProduct.april == 1,
             cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
@@ -373,7 +385,7 @@ export default {
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (typeof params.data.quantities[0] === "undefined") {
+              if (params.data.quantities[0] == null) {
                 params.data.quantities[0] = {
                   id: params.data.id,
                   quantity4: newValInt,
@@ -392,6 +404,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
+            suppressNavigable:(params) => params.data.seasonalityProduct.april == 1,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -400,6 +413,7 @@ export default {
                 }
                 return sum;
               }
+              else return 0;
             },
 
             width: 60,
@@ -414,6 +428,7 @@ export default {
             editable: true,
             resizable: true,
             valueParser: numberParser,
+            suppressNavigable:(params) => params.data.seasonalityProduct.may == 1,
             cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
@@ -423,7 +438,7 @@ export default {
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (typeof params.data.quantities[0] === "undefined") {
+              if (params.data.quantities[0] == null) {
                 params.data.quantities[0] = {
                   id: params.data.id,
                   quantity5: newValInt,
@@ -442,6 +457,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
+            suppressNavigable:(params) => params.data.seasonalityProduct.may == 1,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -450,6 +466,7 @@ export default {
                 }
                 return sum;
               }
+              else return 0;
             },
 
             width: 60,
@@ -464,6 +481,7 @@ export default {
             editable: true,
             resizable: true,
             valueParser: numberParser,
+            suppressNavigable:(params) => params.data.seasonalityProduct.june == 1,
             cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
@@ -473,7 +491,7 @@ export default {
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (typeof params.data.quantities[0] === "undefined") {
+              if (params.data.quantities[0] == null) {
                 params.data.quantities[0] = {
                   id: params.data.id,
                   quantity6: newValInt,
@@ -492,6 +510,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
+            suppressNavigable:(params) => params.data.seasonalityProduct.june == 1,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -500,6 +519,7 @@ export default {
                 }
                 return sum;
               }
+              else return 0;
             },
 
             width: 60,
@@ -514,6 +534,7 @@ export default {
             editable: true,
             resizable: true,
             valueParser: numberParser,
+            suppressNavigable:(params) => params.data.seasonalityProduct.july == 1,
             cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
@@ -523,7 +544,7 @@ export default {
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (typeof params.data.quantities[0] === "undefined") {
+              if (params.data.quantities[0] == null) {
                 params.data.quantities[0] = {
                   id: params.data.id,
                   quantity7: newValInt,
@@ -542,6 +563,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
+            suppressNavigable:(params) => params.data.seasonalityProduct.july == 1,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -550,6 +572,7 @@ export default {
                 }
                 return sum;
               }
+              else return 0;
             },
 
             width: 60,
@@ -564,6 +587,7 @@ export default {
             editable: true,
             resizable: true,
             valueParser: numberParser,
+            suppressNavigable:(params) => params.data.seasonalityProduct.august == 1,
             cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
@@ -573,7 +597,7 @@ export default {
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (typeof params.data.quantities[0] === "undefined") {
+              if (params.data.quantities[0] == null) {
                 params.data.quantities[0] = {
                   id: params.data.id,
                   quantity8: newValInt,
@@ -592,6 +616,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
+            suppressNavigable:(params) => params.data.seasonalityProduct.august == 1,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -600,6 +625,7 @@ export default {
                 }
                 return sum;
               }
+              else return 0;
             },
 
             width: 60,
@@ -614,7 +640,7 @@ export default {
             editable: true,
             resizable: true,
             valueParser: numberParser,
-            valueFormatter : numberCellFormatter,
+            suppressNavigable:(params) => params.data.seasonalityProduct.september == 1,
             cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
@@ -624,7 +650,7 @@ export default {
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (typeof params.data.quantities[0] === "undefined") {
+              if (params.data.quantities[0] == null) {
                 params.data.quantities[0] = {
                   id: params.data.id,
                   quantity9: newValInt,
@@ -643,6 +669,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
+            suppressNavigable:(params) => params.data.seasonalityProduct.september == 1,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -651,6 +678,7 @@ export default {
                 }
                 return sum;
               }
+              else return 0;
             },
 
             width: 60,
@@ -665,6 +693,7 @@ export default {
             editable: true,
             resizable: true,
             valueParser: numberParser,
+            suppressNavigable:(params) => params.data.seasonalityProduct.october == 1,
             cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
@@ -674,7 +703,7 @@ export default {
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (typeof params.data.quantities[0] === "undefined") {
+              if (params.data.quantities[0] == null) {
                 params.data.quantities[0] = {
                   id: params.data.id,
                   quantity10: newValInt,
@@ -693,6 +722,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
+            suppressNavigable:(params) => params.data.seasonalityProduct.october == 1,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -701,6 +731,7 @@ export default {
                 }
                 return sum;
               }
+              else return 0;
             },
 
             width: 60,
@@ -716,6 +747,7 @@ export default {
             editable: true,
             resizable: true,
             valueParser: numberParser,
+            suppressNavigable:(params) => params.data.seasonalityProduct.november == 1,
             cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
@@ -725,7 +757,7 @@ export default {
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (typeof params.data.quantities[0] === "undefined") {
+              if (params.data.quantities[0] == null) {
                 params.data.quantities[0] = {
                   id: params.data.id,
                   quantity11: newValInt,
@@ -744,6 +776,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
+            suppressNavigable:(params) => params.data.seasonalityProduct.november == 1,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -752,6 +785,7 @@ export default {
                 }
                 return sum;
               }
+              else return 0;
             },
 
             width: 60,
@@ -767,6 +801,7 @@ export default {
             editable: true,
             resizable: true,
             valueParser: numberParser,
+            suppressNavigable:(params) => params.data.seasonalityProduct.december == 1,
             cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
@@ -776,7 +811,7 @@ export default {
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (typeof params.data.quantities[0] === "undefined") {
+              if (params.data.quantities[0] == null) {
                 params.data.quantities[0] = {
                   id: params.data.id,
                   quantity12: newValInt,
@@ -795,6 +830,7 @@ export default {
             editable: false,
             resizable: true,
             valueParser: numberParser,
+            suppressNavigable:(params) => params.data.seasonalityProduct.december == 1,
             valueGetter: function (params) {
               if (params.data.realQuantities[0] != null) {
                 var sum = 0;
@@ -803,6 +839,7 @@ export default {
                 }
                 return sum;
               }
+              else return 0;
             },
 
             width: 60,

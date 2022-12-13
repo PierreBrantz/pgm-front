@@ -509,10 +509,16 @@ export default {
     },
 
     async fetchProductList() {
-      
-      const json = await axios
+      let json = null;
+      if(this.selectedProducer == null){
+        json = await axios
+        .get("/products")
+        .then((response) => (this.requests = response.data));
+      }else{
+      json = await axios
         .get("/products?producerId=" + this.selectedProducer)
         .then((response) => (this.requests = response.data));
+      }
       this.products = json;
       json.forEach((element) =>
         this.productList.push({ value: element.id, text: element.name })
@@ -546,20 +552,13 @@ export default {
       }
 
       if (arg) {
-        if (this.showUserBoard) {
+        
           const json = await axios
             .get("/products?producerId=" + this.selectedProducer)
             .then((response) => (this.requests = response.data))
             .then((rowData) => (this.rowData = rowData));
+          
           this.productsByProducer = json;
-        } else {
-          const json = await axios
-            .get("/products/producer/" + arg)
-            .then((response) => (this.requests = response.data))
-            .then((rowData) => (this.rowData = rowData));
-          this.productsByProducer = json;
-        }
-
         this.producerId = arg;
         this.selectedProducer = this.producerId;
         this.products = [];
@@ -663,6 +662,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleJan,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.january == 1,
             valueGetter: function (params) {
               if (params.data.currentRealQuantity) {
                 return params.data.currentRealQuantity.quantity1;
@@ -692,7 +692,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleJan,
             resizable: true,
-
+            suppressNavigable:(params) => params.data.seasonalityProduct.january == 1,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity1) {
                 return params.data.quantities[0].quantity1;
@@ -712,6 +712,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleFeb,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.february == 1,
             valueGetter: function (params) {
               if (params.data.currentRealQuantity) {
                 return params.data.currentRealQuantity.quantity2;
@@ -741,7 +742,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleFeb,
             resizable: true,
-
+            suppressNavigable:(params) => params.data.seasonalityProduct.february == 1,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity2) {
                 return params.data.quantities[0].quantity2;
@@ -761,6 +762,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleMar,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.march == 1,
             valueGetter: function (params) {
               if (params.data.currentRealQuantity) {
                 return params.data.currentRealQuantity.quantity3;
@@ -788,6 +790,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleMar,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.march == 1,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity3) {
                 return params.data.quantities[0].quantity3;
@@ -807,6 +810,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleApr,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.april == 1,
             valueGetter: function (params) {
               if (params.data.currentRealQuantity) {
                 return params.data.currentRealQuantity.quantity4;
@@ -834,6 +838,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleApr,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.april == 1,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity4) {
                 return params.data.quantities[0].quantity4;
@@ -853,6 +858,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleMay,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.may == 1,
             valueGetter: function (params) {
               if (params.data.currentRealQuantity) {
                 return params.data.currentRealQuantity.quantity5;
@@ -880,6 +886,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleMay,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.may == 1,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity5) {
                 return params.data.quantities[0].quantity5;
@@ -899,6 +906,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleJun,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.june == 1,
             valueGetter: function (params) {
               if (params.data.currentRealQuantity) {
                 return params.data.currentRealQuantity.quantity6;
@@ -926,6 +934,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleJun,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.june == 1,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity6) {
                 return params.data.quantities[0].quantity6;
@@ -945,6 +954,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleJul,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.july == 1,
             valueGetter: function (params) {
               if (params.data.currentRealQuantity) {
                 return params.data.currentRealQuantity.quantity7;
@@ -972,6 +982,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleJul,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.july == 1,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity7) {
                 return params.data.quantities[0].quantity7;
@@ -991,6 +1002,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleAug,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.august == 1,
             valueGetter: function (params) {
               if (params.data.currentRealQuantity) {
                 return params.data.currentRealQuantity.quantity8;
@@ -1018,6 +1030,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleAug,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.august == 1,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity8) {
                 return params.data.quantities[0].quantity8;
@@ -1037,6 +1050,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleSep,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.september == 1,
             valueGetter: function (params) {
               if (params.data.currentRealQuantity) {
                 return params.data.currentRealQuantity.quantity9;
@@ -1064,6 +1078,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleSep,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.september == 1,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity9) {
                 return params.data.quantities[0].quantity9;
@@ -1083,6 +1098,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleOct,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.october == 1,
             valueGetter: function (params) {
               if (params.data.currentRealQuantity) {
                 return params.data.currentRealQuantity.quantity10;
@@ -1110,6 +1126,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleOct,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.october == 1,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity10) {
                 return params.data.quantities[0].quantity10;
@@ -1129,6 +1146,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleNov,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.november == 1,
             valueGetter: function (params) {
               if (params.data.currentRealQuantity) {
                 return params.data.currentRealQuantity.quantity11;
@@ -1156,6 +1174,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleNov,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.november == 1,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity11) {
                 return params.data.quantities[0].quantity11;
@@ -1175,6 +1194,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleDec,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.december == 1,
             valueGetter: function (params) {
               if (params.data.currentRealQuantity) {
                 return params.data.currentRealQuantity.quantity12;
@@ -1202,6 +1222,7 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleDec,
             resizable: true,
+            suppressNavigable:(params) => params.data.seasonalityProduct.december == 1,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity12) {
                 return params.data.quantities[0].quantity12;

@@ -117,7 +117,6 @@ export default {
   beforeMount() {
     this.gridOptions = {
       onCellClicked: (event) => {
-        console.log(event.data);
         if (!this.currentSeason) this.currentSeason = 1;
         switch (event.colDef.field) {
           case "january": {
@@ -177,14 +176,61 @@ export default {
     this.columnDefs = [
       {
         field: "name",
-        width: 300,
-        resizable: true
+        width: 180,
+        resizable: true,
+         pinned: "left",
         
+      },
+             {
+        headerName: "Label",
+        field: "productLabel",
+        width: 60,
+        sortable: true,
+        pinned: "left",
+        resizable: true,
+ 
+        valueGetter: function (params) {
+          if (params.data.productLabel && params.data.productLabel.name) {
+            return params.data.productLabel.name;
+          }
+        },
+      },
+       {
+        headerName: "Origine",
+        field: "productOrigin",
+        width: 60,
+        sortable: true,   
+        resizable: true,
+        pinned: "left",
+        valueGetter: function (params) {
+          if (params.data.productOrigin && params.data.productOrigin.name) {
+            return params.data.productOrigin.name;
+          }
+        },
+      },
+      {
+        headerName: "Condit#",
+        width: 80,    
+        resizable: true,
+        pinned: "left",
+        valueGetter: function (params) {
+          
+         if(params.data.productUnit != null){  
+          if(params.data.compactDisplay){
+              return (params.data.nbByPackaging * params.data.quantity) + params.data.productUnit.name;
+          }
+          else{
+            return params.data.nbByPackaging + "*" + params.data.quantity + params.data.productUnit.name;
+          }
+         }
+          
+        },
       },
       {
         
         field: "january",
         headerName: "janvier",
+        width: 60,    
         cellClass: (params) => {          
           if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.january);
@@ -194,6 +240,7 @@ export default {
       {
         field: "february",
         headerName: "Février",
+        width: 60,    
         cellClass: (params) => {
           if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.february);
@@ -203,6 +250,7 @@ export default {
       {
         field: "march",
         headerName: "Mars",
+        width: 60, 
         cellClass: (params) => {
           if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.march);
@@ -212,6 +260,7 @@ export default {
       {
         field: "april",
         headerName: "Avril",
+        width: 60, 
         cellClass: (params) => {
           if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.april);
@@ -221,6 +270,7 @@ export default {
       {
         field: "may",
         headerName: "Mai",
+        width: 60, 
         cellClass: (params) => {
           if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.may);
@@ -230,6 +280,7 @@ export default {
       {
         field: "june",
         headerName: "Juin",
+        width: 60, 
         cellClass: (params) => {
           if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.june);
@@ -239,6 +290,7 @@ export default {
       {
         field: "july",
         headerName: "Juillet",
+        width: 60, 
         cellClass: (params) => {
           if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.july);
@@ -248,6 +300,7 @@ export default {
       {
         field: "august",
         headerName: "Août",
+        width: 60, 
         cellClass: (params) => {
           if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.august);
@@ -257,6 +310,7 @@ export default {
       {
         field: "september",
         headerName: "Septembre",
+        width: 60, 
         cellClass: (params) => {
           if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.september);
@@ -266,6 +320,7 @@ export default {
       {
         field: "october",
         headerName: "Octobre",
+        width: 60, 
         cellClass: (params) => {
           if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.october);
@@ -275,6 +330,7 @@ export default {
       {
         field: "november",
         headerName: "Novembre",
+        width: 60, 
         cellClass: (params) => {
           if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.november);
@@ -284,6 +340,7 @@ export default {
       {
         field: "december",
         headerName: "Décembre",
+        width: 60, 
         cellClass: (params) => {
           if (params.data.seasonalityProduct != null ) {
             return this.selectColor(params.data.seasonalityProduct.december);
@@ -311,8 +368,7 @@ export default {
     },
 
      selectColor(seasonId) {
-   
-  
+ 
       switch (seasonId) {
         case this.products[0].seasonalities[0] != null && this.products[0].seasonalities[0].id:
           return "season1";
@@ -340,11 +396,11 @@ export default {
         case 0:
           return "outline-secondary";
         case 1:
-          return "warning";warning
+          return "warning";
         case 2:
-          return "success";success
+          return "success";
         case 3:
-          return "info";info
+          return "info";
       
       /*case 4:
           return "danger";
@@ -397,13 +453,13 @@ export default {
   background-color: #fff !important;
 }
 .season2 {
-  background-color: #28a745 !important;
+  background-color: #ffc107 !important;  
 }
 .season3 {
-  background-color: #17a2b8 !important;
+  background-color: #28a745 !important;  
 }
 .season4 {
-  background-color: #ffc107 !important;
+  background-color: #17a2b8 !important;
 }
 .season5 {
   background-color: #dc3545 !important;

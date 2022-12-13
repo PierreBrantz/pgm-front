@@ -537,7 +537,7 @@ export default {
     event.preventDefault();
       
       axios.delete("/products/" + this.selectedProduct);
-      this.productList = [{ value: null, text: "Choisir un produit..." }];
+      
       
       this.form =[];
       this.selectedProduct= null,
@@ -553,7 +553,7 @@ export default {
           variant: "success",
           solid: true,
         });
-      
+      this.productList = [{ value: null, text: "Choisir un produit..." }];
       this.fetchProducts();
     }
   }
