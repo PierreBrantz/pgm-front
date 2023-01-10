@@ -615,6 +615,7 @@ export default {
         sortable: true,
         pinned: "left",
          resizable: true,
+         suppressNavigable: true
       },
       {
         headerName: "Condit#",
@@ -622,6 +623,7 @@ export default {
         width: 80,
         pinned: "left",
         resizable: true,
+        suppressNavigable: true,
         valueGetter: function (params) {
           if (params.data.productUnit != null) {
             if (params.data.compactDisplay) {
@@ -651,13 +653,14 @@ export default {
         width: 50,
         pinned: "left",
         resizable: true,
+        suppressNavigable: true
       },
       {
         headerName: "Janvier",
         children: [
           {
             field: "quantity1",
-            headerName: "Cmd",
+            headerName: "Prop",
             editable: true,
             valueParser: numberParser,
             cellStyle: cellStyleJan,
@@ -687,12 +690,12 @@ export default {
           },
           {
             field: "quantityTheo1",
-            headerName: "Prop",
+            headerName: "Théo",
             editable: false,
             valueParser: numberParser,
             cellStyle: cellStyleJan,
             resizable: true,
-            suppressNavigable:(params) => params.data.seasonalityProduct.january == 1,
+            suppressNavigable:true,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity1) {
                 return params.data.quantities[0].quantity1;
@@ -707,7 +710,7 @@ export default {
         children: [
           {
             field: "quantity2",
-            headerName: "Cmd",
+            headerName: "Prop",
             editable: true,
             valueParser: numberParser,
             cellStyle: cellStyleFeb,
@@ -737,12 +740,12 @@ export default {
           },
           {
             field: "quantityTheo2",
-            headerName: "Prop",
+            headerName: "Théo",
             editable: false,
             valueParser: numberParser,
             cellStyle: cellStyleFeb,
             resizable: true,
-            suppressNavigable:(params) => params.data.seasonalityProduct.february == 1,
+            suppressNavigable:true,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity2) {
                 return params.data.quantities[0].quantity2;
@@ -757,7 +760,7 @@ export default {
         children: [
           {
             field: "quantity3",
-            headerName: "Cmd",
+            headerName: "Prop",
             editable: true,
             valueParser: numberParser,
             cellStyle: cellStyleMar,
@@ -785,12 +788,12 @@ export default {
           },
           {
             field: "quantityTheo3",
-            headerName: "Prop",
+            headerName: "Théo",
             editable: false,
             valueParser: numberParser,
             cellStyle: cellStyleMar,
             resizable: true,
-            suppressNavigable:(params) => params.data.seasonalityProduct.march == 1,
+            suppressNavigable:true,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity3) {
                 return params.data.quantities[0].quantity3;
@@ -805,7 +808,7 @@ export default {
         children: [
           {
             field: "quantity4",
-            headerName: "Cmd",
+            headerName: "Prop",
             editable: true,
             valueParser: numberParser,
             cellStyle: cellStyleApr,
@@ -833,12 +836,12 @@ export default {
           },
           {
             field: "quantityTheo4",
-            headerName: "Prop",
+            headerName: "Théo",
             editable: false,
             valueParser: numberParser,
             cellStyle: cellStyleApr,
             resizable: true,
-            suppressNavigable:(params) => params.data.seasonalityProduct.april == 1,
+            suppressNavigable:true,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity4) {
                 return params.data.quantities[0].quantity4;
@@ -853,7 +856,7 @@ export default {
         children: [
           {
             field: "quantity5",
-            headerName: "Cmd",
+            headerName: "Prop",
             editable: true,
             valueParser: numberParser,
             cellStyle: cellStyleMay,
@@ -881,12 +884,12 @@ export default {
           },
           {
             field: "quantityTheo5",
-            headerName: "Prop",
+            headerName: "Théo",
             editable: false,
             valueParser: numberParser,
             cellStyle: cellStyleMay,
             resizable: true,
-            suppressNavigable:(params) => params.data.seasonalityProduct.may == 1,
+            suppressNavigable:true,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity5) {
                 return params.data.quantities[0].quantity5;
@@ -901,7 +904,7 @@ export default {
         children: [
           {
             field: "quantity6",
-            headerName: "Cmd",
+            headerName: "Prop",
             editable: true,
             valueParser: numberParser,
             cellStyle: cellStyleJun,
@@ -929,12 +932,12 @@ export default {
           },
           {
             field: "quantityTheo6",
-            headerName: "Prop",
+            headerName: "Théo",
             editable: false,
             valueParser: numberParser,
             cellStyle: cellStyleJun,
             resizable: true,
-            suppressNavigable:(params) => params.data.seasonalityProduct.june == 1,
+            suppressNavigable:true,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity6) {
                 return params.data.quantities[0].quantity6;
@@ -949,7 +952,7 @@ export default {
         children: [
           {
             field: "quantity7",
-            headerName: "Cmd",
+            headerName: "Prop",
             editable: true,
             valueParser: numberParser,
             cellStyle: cellStyleJul,
@@ -977,12 +980,12 @@ export default {
           },
           {
             field: "quantityTheo7",
-            headerName: "Prop",
+            headerName: "Théo",
             editable: false,
             valueParser: numberParser,
             cellStyle: cellStyleJul,
             resizable: true,
-            suppressNavigable:(params) => params.data.seasonalityProduct.july == 1,
+            suppressNavigable:true,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity7) {
                 return params.data.quantities[0].quantity7;
@@ -997,7 +1000,7 @@ export default {
         children: [
           {
             field: "quantity8",
-            headerName: "Cmd",
+            headerName: "Prop",
             editable: true,
             valueParser: numberParser,
             cellStyle: cellStyleAug,
@@ -1025,12 +1028,12 @@ export default {
           },
           {
             field: "quantityTheo8",
-            headerName: "Prop",
+            headerName: "Théo",
             editable: false,
             valueParser: numberParser,
             cellStyle: cellStyleAug,
             resizable: true,
-            suppressNavigable:(params) => params.data.seasonalityProduct.august == 1,
+            suppressNavigable:true,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity8) {
                 return params.data.quantities[0].quantity8;
@@ -1045,7 +1048,7 @@ export default {
         children: [
           {
             field: "quantity9",
-            headerName: "Cmd",
+            headerName: "Prop",
             editable: true,
             valueParser: numberParser,
             cellStyle: cellStyleSep,
@@ -1073,12 +1076,12 @@ export default {
           },
           {
             field: "quantityTheo9",
-            headerName: "Prop",
+            headerName: "Théo",
             editable: false,
             valueParser: numberParser,
             cellStyle: cellStyleSep,
             resizable: true,
-            suppressNavigable:(params) => params.data.seasonalityProduct.september == 1,
+            suppressNavigable:true,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity9) {
                 return params.data.quantities[0].quantity9;
@@ -1093,7 +1096,7 @@ export default {
         children: [
           {
             field: "quantity10",
-            headerName: "Cmd",
+            headerName: "Prop",
             editable: true,
             valueParser: numberParser,
             cellStyle: cellStyleOct,
@@ -1121,12 +1124,12 @@ export default {
           },
           {
             field: "quantityTheo10",
-            headerName: "Prop",
+            headerName: "Théo",
             editable: false,
             valueParser: numberParser,
             cellStyle: cellStyleOct,
             resizable: true,
-            suppressNavigable:(params) => params.data.seasonalityProduct.october == 1,
+            suppressNavigable:true,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity10) {
                 return params.data.quantities[0].quantity10;
@@ -1141,7 +1144,7 @@ export default {
         children: [
           {
             field: "quantity11",
-            headerName: "Cmd",
+            headerName: "Prop",
             editable: true,
             valueParser: numberParser,
             cellStyle: cellStyleNov,
@@ -1169,12 +1172,12 @@ export default {
           },
           {
             field: "quantityTheo11",
-            headerName: "Prop",
+            headerName: "Théo",
             editable: false,
             valueParser: numberParser,
             cellStyle: cellStyleNov,
             resizable: true,
-            suppressNavigable:(params) => params.data.seasonalityProduct.november == 1,
+            suppressNavigable:true,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity11) {
                 return params.data.quantities[0].quantity11;
@@ -1189,7 +1192,7 @@ export default {
         children: [
           {
             field: "quantity12",
-            headerName: "Cmd",
+            headerName: "Prop",
             editable: true,
             valueParser: numberParser,
             cellStyle: cellStyleDec,
@@ -1217,12 +1220,12 @@ export default {
           },
           {
             field: "quantityTheo12",
-            headerName: "Prop",
+            headerName: "Théo",
             editable: false,
             valueParser: numberParser,
             cellStyle: cellStyleDec,
             resizable: true,
-            suppressNavigable:(params) => params.data.seasonalityProduct.december == 1,
+            suppressNavigable:true,
             valueGetter: function (params) {
               if (params.data.quantities[0] && params.data.quantities[0].quantity12) {
                 return params.data.quantities[0].quantity12;
@@ -1236,6 +1239,7 @@ export default {
         headerName: "Qte Tot",
         width: 90,
         pinned: "right",
+        suppressNavigable: true,
         valueGetter: function (params) {
           if (!params.data.currentRealQuantity) return 0;
           return (
@@ -1259,6 +1263,7 @@ export default {
         headerName: "Prix Tot",
         width: 90,
         pinned: "right",
+        suppressNavigable: true,
         valueGetter: function (params) {
           if (!params.data.currentRealQuantity) return 0;
           return (

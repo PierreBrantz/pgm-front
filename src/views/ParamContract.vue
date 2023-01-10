@@ -27,7 +27,7 @@
 
    <b-row class="m-1">
         <b-col cols="3" class="p-1">
-          <label>Colonne "Proposition" (vue producteur)</label>
+          <label>Colonne "Théorique" (vue producteur)</label>
         </b-col>
         <b-col cols="3" class="p-1">
           <b-form-checkbox v-model="form.propositionColumn" name="check-button" switch>

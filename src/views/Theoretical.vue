@@ -206,7 +206,7 @@ export default {
         headerName: "Janvier",
         children: [
           {
-            headerName: "Prop.",
+            headerName: "Théo.",
             editable: true,
             valueParser: numberParser,
             resizable: true,
@@ -236,7 +236,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Cmd",
+            headerName: "Prop",
             field: "realJanuary",
             editable: false,
             resizable: true,
@@ -262,7 +262,7 @@ export default {
         headerName: "Février",
         children: [
           {
-            headerName: "Prop.",
+            headerName: "Théo.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -291,7 +291,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Cmd",
+            headerName: "Prop",
             editable: false,
             field: "realFebruary",
             valueParser: numberParser,
@@ -317,7 +317,7 @@ export default {
         headerName: "Mars",
         children: [
           {
-            headerName: "Prop.",
+            headerName: "Théo.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -344,7 +344,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Cmd",
+            headerName: "Prop",
             field: "realMarch",
             editable: false,
             resizable: true,
@@ -371,7 +371,7 @@ export default {
         headerName: "Avril",
         children: [
           {
-            headerName: "Prop.",
+            headerName: "Théo.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -398,7 +398,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Cmd",
+            headerName: "Prop",
             field: "realApril",
             editable: false,
             resizable: true,
@@ -424,7 +424,7 @@ export default {
         headerName: "Mai",
         children: [
           {
-            headerName: "Prop.",
+            headerName: "Théo.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -451,7 +451,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Cmd",
+            headerName: "Prop",
             field: "realMay",
             editable: false,
             resizable: true,
@@ -477,7 +477,7 @@ export default {
         headerName: "Juin",
         children: [
           {
-            headerName: "Prop.",
+            headerName: "Théo.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -504,7 +504,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Cmd",
+            headerName: "Prop",
             field: "realJune",
             editable: false,
             resizable: true,
@@ -530,7 +530,7 @@ export default {
         headerName: "Juillet",
         children: [
           {
-            headerName: "Prop.",
+            headerName: "Théo.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -557,7 +557,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Cmd",
+            headerName: "Prop",
             field: "realJuly",
             editable: false,
             resizable: true,
@@ -583,7 +583,7 @@ export default {
         headerName: "Août",
         children: [
           {
-            headerName: "Prop.",
+            headerName: "Théo.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -610,7 +610,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Cmd",
+            headerName: "Prop",
             field: "realAugust",
             editable: false,
             resizable: true,
@@ -636,7 +636,7 @@ export default {
         headerName: "Septembre",
         children: [
           {
-            headerName: "Prop.",
+            headerName: "Théo.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -663,7 +663,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Cmd",
+            headerName: "Prop",
             field: "realSeptember",
             editable: false,
             resizable: true,
@@ -689,7 +689,7 @@ export default {
         headerName: "Octobre",
         children: [
           {
-            headerName: "Prop.",
+            headerName: "Théo.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -716,7 +716,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Cmd",
+            headerName: "Prop",
             field: "realOctober",
             editable: false,
             resizable: true,
@@ -743,7 +743,7 @@ export default {
         headerName: "Novembre",
         children: [
           {
-            headerName: "Prop.",
+            headerName: "Théo.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -770,7 +770,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Cmd",
+            headerName: "Prop",
             field: "realNovember",
             editable: false,
             resizable: true,
@@ -797,7 +797,7 @@ export default {
         headerName: "Décembre",
         children: [
           {
-            headerName: "Prop.",
+            headerName: "Théo.",
             editable: true,
             resizable: true,
             valueParser: numberParser,
@@ -824,7 +824,7 @@ export default {
             width: 60,
           },
           {
-            headerName: "Cmd",
+            headerName: "Prop",
             field: "realDecember",
             valueFormatter : numberCellFormatter,
             editable: false,
@@ -851,7 +851,7 @@ export default {
         marryChildren: true,
         children: [
           {
-            headerName: "Prop.",
+            headerName: "Théo.",
             width: 70,
             pinned: "right",
             resizable: true,
@@ -877,7 +877,7 @@ export default {
             },
           },
           {
-            headerName: "Cmd",
+            headerName: "Prop",
             width: 70,
             pinned: "right",
             resizable: true,
@@ -914,7 +914,7 @@ export default {
         marryChildren: true,
         children: [
           {
-            headerName: "Prop.",
+            headerName: "Théo.",
             pinned: "right",
             resizable: true,
             width: 70,
@@ -989,7 +989,7 @@ export default {
             },
           },
           {
-            headerName: "Cmd",
+            headerName: "Prop",
             width: 70,
             pinned: "right",
             resizable: true,

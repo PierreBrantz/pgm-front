@@ -399,7 +399,7 @@ export default {
                 return item;
               }
         });
-
+     
       axios
         .post(
           "/producers",
@@ -420,8 +420,8 @@ export default {
               tva : this.form.tva,
               certificate : this.form.certificate,
               producerType : this.form.producerType,
-              producerOrigin :this.form.producerOrigin
-
+              producerOrigin :this.form.producerOrigin,
+              products: this.form.products
             })
         )
         .then((response) => {
