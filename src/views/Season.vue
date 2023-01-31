@@ -7,7 +7,7 @@
             <b-row>
               <b-col>
                 <b-button
-                  :variant="selectButtonColor(count)"
+                  :style="btnStyles(count)"                 
                   v-on:click="currentSeason = season.id"
                   v-on:dblclick="editSeasonName(count)"
                   size="sm"
@@ -72,6 +72,8 @@ import SeasonNameModal from "../components/SeasonNameModal.vue";
 import AddSeasonModal from "../components/AddSeasonModal.vue";
 import axios from "axios";
 import { AgGridVue } from "ag-grid-vue";
+import { DeliveryMethods } from '../services/constant.js';
+
 
 
 
@@ -87,14 +89,14 @@ export default {
       currentSeason: 1,
       seasonalityProduct: null, 
       lastSeasonIndex : 0,
-      seasonIndex: 1
-      
+      seasonIndex: 1,
     };
   },
   computed: {
     currentUser() {
       return this.$store.state.auth.user;
     },
+    
   },
 
   components: {
@@ -103,6 +105,7 @@ export default {
     "add-season-modal": AddSeasonModal,
   },
   mounted() {
+    
     if (!this.currentUser) {
       this.$router.push("/login");
     }
@@ -111,7 +114,6 @@ export default {
     this.gridApi.sizeColumnsToFit();
     this.fetchProductList();
     this.fetchSeasonality();
-
   },
   
   beforeMount() {
@@ -231,126 +233,122 @@ export default {
         field: "january",
         headerName: "janvier",
         width: 60,    
-        cellClass: (params) => {          
-          if (params.data.seasonalityProduct != null ) {
-            return this.selectColor(params.data.seasonalityProduct.january);
-          }
-        },
+        cellStyle: params =>{
+          return {backgroundColor : this.selectColor(params.data.seasonalityProduct.january)}
+        }
       },
       {
         field: "february",
         headerName: "Février",
         width: 60,    
-        cellClass: (params) => {
-          if (params.data.seasonalityProduct != null ) {
-            return this.selectColor(params.data.seasonalityProduct.february);
-          }
-        },
+        cellStyle: params =>{
+          return {backgroundColor : this.selectColor(params.data.seasonalityProduct.february)}
+        }
       },
       {
         field: "march",
         headerName: "Mars",
         width: 60, 
-        cellClass: (params) => {
-          if (params.data.seasonalityProduct != null ) {
-            return this.selectColor(params.data.seasonalityProduct.march);
-          }
-        },
+        cellStyle: params =>{
+          return {backgroundColor : this.selectColor(params.data.seasonalityProduct.march)}
+        }
       },
       {
         field: "april",
         headerName: "Avril",
         width: 60, 
-        cellClass: (params) => {
-          if (params.data.seasonalityProduct != null ) {
-            return this.selectColor(params.data.seasonalityProduct.april);
-          }
-        },
+        cellStyle: params =>{
+          return {backgroundColor : this.selectColor(params.data.seasonalityProduct.april)}
+        }
       },
       {
         field: "may",
         headerName: "Mai",
         width: 60, 
-        cellClass: (params) => {
-          if (params.data.seasonalityProduct != null ) {
-            return this.selectColor(params.data.seasonalityProduct.may);
-          }
-        },
+        cellStyle: params =>{
+          return {backgroundColor : this.selectColor(params.data.seasonalityProduct.may)}
+        }
       },
       {
         field: "june",
         headerName: "Juin",
         width: 60, 
-        cellClass: (params) => {
-          if (params.data.seasonalityProduct != null ) {
-            return this.selectColor(params.data.seasonalityProduct.june);
-          }
-        },
+        cellStyle: params =>{
+          return {backgroundColor : this.selectColor(params.data.seasonalityProduct.june)}
+        }
       },
       {
         field: "july",
         headerName: "Juillet",
         width: 60, 
-        cellClass: (params) => {
-          if (params.data.seasonalityProduct != null ) {
-            return this.selectColor(params.data.seasonalityProduct.july);
-          }
-        },
+        cellStyle: params =>{
+          return {backgroundColor : this.selectColor(params.data.seasonalityProduct.july)}
+        }
       },
       {
         field: "august",
         headerName: "Août",
         width: 60, 
-        cellClass: (params) => {
-          if (params.data.seasonalityProduct != null ) {
-            return this.selectColor(params.data.seasonalityProduct.august);
-          }
-        },
+        cellStyle: params =>{
+          return {backgroundColor : this.selectColor(params.data.seasonalityProduct.august)}
+        }
       },
       {
         field: "september",
         headerName: "Septembre",
         width: 60, 
-        cellClass: (params) => {
-          if (params.data.seasonalityProduct != null ) {
-            return this.selectColor(params.data.seasonalityProduct.september);
-          }
-        },
+        cellStyle: params =>{
+          return {backgroundColor : this.selectColor(params.data.seasonalityProduct.september)}
+        }
       },
       {
         field: "october",
         headerName: "Octobre",
         width: 60, 
-        cellClass: (params) => {
-          if (params.data.seasonalityProduct != null ) {
-            return this.selectColor(params.data.seasonalityProduct.october);
-          }
-        },
+        cellStyle: params =>{
+          return {backgroundColor : this.selectColor(params.data.seasonalityProduct.october)}
+        }
       },
       {
         field: "november",
         headerName: "Novembre",
         width: 60, 
-        cellClass: (params) => {
-          if (params.data.seasonalityProduct != null ) {
-            return this.selectColor(params.data.seasonalityProduct.november);
-          }
-        },
+        cellStyle: params =>{
+          return {backgroundColor : this.selectColor(params.data.seasonalityProduct.november)}
+        }
       },
       {
         field: "december",
         headerName: "Décembre",
         width: 60, 
-        cellClass: (params) => {
-          if (params.data.seasonalityProduct != null ) {
-            return this.selectColor(params.data.seasonalityProduct.december);
-          }
-        },
+        cellStyle: params =>{
+          return {backgroundColor : this.selectColor(params.data.seasonalityProduct.december)}
+        }
       },
     ];
   },
 
   methods: {
+    btnStyles(seasonColor) {
+      var background;
+      switch(seasonColor){
+        case 0 : background= DeliveryMethods.COLOR_0;    
+        break;
+        case 1 : background= DeliveryMethods.COLOR_1;
+        break;
+        case 2 : background= DeliveryMethods.COLOR_2;
+        break;
+        case 3 : background= DeliveryMethods.COLOR_3;
+        break;
+        default:
+          background= DeliveryMethods.COLOR_4;
+      }
+      return {
+        "background-color" : background,
+        "color" : "#000000"
+      }
+    },
+    
     async fetchProductList() {
       await axios
         .get("/products")
@@ -361,55 +359,23 @@ export default {
      await axios
         .get("/seasons")
         .then((response) =>(
-
           this.seasons = response.data));
-       
-        
     },
 
      selectColor(seasonId) {
- 
       switch (seasonId) {
         case this.products[0].seasonalities[0] != null && this.products[0].seasonalities[0].id:
-          return "season1";
+          return DeliveryMethods.COLOR_0;
         case this.products[0].seasonalities[1] != null && this.products[0].seasonalities[1].id:
-          return "season2";
+          return DeliveryMethods.COLOR_1;
         case this.products[0].seasonalities[2] != null && this.products[0].seasonalities[2].id:
-          return "season3";
-       
-       case this.products[0].seasonalities[3] != null && this.products[0].seasonalities[3].id:
-          return "season4";
-      /*
-      case this.products[0].seasonalities[4] != null && this.products[0].seasonalities[4].id:
-          return "season5";
-        case this.products[0].seasonalities[5] != null && this.products[0].seasonalities[5].id:
-          return "season6";
-          */
-        default:
-          return "season5";
+          return DeliveryMethods.COLOR_2;
+        case this.products[0].seasonalities[3] != null && this.products[0].seasonalities[3].id:
+          return DeliveryMethods.COLOR_3;
+         default:
+          return DeliveryMethods.COLOR_4;
       }
  
-    },
-    selectButtonColor(count) {
-      
-      switch (count) {
-        case 0:
-          return "outline-secondary";
-        case 1:
-          return "warning";
-        case 2:
-          return "success";
-        case 3:
-          return "info";
-      
-      /*case 4:
-          return "danger";
-        case 5:
-          return "secondary";
-          */
-        default:
-          return "danger";
-      }
     },
     save() {
       axios.post("/products", this.products);
@@ -449,22 +415,6 @@ export default {
 };
 </script>
 <style >
-.season1 {
-  background-color: #fff !important;
-}
-.season2 {
-  background-color: #ffc107 !important;  
-}
-.season3 {
-  background-color: #28a745 !important;  
-}
-.season4 {
-  background-color: #17a2b8 !important;
-}
-.season5 {
-  background-color: #dc3545 !important;
-}
-
 
 .ag-header-group-cell-label,
 .ag-header-cell-label {
@@ -487,7 +437,10 @@ export default {
   text-align: center;
 }
 
-.btn-success {
+
+
+
+.btn-default {
   color: #fff;
   background-color: #28a745;
   border-color: #28a745;

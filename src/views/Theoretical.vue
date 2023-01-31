@@ -1,5 +1,5 @@
 <template >
-  <div style="display: flex; flex-direction: column; height: 100%">
+  <div style="display: flex; flex-direction: column; height: 100%" >
     <div style="flex: 1 1 auto">
       <ag-grid-vue
         style="width: 100%; height: 100%"
@@ -32,10 +32,10 @@ import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { AllCommunityModules } from "@ag-grid-community/all-modules";
 import axios from "axios";
 import TheoricalAddProductToProducerModal from "../components/TheoricalAddProductToProducerModal.vue";
+import { DeliveryMethods } from '../services/constant.js';
 
-const THEORETICAL_QUANTITY_COLOR = "#15b3d629";
-const TOTAL_THEO_COLOR = "#d9ffc6b8";
-const TOTAL_REAL_COLOR = "#ffe09bb8";
+const TOTAL_THEO_COLOR = "#eeeeee";
+const TOTAL_REAL_COLOR = "#d6d6d6";
 
 export default {
   data() {
@@ -78,6 +78,7 @@ export default {
     },
     async handleUpdate(products) {
        await axios.post("/products", products);
+       
        var params = {
           force: true,
           suppressFlash: true,
@@ -134,6 +135,7 @@ export default {
         sortable: true,
         pinned: "left",
         resizable: true,
+        suppressNavigable: true,
         valueGetter: function (params) {
           if (params.data.calibration) {
             return params.data.name + " (" + params.data.calibration + ")";
@@ -151,6 +153,7 @@ export default {
         pinned: "left",
         resizable: true,
         filter: 'agTextColumnFilter',
+        suppressNavigable: true,
         valueGetter: function (params) {
           if (params.data.productLabel && params.data.productLabel.name) {
             return params.data.productLabel.name;
@@ -165,6 +168,7 @@ export default {
         pinned: "left",
         resizable: true,
         filter: 'agTextColumnFilter',
+        suppressNavigable: true,
         valueGetter: function (params) {
           if (params.data.productOrigin && params.data.productOrigin.name) {
             return params.data.productOrigin.name;
@@ -176,7 +180,7 @@ export default {
         width: 60,
         pinned: "left",
         resizable: true,
-
+        suppressNavigable: true,
         valueGetter: function (params) {
           
          if(params.data.productUnit != null){  
@@ -193,6 +197,7 @@ export default {
       {
         headerName: "Prix",
         resizable: true,
+        suppressNavigable: true,
         valueGetter: function (params) {
           if (params.data.price) {
             return params.data.price + "€";
@@ -212,7 +217,7 @@ export default {
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.january == 1,
             
-            cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+            cellStyle: cellStyleJan,
             valueGetter: function (params) {
               if (params.data.quantities[0]) {
                 return params.data.quantities[0].quantity1;
@@ -243,12 +248,12 @@ export default {
             suppressNavigable:(params) => params.data.seasonalityProduct.january == 1,
             valueFormatter : numberCellFormatter,
             valueParser: numberParser,
+            cellStyle: cellStyleJan,
             valueGetter: function (params) {
-              console.log(params.data);
-              if (params.data.realQuantities[0] != null) {
+                if (params.data.producers.length>0) {
                 var sum = 0;
-                for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += Number(params.data.realQuantities[i].quantity1);
+                for (let i = 0; i < params.data.producers.length; i++) {
+                  sum += Number(params.data.producers[i].realQuantity.quantity1);
                 }
                 return sum;
               }
@@ -267,7 +272,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             suppressNavigable:(params) => params.data.seasonalityProduct.february == 1,
-            cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+            cellStyle: cellStyleFeb,
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
                 return params.data.quantities[0].quantity2;
@@ -297,12 +302,13 @@ export default {
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
             resizable: true,
+            cellStyle: cellStyleFeb,
             suppressNavigable:(params) => params.data.seasonalityProduct.february == 1,
             valueGetter: function (params) {
-              if (params.data.realQuantities[0] != null) {
+            if (params.data.producers.length>0) {
                 var sum = 0;
-                for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += Number(params.data.realQuantities[i].quantity2);
+                for (let i = 0; i < params.data.producers.length; i++) {
+                  sum += Number(params.data.producers[i].realQuantity.quantity2);
                 }
                 return sum;
               }
@@ -322,7 +328,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             suppressNavigable:(params) => params.data.seasonalityProduct.march == 1,
-            cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+            cellStyle: cellStyleMar,
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
                 return params.data.quantities[0].quantity3;
@@ -350,15 +356,15 @@ export default {
             resizable: true,
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
+            cellStyle: cellStyleMar,
             suppressNavigable:(params) => params.data.seasonalityProduct.march == 1,
             valueGetter: function (params) {
-              if (params.data.realQuantities[0] != null) {
+             if (params.data.producers.length>0) {
                 var sum = 0;
-                for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += Number(params.data.realQuantities[i].quantity3);
+                for (let i = 0; i < params.data.producers.length; i++) {
+                  sum += Number(params.data.producers[i].realQuantity.quantity3);
                 }
                 return sum;
-                
               }
               else return 0;
             },
@@ -376,7 +382,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             suppressNavigable:(params) => params.data.seasonalityProduct.april == 1,
-            cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+           cellStyle: cellStyleApr,
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
                 return params.data.quantities[0].quantity4;
@@ -404,12 +410,13 @@ export default {
             resizable: true,
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
+            cellStyle: cellStyleApr,
             suppressNavigable:(params) => params.data.seasonalityProduct.april == 1,
             valueGetter: function (params) {
-              if (params.data.realQuantities[0] != null) {
+              if (params.data.producers.length>0) {
                 var sum = 0;
-                for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += Number(params.data.realQuantities[i].quantity4);
+                for (let i = 0; i < params.data.producers.length; i++) {
+                  sum += Number(params.data.producers[i].realQuantity.quantity4);
                 }
                 return sum;
               }
@@ -429,7 +436,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             suppressNavigable:(params) => params.data.seasonalityProduct.may == 1,
-            cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+            cellStyle: cellStyleMay,
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
                 return params.data.quantities[0].quantity5;
@@ -457,12 +464,13 @@ export default {
             resizable: true,
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
+            cellStyle: cellStyleMay,
             suppressNavigable:(params) => params.data.seasonalityProduct.may == 1,
             valueGetter: function (params) {
-              if (params.data.realQuantities[0] != null) {
+             if (params.data.producers.length>0) {
                 var sum = 0;
-                for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += Number(params.data.realQuantities[i].quantity5);
+                for (let i = 0; i < params.data.producers.length; i++) {
+                  sum += Number(params.data.producers[i].realQuantity.quantity5);
                 }
                 return sum;
               }
@@ -482,7 +490,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             suppressNavigable:(params) => params.data.seasonalityProduct.june == 1,
-            cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+            cellStyle: cellStyleJun,
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
                 return params.data.quantities[0].quantity6;
@@ -510,12 +518,13 @@ export default {
             resizable: true,
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
+            cellStyle: cellStyleJun,
             suppressNavigable:(params) => params.data.seasonalityProduct.june == 1,
             valueGetter: function (params) {
-              if (params.data.realQuantities[0] != null) {
+              if (params.data.producers.length>0) {
                 var sum = 0;
-                for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += Number(params.data.realQuantities[i].quantity6);
+                for (let i = 0; i < params.data.producers.length; i++) {
+                  sum += Number(params.data.producers[i].realQuantity.quantity6);
                 }
                 return sum;
               }
@@ -535,7 +544,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             suppressNavigable:(params) => params.data.seasonalityProduct.july == 1,
-            cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+            cellStyle: cellStyleJul,
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
                 return params.data.quantities[0].quantity7;
@@ -563,12 +572,13 @@ export default {
             resizable: true,
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
+            cellStyle: cellStyleJul,
             suppressNavigable:(params) => params.data.seasonalityProduct.july == 1,
             valueGetter: function (params) {
-              if (params.data.realQuantities[0] != null) {
+              if (params.data.producers.length>0) {
                 var sum = 0;
-                for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += Number(params.data.realQuantities[i].quantity7);
+                for (let i = 0; i < params.data.producers.length; i++) {
+                  sum += Number(params.data.producers[i].realQuantity.quantity7);
                 }
                 return sum;
               }
@@ -588,7 +598,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             suppressNavigable:(params) => params.data.seasonalityProduct.august == 1,
-            cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+            cellStyle: cellStyleAug,
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
                 return params.data.quantities[0].quantity8;
@@ -616,12 +626,13 @@ export default {
             resizable: true,
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
+            cellStyle: cellStyleAug,
             suppressNavigable:(params) => params.data.seasonalityProduct.august == 1,
             valueGetter: function (params) {
-              if (params.data.realQuantities[0] != null) {
+              if (params.data.producers.length>0) {
                 var sum = 0;
-                for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += Number(params.data.realQuantities[i].quantity8);
+                for (let i = 0; i < params.data.producers.length; i++) {
+                  sum += Number(params.data.producers[i].realQuantity.quantity8);
                 }
                 return sum;
               }
@@ -641,7 +652,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             suppressNavigable:(params) => params.data.seasonalityProduct.september == 1,
-            cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+            cellStyle: cellStyleSep,
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
                 return params.data.quantities[0].quantity9;
@@ -669,12 +680,13 @@ export default {
             resizable: true,
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
+            cellStyle: cellStyleSep,
             suppressNavigable:(params) => params.data.seasonalityProduct.september == 1,
             valueGetter: function (params) {
-              if (params.data.realQuantities[0] != null) {
+              if (params.data.producers.length>0) {
                 var sum = 0;
-                for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += Number(params.data.realQuantities[i].quantity9);
+                for (let i = 0; i < params.data.producers.length; i++) {
+                  sum += Number(params.data.producers[i].realQuantity.quantity9);
                 }
                 return sum;
               }
@@ -694,7 +706,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             suppressNavigable:(params) => params.data.seasonalityProduct.october == 1,
-            cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+            cellStyle: cellStyleOct,
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
                 return params.data.quantities[0].quantity10;
@@ -722,12 +734,13 @@ export default {
             resizable: true,
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
+            cellStyle: cellStyleOct,
             suppressNavigable:(params) => params.data.seasonalityProduct.october == 1,
             valueGetter: function (params) {
-              if (params.data.realQuantities[0] != null) {
+              if (params.data.producers.length>0) {
                 var sum = 0;
-                for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += Number(params.data.realQuantities[i].quantity10);
+                for (let i = 0; i < params.data.producers.length; i++) {
+                  sum += Number(params.data.producers[i].realQuantity.quantity10);
                 }
                 return sum;
               }
@@ -748,7 +761,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             suppressNavigable:(params) => params.data.seasonalityProduct.november == 1,
-            cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+            cellStyle: cellStyleNov,
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
                 return params.data.quantities[0].quantity11;
@@ -776,12 +789,13 @@ export default {
             resizable: true,
             valueParser: numberParser,
             valueFormatter : numberCellFormatter,
+            cellStyle: cellStyleNov,
             suppressNavigable:(params) => params.data.seasonalityProduct.november == 1,
             valueGetter: function (params) {
-              if (params.data.realQuantities[0] != null) {
+              if (params.data.producers.length>0) {
                 var sum = 0;
-                for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += Number(params.data.realQuantities[i].quantity11);
+                for (let i = 0; i < params.data.producers.length; i++) {
+                  sum += Number(params.data.producers[i].realQuantity.quantity11);
                 }
                 return sum;
               }
@@ -802,7 +816,7 @@ export default {
             resizable: true,
             valueParser: numberParser,
             suppressNavigable:(params) => params.data.seasonalityProduct.december == 1,
-            cellStyle: { "background-color": THEORETICAL_QUANTITY_COLOR },
+            cellStyle: cellStyleDec,
             valueGetter: function (params) {
               if (params.data.quantities[0] != null) {
                 return params.data.quantities[0].quantity12;
@@ -830,12 +844,13 @@ export default {
             editable: false,
             resizable: true,
             valueParser: numberParser,
+            cellStyle: cellStyleDec,
             suppressNavigable:(params) => params.data.seasonalityProduct.december == 1,
             valueGetter: function (params) {
-              if (params.data.realQuantities[0] != null) {
+              if (params.data.producers.length>0) {
                 var sum = 0;
-                for (let i = 0; i < params.data.realQuantities.length; i++) {
-                  sum += Number(params.data.realQuantities[i].quantity12);
+                for (let i = 0; i < params.data.producers.length; i++) {
+                  sum += Number(params.data.producers[i].realQuantity.quantity12);
                 }
                 return sum;
               }
@@ -856,6 +871,7 @@ export default {
             pinned: "right",
             resizable: true,
             cellStyle: { "background-color": TOTAL_THEO_COLOR },
+            suppressNavigable: true,
             valueGetter: function (params) {
               var sum = 0;
               for (let i = 0; i < params.data.quantities.length; i++) {
@@ -883,24 +899,24 @@ export default {
             resizable: true,
             type: 'numericColumn',
             valueFormatter: numberCellFormatter,
-          
+            suppressNavigable: true,
             cellStyle: { "background-color": TOTAL_REAL_COLOR },
             valueGetter: function (params) {
               var sum = 0;
-              for (let i = 0; i < params.data.realQuantities.length; i++) {
+              for (let i = 0; i < params.data.producers.length; i++) {
                 sum +=
-                  (params.data.realQuantities[i].quantity1 == null ? 0 : Number(params.data.realQuantities[i].quantity1)) +
-                  (params.data.realQuantities[i].quantity2 == null ? 0 : Number(params.data.realQuantities[i].quantity2)) +
-                  (params.data.realQuantities[i].quantity3 == null ? 0 : Number(params.data.realQuantities[i].quantity3)) +
-                  (params.data.realQuantities[i].quantity4 == null ? 0 : Number(params.data.realQuantities[i].quantity4)) +
-                  (params.data.realQuantities[i].quantity5 == null ? 0 : Number(params.data.realQuantities[i].quantity5)) +
-                  (params.data.realQuantities[i].quantity6 == null ? 0 : Number(params.data.realQuantities[i].quantity6)) +
-                  (params.data.realQuantities[i].quantity7 == null ? 0 : Number(params.data.realQuantities[i].quantity7)) +
-                  (params.data.realQuantities[i].quantity8 == null ? 0 : Number(params.data.realQuantities[i].quantity8)) +
-                  (params.data.realQuantities[i].quantity9 == null ? 0 : Number(params.data.realQuantities[i].quantity9)) +
-                  (params.data.realQuantities[i].quantity10 == null ? 0 : Number(params.data.realQuantities[i].quantity10)) +
-                  (params.data.realQuantities[i].quantity11 == null ? 0 : Number(params.data.realQuantities[i].quantity11)) +
-                  (params.data.realQuantities[i].quantity12 == null ? 0 : Number(params.data.realQuantities[i].quantity12));
+                  (params.data.producers[i].realQuantity.quantity1 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity1)) +
+                  (params.data.producers[i].realQuantity.quantity2 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity2)) +
+                  (params.data.producers[i].realQuantity.quantity3 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity3)) +
+                  (params.data.producers[i].realQuantity.quantity4 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity4)) +
+                  (params.data.producers[i].realQuantity.quantity5 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity5)) +
+                  (params.data.producers[i].realQuantity.quantity6 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity6)) +
+                  (params.data.producers[i].realQuantity.quantity7 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity7)) +
+                  (params.data.producers[i].realQuantity.quantity8 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity8)) +
+                  (params.data.producers[i].realQuantity.quantity9 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity9)) +
+                  (params.data.producers[i].realQuantity.quantity10 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity10)) +
+                  (params.data.producers[i].realQuantity.quantity11 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity11)) +
+                  (params.data.producers[i].realQuantity.quantity12 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity12));
               }
 
               return sum;
@@ -919,6 +935,7 @@ export default {
             resizable: true,
             width: 70,
             cellStyle: { "background-color": TOTAL_THEO_COLOR },
+            suppressNavigable: true,
             valueGetter: function (params) {
               var sum = 0;
               for (let i = 0; i < params.data.quantities.length; i++) {
@@ -993,68 +1010,68 @@ export default {
             width: 70,
             pinned: "right",
             resizable: true,
-            
+            suppressNavigable: true,
             cellStyle: { "background-color": TOTAL_REAL_COLOR },
             valueGetter: function (params) {
               var sum = 0;
-              for (let i = 0; i < params.data.realQuantities.length; i++) {
+              for (let i = 0; i < params.data.producers.length; i++) {
                 sum +=
-                  (params.data.realQuantities[i].quantity1 *
+                  (params.data.producers[i].realQuantity.quantity1 *
                     params.data.price *
                     params.data.seasonalities[
                       params.data.seasonalityProduct.january - 1
                     ].percent || 0) +
-                  (params.data.realQuantities[i].quantity2 *
+                  (params.data.producers[i].realQuantity.quantity2 *
                     params.data.price *
                     params.data.seasonalities[
                       params.data.seasonalityProduct.february - 1
                     ].percent || 0) +
-                  (params.data.realQuantities[i].quantity3 *
+                  (params.data.producers[i].realQuantity.quantity3 *
                     params.data.price *
                     params.data.seasonalities[
                       params.data.seasonalityProduct.march - 1
                     ].percent || 0) +
-                  (params.data.realQuantities[i].quantity4 *
+                  (params.data.producers[i].realQuantity.quantity4 *
                     params.data.price *
                     params.data.seasonalities[
                       params.data.seasonalityProduct.april - 1
                     ].percent || 0) +
-                  (params.data.realQuantities[i].quantity5 *
+                  (params.data.producers[i].realQuantity.quantity5 *
                     params.data.price *
                     params.data.seasonalities[
                       params.data.seasonalityProduct.may - 1
                     ].percent || 0) +
-                  (params.data.realQuantities[i].quantity6 *
+                  (params.data.producers[i].realQuantity.quantity6 *
                     params.data.price *
                     params.data.seasonalities[
                       params.data.seasonalityProduct.june - 1
                     ].percent || 0) +
-                  (params.data.realQuantities[i].quantity7 *
+                  (params.data.producers[i].realQuantity.quantity7 *
                     params.data.price *
                     params.data.seasonalities[
                       params.data.seasonalityProduct.july - 1
                     ].percent || 0) +
-                  (params.data.realQuantities[i].quantity8 *
+                  (params.data.producers[i].realQuantity.quantity8 *
                     params.data.price *
                     params.data.seasonalities[
                       params.data.seasonalityProduct.august - 1
                     ].percent || 0) +
-                  (params.data.realQuantities[i].quantity9 *
+                  (params.data.producers[i].realQuantity.quantity9 *
                     params.data.price *
                     params.data.seasonalities[
                       params.data.seasonalityProduct.september - 1
                     ].percent || 0) +
-                  (params.data.realQuantities[i].quantity10 *
+                  (params.data.producers[i].realQuantity.quantity10 *
                     params.data.price *
                     params.data.seasonalities[
                       params.data.seasonalityProduct.october - 1
                     ].percent || 0) +
-                  (params.data.realQuantities[i].quantity11 *
+                  (params.data.producers[i].realQuantity.quantity11 *
                     params.data.price *
                     params.data.seasonalities[
                       params.data.seasonalityProduct.november - 1
                     ].percent || 0) +
-                  (params.data.realQuantities[i].quantity12 *
+                  (params.data.producers[i].realQuantity.quantity12 *
                     params.data.price *
                     params.data.seasonalities[
                       params.data.seasonalityProduct.december - 1
@@ -1082,6 +1099,69 @@ window.numberCellFormatter = function numberCellFormatter(params) {
     .toString()
     .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1');
 };
+window.cellStyleJan = function cellStyleJan(params) {
+  const color = numberToColor(params.data.seasonalityProduct.january);
+  return { backgroundColor: color };
+};
+
+window.cellStyleFeb = function cellStyleFeb(params) {
+  const color = numberToColor(params.data.seasonalityProduct.february);
+  return { backgroundColor: color };
+};
+window.cellStyleMar = function cellStyleMar(params) {
+  const color = numberToColor(params.data.seasonalityProduct.march);
+  return { backgroundColor: color };
+};
+window.cellStyleApr = function cellStyleApr(params) {
+  const color = numberToColor(params.data.seasonalityProduct.april);
+  return { backgroundColor: color };
+};
+window.cellStyleMay = function cellStyleMay(params) {
+  const color = numberToColor(params.data.seasonalityProduct.may);
+  return { backgroundColor: color };
+};
+window.cellStyleJun = function cellStyleJun(params) {
+  const color = numberToColor(params.data.seasonalityProduct.june);
+  return { backgroundColor: color };
+};
+window.cellStyleJul = function cellStyleJul(params) {
+  const color = numberToColor(params.data.seasonalityProduct.july);
+  return { backgroundColor: color };
+};
+window.cellStyleAug = function cellStyleAug(params) {
+  const color = numberToColor(params.data.seasonalityProduct.august);
+  return { backgroundColor: color };
+};
+window.cellStyleSep = function cellStyleSep(params) {
+  const color = numberToColor(params.data.seasonalityProduct.september);
+  return { backgroundColor: color };
+};
+window.cellStyleOct = function cellStyleOct(params) {
+  const color = numberToColor(params.data.seasonalityProduct.october);
+  return { backgroundColor: color };
+};
+window.cellStyleNov = function cellStyleNov(params) {
+  const color = numberToColor(params.data.seasonalityProduct.november);
+  return { backgroundColor: color };
+};
+window.cellStyleDec = function cellStyleDec(params) {
+  const color = numberToColor(params.data.seasonalityProduct.december);
+  return { backgroundColor: color };
+};
+
+window.numberToColor = function numberToColor(val) {
+  if (val === 1) {
+    return DeliveryMethods.COLOR_0;
+  } else if (val === 2) {
+    return DeliveryMethods.COLOR_1;
+  } else if (val === 3) {
+    return DeliveryMethods.COLOR_2;
+  } else if (val === 4) {
+    return DeliveryMethods.COLOR_3;
+  } else {
+    return DeliveryMethods.COLOR_4;
+  }
+};
 </script>
  
 <style >
@@ -1090,6 +1170,10 @@ window.numberCellFormatter = function numberCellFormatter(params) {
   margin-left: 5px;
   padding-left: 5px;
   padding-right: 3px;
+}
+
+.ag-theme-alpine {
+    --ag-range-selection-border-color: rgb(193, 0, 0);    
 }
 
 .ag-theme-alpine .ag-cell,

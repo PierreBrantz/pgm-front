@@ -63,10 +63,10 @@
             <b-col>
               <ul>
                 <li>
-                  <span style="background: #fff"></span>{{ seasons[0].name }}
+                  <span :style="btnStyles(0)"  ></span>{{ seasons[0].name }}
                 </li>
                 <li>
-                  <span style="background: #28a745"></span>{{ seasons[1].name }}
+                  <span :style="btnStyles(1)"></span>{{ seasons[1].name }}
                 </li>
               </ul>
             </b-col>
@@ -74,10 +74,10 @@
             <b-col>
               <ul>
                 <li>
-                  <span style="background: #17a2b8"></span>{{ seasons[2].name }}
+                  <span :style="btnStyles(2)"></span>{{ seasons[2].name }}
                 </li>
                 <li>
-                  <span style="background: #ffc107"></span>{{ seasons[3].name }}
+                  <span :style="btnStyles(3)"></span>{{ seasons[3].name }}
                 </li>
               </ul>
             </b-col>
@@ -122,6 +122,7 @@ import axios from "axios";
 import jsPDF from "jspdf";
 import JsPDFAutotable from "jspdf-autotable";
 import ProductDetailModal from "../components/ProductDetailModal.vue";
+import { DeliveryMethods } from '../services/constant.js';
 
 export default {
   data() {
@@ -143,7 +144,7 @@ export default {
       seasons: [],
       producerInfo: null,
       contractParam: null,
-      headerHeight: 20,
+      headerHeight: 20
     };
   },
   computed: {
@@ -183,7 +184,28 @@ export default {
     this.fetchContractParams();
   },
   methods: {
+    btnStyles(seasonColor) {
+      var background;
+      switch(seasonColor){
+        case 0 : background= DeliveryMethods.COLOR_0;    
+        break;
+        case 1 : background= DeliveryMethods.COLOR_1;
+        break;
+        case 2 : background= DeliveryMethods.COLOR_2;
+        break;
+        case 3 : background= DeliveryMethods.COLOR_3;
+        break;
+        default:
+          background= DeliveryMethods.COLOR_4;
+      }
+      return {
+        "background-color" : background,
+        "color" : "#000000"
+      }
+    },
     async onCellValueChanged(event) {
+
+
       const json = await axios
         .post(
           "/products/" + event.data.id + "/producer/" + this.selectedProducer,
@@ -542,23 +564,29 @@ export default {
 
     async changeProducer(arg) {
       if (this.showUserBoard) {
-        await axios
+        const json = await axios
           .get("/producers/abr/" + this.currentUser.username)
           .then((response) => {
             this.requests = response.data;
           });
         arg = this.requests.id;
         this.selectedProducer = arg;
+       
       }
 
       if (arg) {
         
           const json = await axios
             .get("/products?producerId=" + this.selectedProducer)
-            .then((response) => (this.requests = response.data))
+            .then((response) => {
+              this.requests = response.data;
+              for(let i = 0; i < this.requests.length; i++){
+                this.requests[i].currentProducer = this.selectedProducer;
+                this.requests[i].currentProducerData = this.producer;
+              }                       
+              return this.requests;})
             .then((rowData) => (this.rowData = rowData));
-          
-          this.productsByProducer = json;
+        this.productsByProducer = json;
         this.producerId = arg;
         this.selectedProducer = this.producerId;
         this.products = [];
@@ -667,22 +695,27 @@ export default {
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.january == 1,
             valueGetter: function (params) {
-              if (params.data.currentRealQuantity) {
-                return params.data.currentRealQuantity.quantity1;
-              }
+                var ret = params.data.producers.find((item)=> { 
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });
+        
+              return ret == null ? 0 : ret.realQuantity.quantity1;
             },
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (valueChanged) {
-                if (!params.data.currentRealQuantity) {
-                  params.data.currentRealQuantity = {
-                    id: params.data.id,
-                    quantity1: newValInt,
-                  };
-                } else {
-                  params.data.currentRealQuantity.quantity1 = newValInt;
-                }
+              if (valueChanged) {                
+                var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });
+              if(ret == null){
+                
+              }
+              ret.realQuantity.quantity1 = newValInt;
               }
               return valueChanged;
             },
@@ -717,22 +750,23 @@ export default {
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.february == 1,
             valueGetter: function (params) {
-              if (params.data.currentRealQuantity) {
-                return params.data.currentRealQuantity.quantity2;
-              }
+              var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+               return ret == null ? 0 : ret.realQuantity.quantity2;
             },
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (params.data.b !== newValInt) {
-                if (!params.data.currentRealQuantity) {
-                  params.data.currentRealQuantity = {
-                    id: params.data.id,
-                    quantity2: newValInt,
-                  };
-                } else {
-                  params.data.currentRealQuantity.quantity2 = newValInt;
-                }
+              if (valueChanged) {                
+                var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              ret.realQuantity.quantity2 = newValInt;
               }
               return valueChanged;
             },
@@ -766,21 +800,23 @@ export default {
             cellStyle: cellStyleMar,
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.march == 1,
-            valueGetter: function (params) {
-              if (params.data.currentRealQuantity) {
-                return params.data.currentRealQuantity.quantity3;
-              }
+            valueGetter: function (params) {var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              return ret == null ? 0 : ret.realQuantity.quantity3;
             },
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (!params.data.currentRealQuantity) {
-                params.data.currentRealQuantity = {
-                  id: params.data.id,
-                  quantity3: newValInt,
-                };
-              } else {
-                params.data.currentRealQuantity.quantity3 = newValInt;
+              if (valueChanged) {                
+                var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              ret.realQuantity.quantity3 = newValInt;
               }
               return valueChanged;
             },
@@ -815,20 +851,23 @@ export default {
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.april == 1,
             valueGetter: function (params) {
-              if (params.data.currentRealQuantity) {
-                return params.data.currentRealQuantity.quantity4;
-              }
+              var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              return ret == null ? 0 : ret.realQuantity.quantity4;
             },
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (!params.data.currentRealQuantity) {
-                params.data.currentRealQuantity = {
-                  id: params.data.id,
-                  quantity4: newValInt,
-                };
-              } else {
-                params.data.currentRealQuantity.quantity4 = newValInt;
+              if (valueChanged) {                
+                var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              ret.realQuantity.quantity4 = newValInt;
               }
               return valueChanged;
             },
@@ -863,20 +902,23 @@ export default {
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.may == 1,
             valueGetter: function (params) {
-              if (params.data.currentRealQuantity) {
-                return params.data.currentRealQuantity.quantity5;
-              }
+             var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              return ret == null ? 0 : ret.realQuantity.quantity5;
             },
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (!params.data.currentRealQuantity) {
-                params.data.currentRealQuantity = {
-                  id: params.data.id,
-                  quantity5: newValInt,
-                };
-              } else {
-                params.data.currentRealQuantity.quantity5 = newValInt;
+              if (valueChanged) {                
+                var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              ret.realQuantity.quantity5 = newValInt;
               }
               return valueChanged;
             },
@@ -911,20 +953,23 @@ export default {
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.june == 1,
             valueGetter: function (params) {
-              if (params.data.currentRealQuantity) {
-                return params.data.currentRealQuantity.quantity6;
-              }
+             var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              return ret == null ? 0 : ret.realQuantity.quantity6;
             },
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (!params.data.currentRealQuantity) {
-                params.data.currentRealQuantity = {
-                  id: params.data.id,
-                  quantity6: newValInt,
-                };
-              } else {
-                params.data.currentRealQuantity.quantity6 = newValInt;
+             if (valueChanged) {                
+                var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              ret.realQuantity.quantity6 = newValInt;
               }
               return valueChanged;
             },
@@ -959,20 +1004,23 @@ export default {
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.july == 1,
             valueGetter: function (params) {
-              if (params.data.currentRealQuantity) {
-                return params.data.currentRealQuantity.quantity7;
-              }
+            var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              return ret == null ? 0 : ret.realQuantity.quantity7;
             },
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (!params.data.currentRealQuantity) {
-                params.data.currentRealQuantity = {
-                  id: params.data.id,
-                  quantity7: newValInt,
-                };
-              } else {
-                params.data.currentRealQuantity.quantity7 = newValInt;
+              if (valueChanged) {                
+                var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              ret.realQuantity.quantity7 = newValInt;
               }
               return valueChanged;
             },
@@ -1007,20 +1055,23 @@ export default {
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.august == 1,
             valueGetter: function (params) {
-              if (params.data.currentRealQuantity) {
-                return params.data.currentRealQuantity.quantity8;
-              }
+             var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              return ret == null ? 0 : ret.realQuantity.quantity8;
             },
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (!params.data.currentRealQuantity) {
-                params.data.currentRealQuantity = {
-                  id: params.data.id,
-                  quantity8: newValInt,
-                };
-              } else {
-                params.data.currentRealQuantity.quantity8 = newValInt;
+              if (valueChanged) {                
+                var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              ret.realQuantity.quantity8 = newValInt;
               }
               return valueChanged;
             },
@@ -1055,20 +1106,23 @@ export default {
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.september == 1,
             valueGetter: function (params) {
-              if (params.data.currentRealQuantity) {
-                return params.data.currentRealQuantity.quantity9;
-              }
+              var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              return ret == null ? 0 : ret.realQuantity.quantity9;
             },
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (!params.data.currentRealQuantity) {
-                params.data.currentRealQuantity = {
-                  id: params.data.id,
-                  quantity9: newValInt,
-                };
-              } else {
-                params.data.currentRealQuantity.quantity9 = newValInt;
+              if (valueChanged) {                
+                var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              ret.realQuantity.quantity8 = newValInt;
               }
               return valueChanged;
             },
@@ -1103,20 +1157,23 @@ export default {
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.october == 1,
             valueGetter: function (params) {
-              if (params.data.currentRealQuantity) {
-                return params.data.currentRealQuantity.quantity10;
-              }
+              var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              return ret == null ? 0 : ret.realQuantity.quantity10;
             },
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (!params.data.currentRealQuantity) {
-                params.data.currentRealQuantity = {
-                  id: params.data.id,
-                  quantity10: newValInt,
-                };
-              } else {
-                params.data.currentRealQuantity.quantity10 = newValInt;
+              if (valueChanged) {                
+                var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              ret.realQuantity.quantity10 = newValInt;
               }
               return valueChanged;
             },
@@ -1151,20 +1208,23 @@ export default {
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.november == 1,
             valueGetter: function (params) {
-              if (params.data.currentRealQuantity) {
-                return params.data.currentRealQuantity.quantity11;
-              }
+              var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              return ret == null ? 0 : ret.realQuantity.quantity11;
             },
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (!params.data.currentRealQuantity) {
-                params.data.currentRealQuantity = {
-                  id: params.data.id,
-                  quantity11: newValInt,
-                };
-              } else {
-                params.data.currentRealQuantity.quantity11 = newValInt;
+              if (valueChanged) {                
+                var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              ret.realQuantity.quantity11 = newValInt;
               }
               return valueChanged;
             },
@@ -1199,20 +1259,23 @@ export default {
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.december == 1,
             valueGetter: function (params) {
-              if (params.data.currentRealQuantity) {
-                return params.data.currentRealQuantity.quantity12;
-              }
+              var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              return ret == null ? 0 : ret.realQuantity.quantity12;
             },
             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-              if (!params.data.currentRealQuantity) {
-                params.data.currentRealQuantity = {
-                  id: params.data.id,
-                  quantity12: newValInt,
-                };
-              } else {
-                params.data.currentRealQuantity.quantity12 = newValInt;
+              if (valueChanged) {                
+                var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });              
+              ret.realQuantity.quantity12 = newValInt;
               }
               return valueChanged;
             },
@@ -1241,21 +1304,28 @@ export default {
         pinned: "right",
         suppressNavigable: true,
         valueGetter: function (params) {
-          if (!params.data.currentRealQuantity) return 0;
+           var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });
+          if(ret == null) return 0;
+          else{
           return (
-            (params.data.currentRealQuantity.quantity1 || 0) +
-            (params.data.currentRealQuantity.quantity2 || 0) +
-            (params.data.currentRealQuantity.quantity3 || 0) +
-            (params.data.currentRealQuantity.quantity4 || 0) +
-            (params.data.currentRealQuantity.quantity5 || 0) +
-            (params.data.currentRealQuantity.quantity6 || 0) +
-            (params.data.currentRealQuantity.quantity7 || 0) +
-            (params.data.currentRealQuantity.quantity8 || 0) +
-            (params.data.currentRealQuantity.quantity9 || 0) +
-            (params.data.currentRealQuantity.quantity10 || 0) +
-            (params.data.currentRealQuantity.quantity11 || 0) +
-            (params.data.currentRealQuantity.quantity12 || 0)
+            (ret.realQuantity.quantity1 || 0) +
+            (ret.realQuantity.quantity2 || 0) +
+            (ret.realQuantity.quantity3 || 0) +
+            (ret.realQuantity.quantity4 || 0) +
+            (ret.realQuantity.quantity5 || 0) +
+            (ret.realQuantity.quantity6 || 0) +
+            (ret.realQuantity.quantity7 || 0) +
+            (ret.realQuantity.quantity8 || 0) +
+            (ret.realQuantity.quantity9 || 0) +
+            (ret.realQuantity.quantity10 || 0) +
+            (ret.realQuantity.quantity11 || 0) +
+            (ret.realQuantity.quantity12 || 0)
           );
+          }
         },
       },
 
@@ -1265,71 +1335,78 @@ export default {
         pinned: "right",
         suppressNavigable: true,
         valueGetter: function (params) {
-          if (!params.data.currentRealQuantity) return 0;
+          var ret = params.data.producers.find((item)=> {                  
+                  if(item.id === params.data.currentProducer){
+                     return item;
+                  }
+              });
+          if(ret == null) return 0;
+          else{
           return (
             (
-              (params.data.currentRealQuantity.quantity1 *
+              (ret.realQuantity.quantity1 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.january - 1
                 ].percent || 0) +
-              (params.data.currentRealQuantity.quantity2 *
+              (ret.realQuantity.quantity2 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.february - 1
                 ].percent || 0) +
-              (params.data.currentRealQuantity.quantity3 *
+              (ret.realQuantity.quantity3 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.march - 1
                 ].percent || 0) +
-              (params.data.currentRealQuantity.quantity4 *
+              (ret.realQuantity.quantity4 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.april - 1
                 ].percent || 0) +
-              (params.data.currentRealQuantity.quantity5 *
+              (ret.realQuantity.quantity5 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.may - 1
                 ].percent || 0) +
-              (params.data.currentRealQuantity.quantity6 *
+              (ret.realQuantity.quantity6 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.june - 1
                 ].percent || 0) +
-              (params.data.currentRealQuantity.quantity7 *
+              (ret.realQuantity.quantity7 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.july - 1
                 ].percent || 0) +
-              (params.data.currentRealQuantity.quantity8 *
+              (ret.realQuantity.quantity8 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.august - 1
                 ].percent || 0) +
-              (params.data.currentRealQuantity.quantity9 *
+              (ret.realQuantity.quantity9 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.september - 1
                 ].percent || 0) +
-              (params.data.currentRealQuantity.quantity10 *
+              (ret.realQuantity.quantity10 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.october - 1
                 ].percent || 0) +
-              (params.data.currentRealQuantity.quantity11 *
+              (ret.realQuantity.quantity11 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.november - 1
                 ].percent || 0) +
-              (params.data.currentRealQuantity.quantity12 *
+              (ret.realQuantity.quantity12 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.december - 1
                 ].percent || 0)
             ).toFixed(2) + "€"
           );
+          }
         },
       },
     ];
@@ -1391,15 +1468,15 @@ window.cellStyleDec = function cellStyleDec(params) {
 
 window.numberToColor = function numberToColor(val) {
   if (val === 1) {
-    return "#fff";
+    return DeliveryMethods.COLOR_0;
   } else if (val === 2) {
-    return "#28a745";
+    return DeliveryMethods.COLOR_1;
   } else if (val === 3) {
-    return "#17a2b8";
+    return DeliveryMethods.COLOR_2;
   } else if (val === 4) {
-    return "#ffc107";
+    return DeliveryMethods.COLOR_3;
   } else {
-    return "#dc3545";
+    return DeliveryMethods.COLOR_4;
   }
 };
 </script>
@@ -1410,6 +1487,10 @@ window.numberToColor = function numberToColor(val) {
   margin-left: 5px;
   padding-left: 5px;
   padding-right: 3px;
+}
+
+.ag-theme-alpine {
+    --ag-range-selection-border-color: rgb(193, 0, 0);    
 }
 
 .ag-theme-alpine .ag-cell,

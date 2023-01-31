@@ -91,51 +91,54 @@ export default {
       return ret;
     },
     setNbOfProduct(value, producerId) {
-      this.nbOfProduct = value;
 
-      for (let i = 0; i < this.product.realQuantities.length; i++) {
-        if (this.product.realQuantities[i].producerId === producerId) {
+      this.nbOfProduct = value;
+      var producer = this.product.producers.find((item) =>{ 
+      if(item.id === producerId)
+        return item;
+      });
+
+       
           switch(this.season){
             case 'realJanuary' :
-              this.product.realQuantities[i].quantity1 = value;
+              producer.realQuantity.quantity1 = value;
               break;
               case 'realFebruary' :
-              this.product.realQuantities[i].quantity2 = value;
+              producer.realQuantity.quantity2 = value;
               break;
               case 'realMarch' :
-             this.product.realQuantities[i].quantity3 = value;
+             producer.realQuantity.quantity3 = value;
               break;
               case 'realApril' :
-              this.product.realQuantities[i].quantity4 = value;
+              producer.realQuantity.quantity4 = value;
               break;
               case 'realMay' :
-              this.product.realQuantities[i].quantity5 = value;
+              producer.realQuantity.quantity5 = value;
               break;
               case 'realJune' :
-              this.product.realQuantities[i].quantity6 = value;
+              producer.realQuantity.quantity6 = value;
               break;
               case 'realJuly' :
-              this.product.realQuantities[i].quantity7 = value;
-              break;
+              producer.realQuantity.quantity7 = value;
+              break;  
               case 'realAugust' :
-              this.product.realQuantities[i].quantity8 = value;
+              producer.realQuantity.quantity8 = value;
               break;
               case 'realSeptember' :
-              this.product.realQuantities[i].quantity9 = value;
+              producer.realQuantity.quantity9 = value;
               break;
               case 'realOctober' :
-              this.product.realQuantities[i].quantity10 = value;
+              producer.realQuantity.quantity10 = value;
               break;
               case 'realNovember' :
-              this.product.realQuantities[i].quantity11 = value;
+              producer.realQuantity.quantity11 = value;
               break;
               case 'realDecember' :
-              this.product.realQuantities[i].quantity12 = value;
+              producer.realQuantity.quantity12 = value;
               break;
           }
-          
-        }
-      }
+              
+      
       return this.nbOfProduct;
     },
     async onSubmit(event) {
