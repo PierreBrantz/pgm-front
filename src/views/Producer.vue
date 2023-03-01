@@ -696,7 +696,7 @@ export default {
           {
             field: "quantity1",
             headerName: "Prop",
-            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
+            editable: (params) => (params.data.productType.visible == true || params.data.productOrigin.visible == true || params.data.productFamily.visible == true),
             valueParser: numberParser,
             cellStyle: cellStyleJan,
             resizable: true,
@@ -756,7 +756,7 @@ export default {
           {
             field: "quantity2",
             headerName: "Prop",
-            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
+            editable: (params) => (params.data.productType.visible == true || params.data.productOrigin.visible == true || params.data.productFamily.visible == true),
             valueParser: numberParser,
             cellStyle: cellStyleFeb,
             resizable: true,
@@ -816,7 +816,7 @@ export default {
           {
             field: "quantity3",
             headerName: "Prop",
-            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
+            editable: (params) => (params.data.productType.visible == true || params.data.productOrigin.visible == true || params.data.productFamily.visible == true),
             valueParser: numberParser,
             cellStyle: cellStyleMar,
             resizable: true,
@@ -876,7 +876,7 @@ export default {
           {
             field: "quantity4",
             headerName: "Prop",
-            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
+            editable: (params) => (params.data.productType.visible == true || params.data.productOrigin.visible == true || params.data.productFamily.visible== true),
             valueParser: numberParser,
             cellStyle: cellStyleApr,
             resizable: true,
@@ -936,7 +936,7 @@ export default {
           {
             field: "quantity5",
             headerName: "Prop",
-            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
+            editable: (params) => (params.data.productType.visible == true || params.data.productOrigin.visible == true || params.data.productFamily.visible == true),
             valueParser: numberParser,
             cellStyle: cellStyleMay,
             resizable: true,
@@ -996,7 +996,7 @@ export default {
           {
             field: "quantity6",
             headerName: "Prop",
-            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
+            editable: (params) => (params.data.productType.visible == true || params.data.productOrigin.visible == true || params.data.productFamily.visible == true),
             valueParser: numberParser,
             cellStyle: cellStyleJun,
             resizable: true,
@@ -1056,7 +1056,7 @@ export default {
           {
             field: "quantity7",
             headerName: "Prop",
-            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
+            editable: (params) => (params.data.productType.visible == true || params.data.productOrigin.visible == true || params.data.productFamily.visible == true),
             valueParser: numberParser,
             cellStyle: cellStyleJul,
             resizable: true,
@@ -1116,7 +1116,7 @@ export default {
           {
             field: "quantity8",
             headerName: "Prop",
-            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
+            editable: (params) => (params.data.productType.visible == true || params.data.productOrigin.visible == true || params.data.productFamily.visible == true),
             valueParser: numberParser,
             cellStyle: cellStyleAug,
             resizable: true,
@@ -1176,7 +1176,7 @@ export default {
           {
             field: "quantity9",
             headerName: "Prop",
-            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
+            editable: (params) => (params.data.productType.visible == true || params.data.productOrigin.visible == true || params.data.productFamily.visible == true),
             valueParser: numberParser,
             cellStyle: cellStyleSep,
             resizable: true,
@@ -1236,7 +1236,7 @@ export default {
           {
             field: "quantity10",
             headerName: "Prop",
-            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
+            editable: (params) => (params.data.productType.visible == true || params.data.productOrigin.visible == true || params.data.productFamily.visible == true),
             valueParser: numberParser,
             cellStyle: cellStyleOct,
             resizable: true,
@@ -1296,7 +1296,7 @@ export default {
           {
             field: "quantity11",
             headerName: "Prop",
-            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
+            editable: (params) => (params.data.productType.visible == true || params.data.productOrigin.visible == true || params.data.productFamily.visible == true),
             valueParser: numberParser,
             cellStyle: cellStyleNov,
             resizable: true,
@@ -1356,7 +1356,7 @@ export default {
           {
             field: "quantity12",
             headerName: "Prop",
-            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
+            editable: (params) => (params.data.productType.visible == true || params.data.productOrigin.visible == true || params.data.productFamily.visible == true),
             valueParser: numberParser,
             cellStyle: cellStyleDec,
             resizable: true,

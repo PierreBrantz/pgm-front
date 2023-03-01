@@ -37,7 +37,7 @@
       <hr class="mt-3 mb-3"/>
       <b-row class="m-1">
         <b-col cols="3" class="p-1">
-             <label>Produits à mettre en readonly pour le producteur</label>
+             <label>Produits dont la quantité est éditable par le producteur</label>
         </b-col>
       </b-row>
       <b-row class="m-1">
