@@ -14,8 +14,8 @@ moment.tz.setDefault('europe/berlin')
 
 Date.prototype.toJSON = function(){ return moment(this).format(); }
 
-axios.defaults.baseURL = "https://pgm-services.herokuapp.com/";
-//axios.defaults.baseURL = "http://localhost:8081/";
+//axios.defaults.baseURL = "https://pgm-services.herokuapp.com/";
+axios.defaults.baseURL = "http://localhost:8081/";
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)

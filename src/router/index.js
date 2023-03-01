@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import FullCalendar from "vue-full-calendar";
 import Login from "../components/Login.vue";
 import Register from "../components/Register.vue";
 import ChangePassword from "../components/ChangePassword.vue";
@@ -90,7 +89,12 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/EditProduct.vue")
   },
-
+  {
+    path: '/editproducer',
+    name: 'editproducer',
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/EditProducer.vue")
+  },
   {
     path: '/paramcontract',
     name: 'paramcontract',

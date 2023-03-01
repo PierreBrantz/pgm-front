@@ -161,7 +161,7 @@ export default {
         .get("/products")
         .then((response) => (this.requests = response.data));
       json.forEach((element) =>
-        this.productList.push({ value: element.id, text: element.name })
+        this.productList.push({ value: element.id, text: element.productFamily != null ? element.productFamily.name : element.name })
       );
     },
     async changeProduct(arg) {

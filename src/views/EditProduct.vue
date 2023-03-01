@@ -99,11 +99,7 @@ export default {
       this.$router.push("/login");
     }
 
-    //.then((rowData) => {
-    //    this.rowData = rowData;});
-    //this.gridApi = this.gridOptions.api;
-    //  this.gridColumnApi = this.gridOptions.columnApi;
-    // this.gridApi.sizeColumnsToFit();
+    
     this.$store
       .dispatch("fetchProducts")
       .finally(() => this.fetchProductList()).finally(() =>

@@ -11,7 +11,11 @@ export default new Vuex.Store({
     products: [],
     productLabels: [],
     productOrigins: [],
-    productTypes : []
+    productTypes : [],
+    producers: [],
+    producerLabels: [],
+    producerOrigins: [],
+    producerTypes: [],
   },
   mutations: {
     SET_PRODUCTS(state, products) {
@@ -25,7 +29,19 @@ export default new Vuex.Store({
     },
     SET_PRODUCT_TYPES(state, productTypes) {
       state.productTypes = productTypes;
-    }
+    },
+    SET_PRODUCERS(state, producers) {
+      state.producers = producers;
+    },
+    SET_PRODUCER_LABELS(state, producerLabels) {
+      state.producerLabels = producerLabels;
+    },
+    SET_PRODUCER_ORIGINS(state, producerOrigins) {
+      state.producerOrigins = producerOrigins;
+    },
+    SET_PRODUCER_TYPES(state, producerTypes) {
+      state.producerTypes = producerTypes;
+    },
   },
   actions: {
 
@@ -69,13 +85,57 @@ export default new Vuex.Store({
         console.log(error)
       }
     },
+    async fetchProducers({ commit }) {
+      try {
+        const data = await axios.get('/producers')
+        commit('SET_PRODUCERS', data.data)
+      }
+      catch (error) {
+        alert(error)
+        console.log(error)
+      }
+    },
+    async fetchProducerLabels({ commit }) {
+      try {
+        const data = await axios.get('/certificates')
+        commit('SET_PRODUCER_LABELS', data.data)
+      }
+      catch (error) {
+        alert(error)
+        console.log(error)
+      }
+    },
+    async fetchProducerOrigins({ commit }) {
+      try {
+        const data = await axios.get('/producerOrigins')
+        commit('SET_PRODUCER_ORIGINS', data.data)
+      }
+      catch (error) {
+        alert(error)
+        console.log(error)
+      }
+    },
+    async fetchProducerTypes({ commit }) {
+      try {
+        const data = await axios.get('/producerTypes')
+        commit('SET_PRODUCER_TYPES', data.data)
+      }
+      catch (error) {
+        alert(error)
+        console.log(error)
+      }
+    },
 
   },
   getters: {
     products: state => { state.products },
     productLabels : state => {state.productLabels},
     productOrigins : state => {state.productOrigins},
-    productTypes : state => {state.productTypes}
+    productTypes : state => {state.productTypes},
+    producers: state => { state.producers },
+    producerLabels : state => {state.certificates},
+    producerOrigins : state => {state.producerOrigins},
+    producerTypes : state => {state.producerTypes},
   },
 
 

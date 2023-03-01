@@ -204,8 +204,7 @@ export default {
       }
     },
     async onCellValueChanged(event) {
-
-
+      
       const json = await axios
         .post(
           "/products/" + event.data.id + "/producer/" + this.selectedProducer,
@@ -543,7 +542,7 @@ export default {
       }
       this.products = json;
       json.forEach((element) =>
-        this.productList.push({ value: element.id, text: element.name })
+        this.productList.push({ value: element.id, text: element.productFamily != null ? element.productFamily.name : element.name })
       );
     },
     async fetchSeasonalities() {
@@ -643,7 +642,15 @@ export default {
         sortable: true,
         pinned: "left",
          resizable: true,
-         suppressNavigable: true
+         suppressNavigable: true,
+          valueGetter: function (params) {      
+              if(params.data.productFamily != null){
+                return params.data.productFamily.name;
+              }else{
+                return params.data.name;
+              }
+
+            },
       },
       {
         headerName: "Condit#",
@@ -689,33 +696,38 @@ export default {
           {
             field: "quantity1",
             headerName: "Prop",
-            editable: true,
+            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
             valueParser: numberParser,
             cellStyle: cellStyleJan,
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.january == 1,
-            valueGetter: function (params) {
-                var ret = params.data.producers.find((item)=> { 
-                  if(item.id === params.data.currentProducer){
+            valueGetter: function (params) {      
+              var ret = params.data.realQuantities.find((item)=> {    
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });
-        
-              return ret == null ? 0 : ret.realQuantity.quantity1;
+              });   
+               return (ret == null ) ? 0 : ret.quantity1;
             },
-            valueSetter: function (params) {
+             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
               if (valueChanged) {                
-                var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+              var ret = params.data.realQuantities.find((item)=> {                  
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });
-              if(ret == null){
-                
+              });   
+              if(ret != null){
+                ret.quantity1 = newValInt;
+              }else{
+                var rq={
+                  producerId : params.data.currentProducer,
+                  quantity1 : newValInt 
+                }
+                  params.data.realQuantities.push(rq);
               }
-              ret.realQuantity.quantity1 = newValInt;
+              
               }
               return valueChanged;
             },
@@ -744,29 +756,38 @@ export default {
           {
             field: "quantity2",
             headerName: "Prop",
-            editable: true,
+            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
             valueParser: numberParser,
             cellStyle: cellStyleFeb,
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.february == 1,
-            valueGetter: function (params) {
-              var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+            valueGetter: function (params) {      
+              var ret = params.data.realQuantities.find((item)=> {    
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-               return ret == null ? 0 : ret.realQuantity.quantity2;
+              });   
+               return (ret == null ) ? 0 : ret.quantity2;
             },
-            valueSetter: function (params) {
+             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
               if (valueChanged) {                
-                var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+              var ret = params.data.realQuantities.find((item)=> {                  
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              ret.realQuantity.quantity2 = newValInt;
+              });   
+              if(ret != null){
+                ret.quantity2 = newValInt;
+              }else{
+                var rq={
+                  producerId : params.data.currentProducer,
+                  quantity2 : newValInt 
+                }
+                  params.data.realQuantities.push(rq);
+              }
+              
               }
               return valueChanged;
             },
@@ -795,28 +816,38 @@ export default {
           {
             field: "quantity3",
             headerName: "Prop",
-            editable: true,
+            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
             valueParser: numberParser,
             cellStyle: cellStyleMar,
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.march == 1,
-            valueGetter: function (params) {var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+            valueGetter: function (params) {      
+              var ret = params.data.realQuantities.find((item)=> {    
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              return ret == null ? 0 : ret.realQuantity.quantity3;
+              });   
+               return (ret == null ) ? 0 : ret.quantity3;
             },
-            valueSetter: function (params) {
+             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
               if (valueChanged) {                
-                var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+              var ret = params.data.realQuantities.find((item)=> {                  
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              ret.realQuantity.quantity3 = newValInt;
+              });   
+              if(ret != null){
+                ret.quantity3 = newValInt;
+              }else{
+                var rq={
+                  producerId : params.data.currentProducer,
+                  quantity3 : newValInt 
+                }
+                  params.data.realQuantities.push(rq);
+              }
+              
               }
               return valueChanged;
             },
@@ -845,29 +876,38 @@ export default {
           {
             field: "quantity4",
             headerName: "Prop",
-            editable: true,
+            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
             valueParser: numberParser,
             cellStyle: cellStyleApr,
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.april == 1,
-            valueGetter: function (params) {
-              var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+            valueGetter: function (params) {      
+              var ret = params.data.realQuantities.find((item)=> {    
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              return ret == null ? 0 : ret.realQuantity.quantity4;
+              });   
+               return (ret == null ) ? 0 : ret.quantity4;
             },
-            valueSetter: function (params) {
+             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
               if (valueChanged) {                
-                var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+              var ret = params.data.realQuantities.find((item)=> {                  
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              ret.realQuantity.quantity4 = newValInt;
+              });   
+              if(ret != null){
+                ret.quantity4 = newValInt;
+              }else{
+                var rq={
+                  producerId : params.data.currentProducer,
+                  quantity4 : newValInt 
+                }
+                  params.data.realQuantities.push(rq);
+              }
+              
               }
               return valueChanged;
             },
@@ -896,29 +936,38 @@ export default {
           {
             field: "quantity5",
             headerName: "Prop",
-            editable: true,
+            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
             valueParser: numberParser,
             cellStyle: cellStyleMay,
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.may == 1,
-            valueGetter: function (params) {
-             var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+            valueGetter: function (params) {      
+              var ret = params.data.realQuantities.find((item)=> {    
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              return ret == null ? 0 : ret.realQuantity.quantity5;
+              });   
+               return (ret == null ) ? 0 : ret.quantity5;
             },
-            valueSetter: function (params) {
+             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
               if (valueChanged) {                
-                var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+              var ret = params.data.realQuantities.find((item)=> {                  
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              ret.realQuantity.quantity5 = newValInt;
+              });   
+              if(ret != null){
+                ret.quantity5 = newValInt;
+              }else{
+                var rq={
+                  producerId : params.data.currentProducer,
+                  quantity5 : newValInt 
+                }
+                  params.data.realQuantities.push(rq);
+              }
+              
               }
               return valueChanged;
             },
@@ -947,29 +996,38 @@ export default {
           {
             field: "quantity6",
             headerName: "Prop",
-            editable: true,
+            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
             valueParser: numberParser,
             cellStyle: cellStyleJun,
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.june == 1,
-            valueGetter: function (params) {
-             var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+            valueGetter: function (params) {      
+              var ret = params.data.realQuantities.find((item)=> {    
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              return ret == null ? 0 : ret.realQuantity.quantity6;
+              });   
+               return (ret == null ) ? 0 : ret.quantity6;
             },
-            valueSetter: function (params) {
+             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
-             if (valueChanged) {                
-                var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+              if (valueChanged) {                
+              var ret = params.data.realQuantities.find((item)=> {                  
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              ret.realQuantity.quantity6 = newValInt;
+              });   
+              if(ret != null){
+                ret.quantity6 = newValInt;
+              }else{
+                var rq={
+                  producerId : params.data.currentProducer,
+                  quantity6 : newValInt 
+                }
+                  params.data.realQuantities.push(rq);
+              }
+              
               }
               return valueChanged;
             },
@@ -998,29 +1056,38 @@ export default {
           {
             field: "quantity7",
             headerName: "Prop",
-            editable: true,
+            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
             valueParser: numberParser,
             cellStyle: cellStyleJul,
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.july == 1,
-            valueGetter: function (params) {
-            var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+            valueGetter: function (params) {      
+              var ret = params.data.realQuantities.find((item)=> {    
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              return ret == null ? 0 : ret.realQuantity.quantity7;
+              });   
+               return (ret == null ) ? 0 : ret.quantity7;
             },
-            valueSetter: function (params) {
+             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
               if (valueChanged) {                
-                var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+              var ret = params.data.realQuantities.find((item)=> {                  
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              ret.realQuantity.quantity7 = newValInt;
+              });   
+              if(ret != null){
+                ret.quantity7 = newValInt;
+              }else{
+                var rq={
+                  producerId : params.data.currentProducer,
+                  quantity7 : newValInt 
+                }
+                  params.data.realQuantities.push(rq);
+              }
+              
               }
               return valueChanged;
             },
@@ -1049,29 +1116,38 @@ export default {
           {
             field: "quantity8",
             headerName: "Prop",
-            editable: true,
+            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
             valueParser: numberParser,
             cellStyle: cellStyleAug,
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.august == 1,
-            valueGetter: function (params) {
-             var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+            valueGetter: function (params) {      
+              var ret = params.data.realQuantities.find((item)=> {    
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              return ret == null ? 0 : ret.realQuantity.quantity8;
+              });   
+               return (ret == null ) ? 0 : ret.quantity8;
             },
-            valueSetter: function (params) {
+             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
               if (valueChanged) {                
-                var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+              var ret = params.data.realQuantities.find((item)=> {                  
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              ret.realQuantity.quantity8 = newValInt;
+              });   
+              if(ret != null){
+                ret.quantity8 = newValInt;
+              }else{
+                var rq={
+                  producerId : params.data.currentProducer,
+                  quantity8 : newValInt 
+                }
+                  params.data.realQuantities.push(rq);
+              }
+              
               }
               return valueChanged;
             },
@@ -1100,29 +1176,38 @@ export default {
           {
             field: "quantity9",
             headerName: "Prop",
-            editable: true,
+            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
             valueParser: numberParser,
             cellStyle: cellStyleSep,
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.september == 1,
-            valueGetter: function (params) {
-              var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+            valueGetter: function (params) {      
+              var ret = params.data.realQuantities.find((item)=> {    
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              return ret == null ? 0 : ret.realQuantity.quantity9;
+              });   
+               return (ret == null ) ? 0 : ret.quantity9;
             },
-            valueSetter: function (params) {
+             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
               if (valueChanged) {                
-                var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+              var ret = params.data.realQuantities.find((item)=> {                  
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              ret.realQuantity.quantity8 = newValInt;
+              });   
+              if(ret != null){
+                ret.quantity9 = newValInt;
+              }else{
+                var rq={
+                  producerId : params.data.currentProducer,
+                  quantity9 : newValInt 
+                }
+                  params.data.realQuantities.push(rq);
+              }
+              
               }
               return valueChanged;
             },
@@ -1151,29 +1236,38 @@ export default {
           {
             field: "quantity10",
             headerName: "Prop",
-            editable: true,
+            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
             valueParser: numberParser,
             cellStyle: cellStyleOct,
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.october == 1,
-            valueGetter: function (params) {
-              var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+            valueGetter: function (params) {      
+              var ret = params.data.realQuantities.find((item)=> {    
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              return ret == null ? 0 : ret.realQuantity.quantity10;
+              });   
+               return (ret == null ) ? 0 : ret.quantity10;
             },
-            valueSetter: function (params) {
+             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
               if (valueChanged) {                
-                var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+              var ret = params.data.realQuantities.find((item)=> {                  
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              ret.realQuantity.quantity10 = newValInt;
+              });   
+              if(ret != null){
+                ret.quantity10 = newValInt;
+              }else{
+                var rq={
+                  producerId : params.data.currentProducer,
+                  quantity10 : newValInt 
+                }
+                  params.data.realQuantities.push(rq);
+              }
+              
               }
               return valueChanged;
             },
@@ -1202,29 +1296,38 @@ export default {
           {
             field: "quantity11",
             headerName: "Prop",
-            editable: true,
+            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
             valueParser: numberParser,
             cellStyle: cellStyleNov,
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.november == 1,
-            valueGetter: function (params) {
-              var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+            valueGetter: function (params) {      
+              var ret = params.data.realQuantities.find((item)=> {    
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              return ret == null ? 0 : ret.realQuantity.quantity11;
+              });   
+               return (ret == null ) ? 0 : ret.quantity11;
             },
-            valueSetter: function (params) {
+             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
               if (valueChanged) {                
-                var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+              var ret = params.data.realQuantities.find((item)=> {                  
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              ret.realQuantity.quantity11 = newValInt;
+              });   
+              if(ret != null){
+                ret.quantity11 = newValInt;
+              }else{
+                var rq={
+                  producerId : params.data.currentProducer,
+                  quantity11 : newValInt 
+                }
+                  params.data.realQuantities.push(rq);
+              }
+              
               }
               return valueChanged;
             },
@@ -1253,29 +1356,38 @@ export default {
           {
             field: "quantity12",
             headerName: "Prop",
-            editable: true,
+            editable: (params) => (params.data.productType == true || params.data.productOrigin == true || params.data.productFamily == true),
             valueParser: numberParser,
             cellStyle: cellStyleDec,
             resizable: true,
             suppressNavigable:(params) => params.data.seasonalityProduct.december == 1,
-            valueGetter: function (params) {
-              var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+            valueGetter: function (params) {      
+              var ret = params.data.realQuantities.find((item)=> {    
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              return ret == null ? 0 : ret.realQuantity.quantity12;
+              });   
+               return (ret == null ) ? 0 : ret.quantity12;
             },
-            valueSetter: function (params) {
+             valueSetter: function (params) {
               var newValInt = parseInt(params.newValue);
               var valueChanged = params.data.b !== newValInt;
               if (valueChanged) {                
-                var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+              var ret = params.data.realQuantities.find((item)=> {                  
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
-              });              
-              ret.realQuantity.quantity12 = newValInt;
+              });   
+              if(ret != null){
+                ret.quantity12 = newValInt;
+              }else{
+                var rq={
+                  producerId : params.data.currentProducer,
+                  quantity12 : newValInt 
+                }
+                  params.data.realQuantities.push(rq);
+              }
+              
               }
               return valueChanged;
             },
@@ -1304,26 +1416,26 @@ export default {
         pinned: "right",
         suppressNavigable: true,
         valueGetter: function (params) {
-           var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+           var ret = params.data.realQuantities.find((item)=> {                  
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
               });
           if(ret == null) return 0;
           else{
-          return (
-            (ret.realQuantity.quantity1 || 0) +
-            (ret.realQuantity.quantity2 || 0) +
-            (ret.realQuantity.quantity3 || 0) +
-            (ret.realQuantity.quantity4 || 0) +
-            (ret.realQuantity.quantity5 || 0) +
-            (ret.realQuantity.quantity6 || 0) +
-            (ret.realQuantity.quantity7 || 0) +
-            (ret.realQuantity.quantity8 || 0) +
-            (ret.realQuantity.quantity9 || 0) +
-            (ret.realQuantity.quantity10 || 0) +
-            (ret.realQuantity.quantity11 || 0) +
-            (ret.realQuantity.quantity12 || 0)
+          return ((ret == null) ? 0 :
+            (ret.quantity1 || 0) +
+            (ret.quantity2 || 0) +
+            (ret.quantity3 || 0) +
+            (ret.quantity4 || 0) +
+            (ret.quantity5 || 0) +
+            (ret.quantity6 || 0) +
+            (ret.quantity7 || 0) +
+            (ret.quantity8 || 0) +
+            (ret.quantity9 || 0) +
+            (ret.quantity10 || 0) +
+            (ret.quantity11 || 0) +
+            (ret.quantity12 || 0)
           );
           }
         },
@@ -1335,71 +1447,73 @@ export default {
         pinned: "right",
         suppressNavigable: true,
         valueGetter: function (params) {
-          var ret = params.data.producers.find((item)=> {                  
-                  if(item.id === params.data.currentProducer){
+          var ret = params.data.realQuantities.find((item)=> {                  
+                  if(item.producerId === params.data.currentProducer){
                      return item;
                   }
               });
           if(ret == null) return 0;
-          else{
+          else{      
           return (
+            
+            (ret == null) ? 0 :
             (
-              (ret.realQuantity.quantity1 *
+              (ret.quantity1 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.january - 1
                 ].percent || 0) +
-              (ret.realQuantity.quantity2 *
+              (ret.quantity2 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.february - 1
                 ].percent || 0) +
-              (ret.realQuantity.quantity3 *
+              (ret.quantity3 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.march - 1
                 ].percent || 0) +
-              (ret.realQuantity.quantity4 *
+              (ret.quantity4 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.april - 1
                 ].percent || 0) +
-              (ret.realQuantity.quantity5 *
+              (ret.quantity5 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.may - 1
                 ].percent || 0) +
-              (ret.realQuantity.quantity6 *
+              (ret.quantity6 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.june - 1
                 ].percent || 0) +
-              (ret.realQuantity.quantity7 *
+              (ret.quantity7 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.july - 1
                 ].percent || 0) +
-              (ret.realQuantity.quantity8 *
+              (ret.quantity8 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.august - 1
                 ].percent || 0) +
-              (ret.realQuantity.quantity9 *
+              (ret.quantity9 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.september - 1
                 ].percent || 0) +
-              (ret.realQuantity.quantity10 *
+              (ret.quantity10 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.october - 1
                 ].percent || 0) +
-              (ret.realQuantity.quantity11 *
+              (ret.quantity11 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.november - 1
                 ].percent || 0) +
-              (ret.realQuantity.quantity12 *
+              (ret.quantity12 *
                 params.data.price *
                 params.data.seasonalities[
                   params.data.seasonalityProduct.december - 1

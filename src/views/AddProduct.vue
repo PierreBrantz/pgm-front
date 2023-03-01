@@ -430,7 +430,6 @@ export default {
       json.forEach((element) =>
         this.productOriginList.push({ value: element.id, text: element.name })
       );
-    
     },
     async changeProduct(arg) {
       const json = await axios

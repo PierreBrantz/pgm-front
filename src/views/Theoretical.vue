@@ -10,7 +10,7 @@
         :columnDefs="columnDefs"
         :modules="modules"
         :headerHeight="headerHeight"
-        @cell-double-clicked="onCellDoubleClicked"
+         @cell-double-clicked="onCellDoubleClicked"
       ></ag-grid-vue>
 
       <theorical-add-product-to-producer-modal
@@ -51,6 +51,7 @@ export default {
       currentProduct: 0,
       currentProducers: [],
       currentSeason: "",
+      
     };
   },
   computed: {
@@ -72,13 +73,13 @@ export default {
           params.api.sizeColumnsToFit();
         });
       });
-
       params.api.sizeColumnsToFit();
+
        
     },
+
     async handleUpdate(products) {
        await axios.post("/products", products);
-       
        var params = {
           force: true,
           suppressFlash: true,
@@ -121,7 +122,7 @@ export default {
   beforeMount() {
     this.gridOptions = {
       onCellValueChanged: function (event) {
-        const json = axios
+        axios
           .post("/products", [event.data])
 
           .then((response) => (this.requests = response.data));
@@ -138,10 +139,10 @@ export default {
         suppressNavigable: true,
         valueGetter: function (params) {
           if (params.data.calibration) {
-            return params.data.name + " (" + params.data.calibration + ")";
+            return (params.data.productFamily != null ? params.data.productFamily.name : params.data.name) + " (" + params.data.calibration + ")";
           }
           else{
-            return params.data.name;
+            return (params.data.productFamily != null ? params.data.productFamily.name : params.data.name);
           }
         },
       },
@@ -250,10 +251,10 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleJan,
             valueGetter: function (params) {
-                if (params.data.producers.length>0) {
+                if (params.data.realQuantities != null) {
                 var sum = 0;
-                for (let i = 0; i < params.data.producers.length; i++) {
-                  sum += Number(params.data.producers[i].realQuantity.quantity1);
+                for (let i = 0; i < params.data.realQuantities.length; i++) {
+                  sum += Number(params.data.realQuantities[i].quantity1);
                 }
                 return sum;
               }
@@ -304,17 +305,16 @@ export default {
             resizable: true,
             cellStyle: cellStyleFeb,
             suppressNavigable:(params) => params.data.seasonalityProduct.february == 1,
-            valueGetter: function (params) {
-            if (params.data.producers.length>0) {
+                valueGetter: function (params) {
+                if (params.data.realQuantities != null) {
                 var sum = 0;
-                for (let i = 0; i < params.data.producers.length; i++) {
-                  sum += Number(params.data.producers[i].realQuantity.quantity2);
+                for (let i = 0; i < params.data.realQuantities.length; i++) {
+                  sum += Number(params.data.realQuantities[i].quantity2);
                 }
                 return sum;
               }
               else return 0;
             },
-
             width: 60,
           },
         ],
@@ -359,16 +359,15 @@ export default {
             cellStyle: cellStyleMar,
             suppressNavigable:(params) => params.data.seasonalityProduct.march == 1,
             valueGetter: function (params) {
-             if (params.data.producers.length>0) {
+                if (params.data.realQuantities != null) {
                 var sum = 0;
-                for (let i = 0; i < params.data.producers.length; i++) {
-                  sum += Number(params.data.producers[i].realQuantity.quantity3);
+                for (let i = 0; i < params.data.realQuantities.length; i++) {
+                  sum += Number(params.data.realQuantities[i].quantity3);
                 }
                 return sum;
               }
               else return 0;
             },
-
             width: 60,
           },
         ],
@@ -412,11 +411,11 @@ export default {
             valueFormatter : numberCellFormatter,
             cellStyle: cellStyleApr,
             suppressNavigable:(params) => params.data.seasonalityProduct.april == 1,
-            valueGetter: function (params) {
-              if (params.data.producers.length>0) {
+                   valueGetter: function (params) {
+                if (params.data.realQuantities != null) {
                 var sum = 0;
-                for (let i = 0; i < params.data.producers.length; i++) {
-                  sum += Number(params.data.producers[i].realQuantity.quantity4);
+                for (let i = 0; i < params.data.realQuantities.length; i++) {
+                  sum += Number(params.data.realQuantities[i].quantity4);
                 }
                 return sum;
               }
@@ -466,11 +465,11 @@ export default {
             valueFormatter : numberCellFormatter,
             cellStyle: cellStyleMay,
             suppressNavigable:(params) => params.data.seasonalityProduct.may == 1,
-            valueGetter: function (params) {
-             if (params.data.producers.length>0) {
+                   valueGetter: function (params) {
+                if (params.data.realQuantities != null) {
                 var sum = 0;
-                for (let i = 0; i < params.data.producers.length; i++) {
-                  sum += Number(params.data.producers[i].realQuantity.quantity5);
+                for (let i = 0; i < params.data.realQuantities.length; i++) {
+                  sum += Number(params.data.realQuantities[i].quantity5);
                 }
                 return sum;
               }
@@ -520,11 +519,11 @@ export default {
             valueFormatter : numberCellFormatter,
             cellStyle: cellStyleJun,
             suppressNavigable:(params) => params.data.seasonalityProduct.june == 1,
-            valueGetter: function (params) {
-              if (params.data.producers.length>0) {
+                   valueGetter: function (params) {
+                if (params.data.realQuantities != null) {
                 var sum = 0;
-                for (let i = 0; i < params.data.producers.length; i++) {
-                  sum += Number(params.data.producers[i].realQuantity.quantity6);
+                for (let i = 0; i < params.data.realQuantities.length; i++) {
+                  sum += Number(params.data.realQuantities[i].quantity6);
                 }
                 return sum;
               }
@@ -574,11 +573,11 @@ export default {
             valueFormatter : numberCellFormatter,
             cellStyle: cellStyleJul,
             suppressNavigable:(params) => params.data.seasonalityProduct.july == 1,
-            valueGetter: function (params) {
-              if (params.data.producers.length>0) {
+               valueGetter: function (params) {
+                if (params.data.realQuantities != null) {
                 var sum = 0;
-                for (let i = 0; i < params.data.producers.length; i++) {
-                  sum += Number(params.data.producers[i].realQuantity.quantity7);
+                for (let i = 0; i < params.data.realQuantities.length; i++) {
+                  sum += Number(params.data.realQuantities[i].quantity7);
                 }
                 return sum;
               }
@@ -628,17 +627,16 @@ export default {
             valueFormatter : numberCellFormatter,
             cellStyle: cellStyleAug,
             suppressNavigable:(params) => params.data.seasonalityProduct.august == 1,
-            valueGetter: function (params) {
-              if (params.data.producers.length>0) {
+                   valueGetter: function (params) {
+                if (params.data.realQuantities != null) {
                 var sum = 0;
-                for (let i = 0; i < params.data.producers.length; i++) {
-                  sum += Number(params.data.producers[i].realQuantity.quantity8);
+                for (let i = 0; i < params.data.realQuantities.length; i++) {
+                  sum += Number(params.data.realQuantities[i].quantity8);
                 }
                 return sum;
               }
               else return 0;
             },
-
             width: 60,
           },
         ],
@@ -682,17 +680,16 @@ export default {
             valueFormatter : numberCellFormatter,
             cellStyle: cellStyleSep,
             suppressNavigable:(params) => params.data.seasonalityProduct.september == 1,
-            valueGetter: function (params) {
-              if (params.data.producers.length>0) {
+                   valueGetter: function (params) {
+                if (params.data.realQuantities != null) {
                 var sum = 0;
-                for (let i = 0; i < params.data.producers.length; i++) {
-                  sum += Number(params.data.producers[i].realQuantity.quantity9);
+                for (let i = 0; i < params.data.realQuantities.length; i++) {
+                  sum += Number(params.data.realQuantities[i].quantity9);
                 }
                 return sum;
               }
               else return 0;
             },
-
             width: 60,
           },
         ],
@@ -736,17 +733,16 @@ export default {
             valueFormatter : numberCellFormatter,
             cellStyle: cellStyleOct,
             suppressNavigable:(params) => params.data.seasonalityProduct.october == 1,
-            valueGetter: function (params) {
-              if (params.data.producers.length>0) {
+                   valueGetter: function (params) {
+                if (params.data.realQuantities != null) {
                 var sum = 0;
-                for (let i = 0; i < params.data.producers.length; i++) {
-                  sum += Number(params.data.producers[i].realQuantity.quantity10);
+                for (let i = 0; i < params.data.realQuantities.length; i++) {
+                  sum += Number(params.data.realQuantities[i].quantity10);
                 }
                 return sum;
               }
               else return 0;
             },
-
             width: 60,
           },
         ],
@@ -791,11 +787,11 @@ export default {
             valueFormatter : numberCellFormatter,
             cellStyle: cellStyleNov,
             suppressNavigable:(params) => params.data.seasonalityProduct.november == 1,
-            valueGetter: function (params) {
-              if (params.data.producers.length>0) {
+                   valueGetter: function (params) {
+                if (params.data.realQuantities != null) {
                 var sum = 0;
-                for (let i = 0; i < params.data.producers.length; i++) {
-                  sum += Number(params.data.producers[i].realQuantity.quantity11);
+                for (let i = 0; i < params.data.realQuantities.length; i++) {
+                  sum += Number(params.data.realQuantities[i].quantity11);
                 }
                 return sum;
               }
@@ -846,11 +842,11 @@ export default {
             valueParser: numberParser,
             cellStyle: cellStyleDec,
             suppressNavigable:(params) => params.data.seasonalityProduct.december == 1,
-            valueGetter: function (params) {
-              if (params.data.producers.length>0) {
+                   valueGetter: function (params) {
+                if (params.data.realQuantities != null) {
                 var sum = 0;
-                for (let i = 0; i < params.data.producers.length; i++) {
-                  sum += Number(params.data.producers[i].realQuantity.quantity12);
+                for (let i = 0; i < params.data.realQuantities.length; i++) {
+                  sum += Number(params.data.realQuantities[i].quantity12);
                 }
                 return sum;
               }
@@ -903,20 +899,20 @@ export default {
             cellStyle: { "background-color": TOTAL_REAL_COLOR },
             valueGetter: function (params) {
               var sum = 0;
-              for (let i = 0; i < params.data.producers.length; i++) {
+              for (let i = 0; i < params.data.realQuantities.length; i++) {
                 sum +=
-                  (params.data.producers[i].realQuantity.quantity1 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity1)) +
-                  (params.data.producers[i].realQuantity.quantity2 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity2)) +
-                  (params.data.producers[i].realQuantity.quantity3 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity3)) +
-                  (params.data.producers[i].realQuantity.quantity4 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity4)) +
-                  (params.data.producers[i].realQuantity.quantity5 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity5)) +
-                  (params.data.producers[i].realQuantity.quantity6 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity6)) +
-                  (params.data.producers[i].realQuantity.quantity7 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity7)) +
-                  (params.data.producers[i].realQuantity.quantity8 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity8)) +
-                  (params.data.producers[i].realQuantity.quantity9 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity9)) +
-                  (params.data.producers[i].realQuantity.quantity10 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity10)) +
-                  (params.data.producers[i].realQuantity.quantity11 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity11)) +
-                  (params.data.producers[i].realQuantity.quantity12 == null ? 0 : Number(params.data.producers[i].realQuantity.quantity12));
+                  (params.data.realQuantities[i].quantity1 == null ? 0 : Number(params.data.realQuantities[i].quantity1)) +
+                  (params.data.realQuantities[i].quantity2 == null ? 0 : Number(params.data.realQuantities[i].quantity2)) +
+                  (params.data.realQuantities[i].quantity3 == null ? 0 : Number(params.data.realQuantities[i].quantity3)) +
+                  (params.data.realQuantities[i].quantity4 == null ? 0 : Number(params.data.realQuantities[i].quantity4)) +
+                  (params.data.realQuantities[i].quantity5 == null ? 0 : Number(params.data.realQuantities[i].quantity5)) +
+                  (params.data.realQuantities[i].quantity6 == null ? 0 : Number(params.data.realQuantities[i].quantity6)) +
+                  (params.data.realQuantities[i].quantity7 == null ? 0 : Number(params.data.realQuantities[i].quantity7)) +
+                  (params.data.realQuantities[i].quantity8 == null ? 0 : Number(params.data.realQuantities[i].quantity8)) +
+                  (params.data.realQuantities[i].quantity9 == null ? 0 : Number(params.data.realQuantities[i].quantity9)) +
+                  (params.data.realQuantities[i].quantity10 == null ? 0 : Number(params.data.realQuantities[i].quantity10)) +
+                  (params.data.realQuantities[i].quantity11 == null ? 0 : Number(params.data.realQuantities[i].quantity11)) +
+                  (params.data.realQuantities[i].quantity12 == null ? 0 : Number(params.data.realQuantities[i].quantity12));
               }
 
               return sum;
@@ -1162,6 +1158,8 @@ window.numberToColor = function numberToColor(val) {
     return DeliveryMethods.COLOR_4;
   }
 };
+
+
 </script>
  
 <style >

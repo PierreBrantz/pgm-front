@@ -39,7 +39,6 @@ export default {
       nbOfProduct: "0",
     };
   },
-  methods: {},
   mounted() {},
 
   methods: {
@@ -47,6 +46,7 @@ export default {
       let ret;
       this.product.realQuantities.find((item) => {
         if (item.producerId === producerId) {
+         
           switch(this.season){
             case 'realJanuary' :
               ret = item.quantity1;
@@ -93,48 +93,46 @@ export default {
     setNbOfProduct(value, producerId) {
 
       this.nbOfProduct = value;
-      var producer = this.product.producers.find((item) =>{ 
-      if(item.id === producerId)
+      var producer = this.product.realQuantities.find((item) =>{ 
+      if(item.producerId === producerId)
         return item;
-      });
-
-       
+      });       
           switch(this.season){
             case 'realJanuary' :
-              producer.realQuantity.quantity1 = value;
+              producer.quantity1 = value;
               break;
               case 'realFebruary' :
-              producer.realQuantity.quantity2 = value;
+              producer.quantity2 = value;
               break;
               case 'realMarch' :
-             producer.realQuantity.quantity3 = value;
+              producer.quantity3 = value;
               break;
               case 'realApril' :
-              producer.realQuantity.quantity4 = value;
+              producer.quantity4 = value;
               break;
               case 'realMay' :
-              producer.realQuantity.quantity5 = value;
+              producer.quantity5 = value;
               break;
               case 'realJune' :
-              producer.realQuantity.quantity6 = value;
+              producer.quantity6 = value;
               break;
               case 'realJuly' :
-              producer.realQuantity.quantity7 = value;
+              producer.quantity7 = value;
               break;  
               case 'realAugust' :
-              producer.realQuantity.quantity8 = value;
+              producer.quantity8 = value;
               break;
               case 'realSeptember' :
-              producer.realQuantity.quantity9 = value;
+              producer.quantity9 = value;
               break;
               case 'realOctober' :
-              producer.realQuantity.quantity10 = value;
+              producer.quantity10 = value;
               break;
               case 'realNovember' :
-              producer.realQuantity.quantity11 = value;
+              producer.quantity11 = value;
               break;
               case 'realDecember' :
-              producer.realQuantity.quantity12 = value;
+              producer.quantity12 = value;
               break;
           }
               
